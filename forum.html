@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum - CUDA Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Aptos:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title">CUDA Center</span>
+                <div class="mdl-layout-spacer"></div>
+                <nav class="mdl-navigation">
+                    <a class="mdl-navigation__link" href="index.html">Home</a>
+                    <a class="mdl-navigation__link" href="study-guide.html">Study Guide</a>
+                    <a class="mdl-navigation__link is-active" href="forum.html">Forum</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="mdl-layout__content">
+            <div class="page-content">
+                <div class="page-header">
+                    <h1><i class="material-icons-outlined icon-header">forum</i> Community Forum</h1>
+                    <p>Connect, ask questions, and share knowledge with fellow students</p>
+                </div>
+
+                <div class="forum-actions">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+                        <i class="material-icons-outlined">add</i> New Post
+                    </button>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+                        <label class="mdl-button mdl-js-button mdl-button--icon" for="search-expandable">
+                            <i class="material-icons-outlined">search</i>
+                        </label>
+                        <div class="mdl-textfield__expandable-holder">
+                            <input class="mdl-textfield__input" type="text" id="search-expandable" placeholder="Search discussions...">
+                            <label class="mdl-textfield__label" for="search-expandable"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mdl-grid">
+                    <div class="mdl-cell mdl-cell--8-col">
+                        <div class="forum-section">
+                            <h2>Recent Discussions</h2>
+                            
+                            <div class="discussion-card mdl-card mdl-shadow--2dp">
+                                <div class="discussion-content">
+                                    <div class="discussion-header">
+                                        <span class="discussion-badge badge-question">Question</span>
+                                        <h3>How do I solve quadratic equations by completing the square?</h3>
+                                    </div>
+                                    <p class="discussion-preview">I'm struggling with understanding the concept of completing the square. Can someone explain the step-by-step process?</p>
+                                    <div class="discussion-meta">
+                                        <span class="meta-item"><i class="material-icons-outlined">person</i> Sarah M.</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">category</i> Mathematics</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> 2 hours ago</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> 12 replies</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="discussion-card mdl-card mdl-shadow--2dp">
+                                <div class="discussion-content">
+                                    <div class="discussion-header">
+                                        <span class="discussion-badge badge-discussion">Discussion</span>
+                                        <h3>Best study techniques for memorizing historical dates</h3>
+                                    </div>
+                                    <p class="discussion-preview">What methods do you use to remember important dates in history? Share your strategies!</p>
+                                    <div class="discussion-meta">
+                                        <span class="meta-item"><i class="material-icons-outlined">person</i> John D.</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">category</i> History</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> 5 hours ago</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> 24 replies</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="discussion-card mdl-card mdl-shadow--2dp">
+                                <div class="discussion-content">
+                                    <div class="discussion-header">
+                                        <span class="discussion-badge badge-tips">Tips</span>
+                                        <h3>Understanding chemical bonding: Ionic vs Covalent</h3>
+                                    </div>
+                                    <p class="discussion-preview">I've created a simple guide that helped me understand the difference between ionic and covalent bonds...</p>
+                                    <div class="discussion-meta">
+                                        <span class="meta-item"><i class="material-icons-outlined">person</i> Emma R.</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">category</i> Chemistry</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> 1 day ago</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> 18 replies</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="discussion-card mdl-card mdl-shadow--2dp">
+                                <div class="discussion-content">
+                                    <div class="discussion-header">
+                                        <span class="discussion-badge badge-question">Question</span>
+                                        <h3>Help with Python list comprehensions</h3>
+                                    </div>
+                                    <p class="discussion-preview">I'm learning Python and having trouble with list comprehensions. Can someone explain the syntax?</p>
+                                    <div class="discussion-meta">
+                                        <span class="meta-item"><i class="material-icons-outlined">person</i> Michael L.</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">category</i> Programming</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> 2 days ago</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> 8 replies</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="discussion-card mdl-card mdl-shadow--2dp">
+                                <div class="discussion-content">
+                                    <div class="discussion-header">
+                                        <span class="discussion-badge badge-resource">Resource</span>
+                                        <h3>Free resources for learning French online</h3>
+                                    </div>
+                                    <p class="discussion-preview">I've compiled a list of the best free websites and apps for learning French. Check them out!</p>
+                                    <div class="discussion-meta">
+                                        <span class="meta-item"><i class="material-icons-outlined">person</i> Lisa K.</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">category</i> Languages</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> 3 days ago</span>
+                                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> 15 replies</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mdl-cell mdl-cell--4-col">
+                        <div class="sidebar-section">
+                            <div class="mdl-card mdl-shadow--2dp">
+                                <div class="mdl-card__title sidebar-title">
+                                    <h2 class="mdl-card__title-text">Categories</h2>
+                                </div>
+                                <div class="mdl-card__supporting-text">
+                                    <ul class="category-list">
+                                        <li><a href="#"><i class="material-icons-outlined">calculate</i> Mathematics (45)</a></li>
+                                        <li><a href="#"><i class="material-icons-outlined">science</i> Science (38)</a></li>
+                                        <li><a href="#"><i class="material-icons-outlined">menu_book</i> English & Literature (27)</a></li>
+                                        <li><a href="#"><i class="material-icons-outlined">public</i> History (32)</a></li>
+                                        <li><a href="#"><i class="material-icons-outlined">code</i> Programming (41)</a></li>
+                                        <li><a href="#"><i class="material-icons-outlined">translate</i> Languages (19)</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mdl-card mdl-shadow--2dp" style="margin-top: 20px;">
+                                <div class="mdl-card__title sidebar-title">
+                                    <h2 class="mdl-card__title-text">Top Contributors</h2>
+                                </div>
+                                <div class="mdl-card__supporting-text">
+                                    <ul class="contributors-list">
+                                        <li>
+                                            <div class="contributor-avatar">JD</div>
+                                            <div class="contributor-info">
+                                                <span class="contributor-name">John Doe</span>
+                                                <span class="contributor-stats">234 posts</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="contributor-avatar">AS</div>
+                                            <div class="contributor-info">
+                                                <span class="contributor-name">Alice Smith</span>
+                                                <span class="contributor-stats">189 posts</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="contributor-avatar">RJ</div>
+                                            <div class="contributor-info">
+                                                <span class="contributor-name">Robert Johnson</span>
+                                                <span class="contributor-stats">167 posts</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="contributor-avatar">EW</div>
+                                            <div class="contributor-info">
+                                                <span class="contributor-name">Emma Wilson</span>
+                                                <span class="contributor-stats">145 posts</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mdl-card mdl-shadow--2dp" style="margin-top: 20px;">
+                                <div class="mdl-card__title sidebar-title">
+                                    <h2 class="mdl-card__title-text">Forum Rules</h2>
+                                </div>
+                                <div class="mdl-card__supporting-text">
+                                    <ul class="rules-list">
+                                        <li><i class="material-icons-outlined">check_circle</i> Be respectful to all members</li>
+                                        <li><i class="material-icons-outlined">check_circle</i> Post in the appropriate category</li>
+                                        <li><i class="material-icons-outlined">check_circle</i> Provide helpful and accurate information</li>
+                                        <li><i class="material-icons-outlined">check_circle</i> No spam or self-promotion</li>
+                                        <li><i class="material-icons-outlined">check_circle</i> Report violations to moderators</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mdl-mini-footer">
+            <div class="mdl-mini-footer__left-section">
+                <div class="mdl-logo">CUDA Center</div>
+                <ul class="mdl-mini-footer__link-list">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

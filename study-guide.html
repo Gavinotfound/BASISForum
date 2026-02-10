@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Guide - CUDA Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Aptos:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title">CUDA Center</span>
+                <div class="mdl-layout-spacer"></div>
+                <nav class="mdl-navigation">
+                    <a class="mdl-navigation__link" href="index.html">Home</a>
+                    <a class="mdl-navigation__link is-active" href="study-guide.html">Study Guide</a>
+                    <a class="mdl-navigation__link" href="forum.html">Forum</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="mdl-layout__content">
+            <div class="page-content">
+                <div class="page-header">
+                    <h1><i class="material-icons-outlined icon-header">menu_book</i> Study Guide</h1>
+                    <p>Browse comprehensive study materials organized by subject</p>
+                </div>
+
+                <div class="mdl-grid">
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet">
+                        <div class="mdl-card mdl-shadow--2dp subject-card">
+                            <div class="mdl-card__title subject-math">
+                                <h2 class="mdl-card__title-text">Mathematics</h2>
+                            </div>
+                            <div class="mdl-card__supporting-text">
+                                <ul class="topic-list">
+                                    <li><i class="material-icons-outlined">chevron_right</i> Algebra & Functions</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Calculus Basics</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Statistics & Probability</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Geometry Fundamentals</li>
+                                </ul>
+                            </div>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                    View Topics
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet">
+                        <div class="mdl-card mdl-shadow--2dp subject-card">
+                            <div class="mdl-card__title subject-science">
+                                <h2 class="mdl-card__title-text">Science</h2>
+                            </div>
+                            <div class="mdl-card__supporting-text">
+                                <ul class="topic-list">
+                                    <li><i class="material-icons-outlined">chevron_right</i> Physics Principles</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Chemistry Fundamentals</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Biology Essentials</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Environmental Science</li>
+                                </ul>
+                            </div>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                    View Topics
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet">
+                        <div class="mdl-card mdl-shadow--2dp subject-card">
+                            <div class="mdl-card__title subject-english">
+                                <h2 class="mdl-card__title-text">English & Literature</h2>
+                            </div>
+                            <div class="mdl-card__supporting-text">
+                                <ul class="topic-list">
+                                    <li><i class="material-icons-outlined">chevron_right</i> Grammar & Writing</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Literary Analysis</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Reading Comprehension</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Creative Writing</li>
+                                </ul>
+                            </div>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                    View Topics
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet">
+                        <div class="mdl-card mdl-shadow--2dp subject-card">
+                            <div class="mdl-card__title subject-history">
+                                <h2 class="mdl-card__title-text">History</h2>
+                            </div>
+                            <div class="mdl-card__supporting-text">
+                                <ul class="topic-list">
+                                    <li><i class="material-icons-outlined">chevron_right</i> World History</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> American History</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Government & Politics</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Economics</li>
+                                </ul>
+                            </div>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                    View Topics
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet">
+                        <div class="mdl-card mdl-shadow--2dp subject-card">
+                            <div class="mdl-card__title subject-coding">
+                                <h2 class="mdl-card__title-text">Computer Science</h2>
+                            </div>
+                            <div class="mdl-card__supporting-text">
+                                <ul class="topic-list">
+                                    <li><i class="material-icons-outlined">chevron_right</i> Programming Basics</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Data Structures</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Algorithms</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Web Development</li>
+                                </ul>
+                            </div>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                    View Topics
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet">
+                        <div class="mdl-card mdl-shadow--2dp subject-card">
+                            <div class="mdl-card__title subject-languages">
+                                <h2 class="mdl-card__title-text">Languages</h2>
+                            </div>
+                            <div class="mdl-card__supporting-text">
+                                <ul class="topic-list">
+                                    <li><i class="material-icons-outlined">chevron_right</i> Spanish</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> French</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> German</li>
+                                    <li><i class="material-icons-outlined">chevron_right</i> Mandarin Chinese</li>
+                                </ul>
+                            </div>
+                            <div class="mdl-card__actions mdl-card--border">
+                                <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                    View Topics
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resources-section">
+                    <h2>Additional Resources</h2>
+                    <div class="mdl-grid">
+                        <div class="mdl-cell mdl-cell--3-col">
+                            <div class="mdl-card mdl-shadow--2dp resource-card">
+                                <div class="mdl-card__title resource-card-title">
+                                    <h3 class="mdl-card__title-text">
+                                        <i class="material-icons-outlined">video_library</i>
+                                        Video Tutorials
+                                    </h3>
+                                </div>
+                                <div class="mdl-card__supporting-text">
+                                    Watch step-by-step tutorials covering various topics.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mdl-cell mdl-cell--3-col">
+                            <div class="mdl-card mdl-shadow--2dp resource-card">
+                                <div class="mdl-card__title resource-card-title">
+                                    <h3 class="mdl-card__title-text">
+                                        <i class="material-icons-outlined">quiz</i>
+                                        Practice Quizzes
+                                    </h3>
+                                </div>
+                                <div class="mdl-card__supporting-text">
+                                    Test your knowledge with interactive quizzes.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mdl-cell mdl-cell--3-col">
+                            <div class="mdl-card mdl-shadow--2dp resource-card">
+                                <div class="mdl-card__title resource-card-title">
+                                    <h3 class="mdl-card__title-text">
+                                        <i class="material-icons-outlined">download</i>
+                                        Download Notes
+                                    </h3>
+                                </div>
+                                <div class="mdl-card__supporting-text">
+                                    Download PDF study guides and summary notes.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mdl-cell mdl-cell--3-col">
+                            <div class="mdl-card mdl-shadow--2dp resource-card">
+                                <div class="mdl-card__title resource-card-title">
+                                    <h3 class="mdl-card__title-text">
+                                        <i class="material-icons-outlined">lightbulb</i>
+                                        Study Tips
+                                    </h3>
+                                </div>
+                                <div class="mdl-card__supporting-text">
+                                    Learn effective study techniques and strategies.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mdl-mini-footer">
+            <div class="mdl-mini-footer__left-section">
+                <div class="mdl-logo">CUDA Center</div>
+                <ul class="mdl-mini-footer__link-list">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
