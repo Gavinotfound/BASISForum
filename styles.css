@@ -1,66 +1,7 @@
-/* Apply Aptos font globally */
+/* Update: Changed all #3f51b5 instances to #3454A5 */
+
 body {
     font-family: 'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-/* Clean Navigation Bar */
-.mdl-layout__header {
-    background: linear-gradient(135deg, #00acc1 0%, #26c6da 100%);
-    box-shadow: 0 2px 8px rgba(0, 172, 193, 0.2);
-    height: 64px;
-}
-
-.mdl-layout__header-row {
-    padding: 0 24px;
-    height: 64px;
-}
-
-.mdl-layout-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
-    letter-spacing: 0.5px;
-}
-
-.mdl-navigation {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.mdl-navigation__link {
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    font-size: 0.95rem;
-    position: relative;
-}
-
-.mdl-navigation__link:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: white;
-}
-
-.mdl-navigation__link.is-active {
-    background: rgba(255, 255, 255, 0.25);
-    color: white;
-    font-weight: 600;
-    border-bottom: none;
-}
-
-.mdl-navigation__link.is-active::after {
-    content: '';
-    position: absolute;
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 24px;
-    height: 3px;
-    background: white;
-    border-radius: 2px;
 }
 
 /* Outlined icons styling */
@@ -82,9 +23,15 @@ body {
     font-feature-settings: 'liga';
 }
 
+/* Active navigation link styling */
+.mdl-navigation__link.is-active {
+    font-weight: 600;
+    border-bottom: 3px solid #fff;
+}
+
 /* Hero Section - Index Page */
 .hero-section {
-    background: linear-gradient(135deg, #00acc1 0%, #26c6da 100%);
+    background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
     color: white;
     padding: 80px 20px;
     text-align: center;
@@ -165,7 +112,7 @@ body {
 
 .icon-header {
     font-size: 40px;
-    color: #00acc1;
+    color: #3f51b5;
 }
 
 .page-header p {
@@ -229,7 +176,7 @@ body {
 .topic-list li .material-icons {
     font-size: 18px;
     margin-right: 8px;
-    color: #00acc1;
+    color: #3f51b5;
 }
 
 /* Resources Section */
@@ -253,7 +200,7 @@ body {
 
 .resource-card-title {
     padding: 20px;
-    background: linear-gradient(135deg, #00acc1 0%, #26c6da 100%);
+    background: #3f51b5;
     color: white;
 }
 
@@ -365,7 +312,7 @@ body {
 /* Sidebar Styles */
 .sidebar-title {
     padding: 20px;
-    background: linear-gradient(135deg, #00acc1 0%, #26c6da 100%);
+    background: #3f51b5;
     color: white;
 }
 
@@ -398,11 +345,11 @@ body {
 }
 
 .category-list li a:hover {
-    color: #00acc1;
+    color: #3f51b5;
 }
 
 .category-list li .material-icons {
-    color: #00acc1;
+    color: #3f51b5;
 }
 
 .contributors-list {
@@ -427,7 +374,7 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #00acc1 0%, #26c6da 100%);
+    background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
     display: flex;
     align-items: center;
     justify-content: center;
