@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Aptos:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="account-container">
+        <div id="login-box" class="form-box">
+            <h2>Log In</h2>
+            <form id="login-form" action="#" method="post">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                <div class="form-error" id="login-error"></div>
+                <div class="form-actions">
+                    <button type="submit">Log In</button>
+                </div>
+                <p>Don't have an account? <span id="to-signup" class="toggle-link">Sign up</span></p >
+            </form>
+        </div>
+
+        <div id="signup-box" class="form-box" style="display:none;">
+            <h2>Sign Up</h2>
+            <form id="signup-form" action="#" method="post">
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input type="password" id="signup-confirm" name="confirm" required>
+                </div>
+                <div class="form-error" id="signup-error"></div>
+                <div class="form-actions">
+                    <button type="submit">Sign Up</button>
+                </div>
+                <p>Already have an account? <span id="to-login" class="toggle-link">Log in</span></p >
+            </form>
+        </div>
+    </div>
+
+    <script src="account.js"></script>
+</body>
+</html>
