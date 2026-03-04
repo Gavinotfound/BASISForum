@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Aptos:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .settings-container { max-width:640px; margin:40px auto; padding:20px; }
+        .form-group input, .form-group textarea, select { width:100%; padding:8px; box-sizing:border-box; }
+        .form-actions { text-align:right; margin-top:12px; }
+    </style>
+</head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title">AP World History Hub</span>
+                <div class="mdl-layout-spacer"></div>
+                <nav class="mdl-navigation">
+                    <a class="mdl-navigation__link" href="index.html">Home</a>
+                    <a class="mdl-navigation__link" href="study-guide.html">Study Guide</a>
+                    <a class="mdl-navigation__link" href="forum.html">Forum</a>
+                    <a class="mdl-navigation__link" href="account-settings.html">Account</a>
+                </nav>
+                <div class="account-menu">
+                    <button id="accountButton" class="account-button" title="Account">
+                        <i class="material-icons-outlined">account_circle</i>
+                    </button>
+                    <div class="account-dropdown" id="accountDropdown">
+                        <div id="accountNotLogged">
+                            <a href="account.html" class="account-option"><i class="material-icons-outlined">login</i> Log in / Sign up</a>
+                        </div>
+                        <div id="accountLogged" style="display:none;">
+                            <a href="account-settings.html" class="account-option"><i class="material-icons-outlined">settings</i> Account Settings</a>
+                            <div class="account-option"><i class="material-icons-outlined">person</i> <span id="accountEmail">User</span></div>
+                            <div class="account-option" id="accountLogout"><i class="material-icons-outlined">logout</i> Logout</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="mdl-layout__content">
+    <div class="settings-container">
+        <h1>Account Settings</h1>
+        <p>Update your display name, icon, email and password.</p>
+
+        <div class="form-group">
+            <label for="nameInput">Display Name</label>
+            <input id="nameInput" type="text" placeholder="Your name" />
+        </div>
+
+        <div class="form-group">
+            <label for="iconInput">User Icon (emoji or initials)</label>
+            <input id="iconInput" type="text" placeholder="e.g. JD or 😄" />
+        </div>
+
+        <div class="form-group">
+            <label for="emailInput">Email</label>
+            <input id="emailInput" type="email" placeholder="you@example.com" />
+        </div>
+
+        <hr />
+        <p>To change email or password, enter your current password below.</p>
+
+        <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input id="currentPassword" type="password" />
+        </div>
+
+        <div class="form-group">
+            <label for="newPassword">New Password (leave blank to keep)</label>
+            <input id="newPassword" type="password" />
+        </div>
+
+        <div id="settingsError" class="form-error"></div>
+
+        <div class="form-actions">
+            <button id="saveSettingsBtn" class="mdl-button mdl-js-button mdl-button--colored">Save Changes</button>
+        </div>
+    </div>
+
+    <script>
+        async function getAccount() {
+            const res = await fetch('/api/account', { credentials: 'include' });
+            if (!res.ok) {
+                alert('Session invalid or expired. Please log in again.');
+                window.location.href='account.html';
+                return;
+            }
+            return res.json();
+        }
+
+        async function saveAccount(data) {
+            const res = await fetch('/api/account', {
+                method: 'PUT',
+                headers: { 'Content-Type':'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(data)
+            });
+            return res;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // populate account dropdown state
+            try {
+                const s = await fetch('/api/session', { credentials: 'include' }).then(r => r.json());
+                const notLogged = document.getElementById('accountNotLogged');
+                const logged = document.getElementById('accountLogged');
+                const emailEl = document.getElementById('accountEmail');
+                if (s && s.loggedIn) {
+                    notLogged.style.display = 'none'; logged.style.display = 'block'; emailEl.textContent = s.email;
+                } else { notLogged.style.display = 'block'; logged.style.display = 'none'; }
+                document.getElementById('accountLogout').addEventListener('click', async () => { await fetch('/api/logout', { method: 'POST', credentials: 'include' }); window.location.reload(); });
+            } catch (e) { }
+
+            const info = await getAccount();
+            if (!info) return;
+            document.getElementById('nameInput').value = info.name || '';
+            document.getElementById('iconInput').value = info.icon || '';
+            document.getElementById('emailInput').value = info.email || '';
+
+            document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+                const name = document.getElementById('nameInput').value.trim();
+                const icon = document.getElementById('iconInput').value.trim();
+                const email = document.getElementById('emailInput').value.trim();
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const err = document.getElementById('settingsError');
+                err.textContent = '';
+
+                const payload = { name, icon };
+                if (email) payload.email = email;
+                if (currentPassword) payload.currentPassword = currentPassword;
+                if (newPassword) payload.newPassword = newPassword;
+
+                const res = await saveAccount(payload);
+                const data = await res.json();
+                if (!res.ok) return (err.textContent = data.error || 'Failed to save');
+
+                alert('Account updated');
+            });
+        });
+    </script>
+
+    <footer class="mdl-mini-footer">
+        <div class="mdl-mini-footer__left-section">
+            <div class="mdl-logo">AP World History Hub</div>
+            <ul class="mdl-mini-footer__link-list">
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+            </ul>
+        </div>
+    </footer>
+    </main>
+    </div>
+</body>
+</html>

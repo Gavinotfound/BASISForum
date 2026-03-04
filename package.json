@@ -1,0 +1,18 @@
+{
+  "name": "basisforum-backend",
+  "version": "1.0.0",
+  "description": "Local backend for BASISForum (development only)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.7.0",
+    "sanitize-html": "^2.10.0",
+    "uuid": "^9.0.0"
+  }
+}

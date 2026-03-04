@@ -201,7 +201,7 @@
                 </div>
 
                 <div class="forum-actions">
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+                    <button id="newPostBtn" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
                         <i class="material-icons-outlined">add</i> New Post
                     </button>
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
@@ -219,86 +219,7 @@
                     <div class="mdl-cell mdl-cell--8-col">
                         <div class="forum-section">
                             <h2>Recent Discussions</h2>
-                            
-                            <div class="discussion-card mdl-card mdl-shadow--2dp" data-post-id="1">
-                                <div class="discussion-content">
-                                    <div class="discussion-header">
-                                        <span class="discussion-badge badge-question">Question</span>
-                                        <h3>How do I approach the DBQ on the Silk Roads?</h3>
-                                    </div>
-                                    <p class="discussion-preview">I'm struggling with understanding how to analyze the documents and create a thesis statement for the Silk Roads DBQ. Any tips on structure?</p>
-                                    <div class="discussion-meta">
-                                        <span class="meta-item"><i class="material-icons-outlined">person</i> Sarah M.</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">category</i> Period 1</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> 2 hours ago</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> 12 replies</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="discussion-card mdl-card mdl-shadow--2dp" data-post-id="2">
-                                <div class="discussion-content">
-                                    <div class="discussion-header">
-                                        <span class="discussion-badge badge-discussion">Discussion</span>
-                                        <h3>Best study techniques for memorizing historical timelines</h3>
-                                    </div>
-                                    <p class="discussion-preview">What methods do you use to remember the chronological order of events across different periods? I'm getting confused with the dates!</p>
-                                    <div class="discussion-meta">
-                                        <span class="meta-item"><i class="material-icons-outlined">person</i> John D.</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">category</i> Study Tips</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> 5 hours ago</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> 24 replies</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="discussion-card mdl-card mdl-shadow--2dp" data-post-id="3">
-                                <div class="discussion-content">
-                                    <div class="discussion-header">
-                                        <span class="discussion-badge badge-tips">Tips</span>
-                                        <h3>Understanding causation in the Industrial Revolution</h3>
-                                    </div>
-                                    <p class="discussion-preview">I've created a mind map that helped me understand the causes and effects of the Industrial Revolution. Here's how I organized the key factors...</p>
-                                    <div class="discussion-meta">
-                                        <span class="meta-item"><i class="material-icons-outlined">person</i> Emma R.</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">category</i> Period 3</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> 1 day ago</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> 18 replies</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="discussion-card mdl-card mdl-shadow--2dp" data-post-id="4">
-                                <div class="discussion-content">
-                                    <div class="discussion-header">
-                                        <span class="discussion-badge badge-question">Question</span>
-                                        <h3>Help with the Cold War LEQ prompt</h3>
-                                    </div>
-                                    <p class="discussion-preview">I'm working on an LEQ about the Cold War and need help structuring my argument. The prompt asks about the impact on developing nations.</p>
-                                    <div class="discussion-meta">
-                                        <span class="meta-item"><i class="material-icons-outlined">person</i> Michael L.</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">category</i> Period 5</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> 2 days ago</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> 8 replies</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="discussion-card mdl-card mdl-shadow--2dp" data-post-id="5">
-                                <div class="discussion-content">
-                                    <div class="discussion-header">
-                                        <span class="discussion-badge badge-resource">Resource</span>
-                                        <h3>Timeline of decolonization movements (1945-1975)</h3>
-                                    </div>
-                                    <p class="discussion-preview">I've compiled a comprehensive timeline of decolonization movements across Africa and Asia. Includes key events, leaders, and dates!</p>
-                                    <div class="discussion-meta">
-                                        <span class="meta-item"><i class="material-icons-outlined">person</i> Lisa K.</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">category</i> Period 4</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> 3 days ago</span>
-                                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> 15 replies</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <div id="postsContainer"></div>
                         </div>
                     </div>
 
@@ -424,314 +345,326 @@
         </div>
     </div>
 
+    <!-- New Post Modal -->
+    <div class="modal-overlay" id="newPostModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>New Post</h2>
+                <button class="modal-close" onclick="closeNewPost()">
+                    <i class="material-icons-outlined">close</i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="newTitle">Title</label>
+                    <input type="text" id="newTitle" />
+                </div>
+                <div class="form-group">
+                    <label for="newBadge">Badge</label>
+                    <select id="newBadge">
+                        <option>Discussion</option>
+                        <option>Question</option>
+                        <option>Tips</option>
+                        <option>Resource</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newCategory">Category</label>
+                    <input type="text" id="newCategory" placeholder="e.g. Period 3, Study Tips" />
+                </div>
+                <div class="form-group">
+                    <label for="newContent">Content</label>
+                    <textarea id="newContent" rows="8" style="width:100%"></textarea>
+                </div>
+                <div style="text-align:right;margin-top:12px;">
+                    <button class="mdl-button mdl-js-button mdl-button--colored" id="submitPostBtn">Post</button>
+                </div>
+                <div id="newPostError" class="form-error"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Post data with full content
-        const postsData = {
-            1: {
-                title: "How do I approach the DBQ on the Silk Roads?",
-                badge: "Question",
-                badgeClass: "badge-question",
-                content: `<p>I'm struggling with understanding how to analyze the documents and create a thesis statement for the Silk Roads DBQ. Any tips on structure?</p>
-                <p>Here's what I understand so far:</p>
-                <ol>
-                    <li>Identify the time period and geographic scope</li>
-                    <li>Look for patterns in the documents</li>
-                    <li>Create a thesis that addresses the prompt</li>
-                    <li>Use evidence from documents to support claims</li>
-                    <li>Provide additional historical evidence</li>
-                    <li>Address contextualization and complexity</li>
-                </ol>
-                <p>But I get confused at step 3 - how do I craft a thesis that's specific enough but not too narrow? And what's the best way to organize the documents?</p>`,
-                author: "Sarah M.",
-                category: "Period 1",
-                date: "2 hours ago",
-                replies: "12 replies"
-            },
-            2: {
-                title: "Best study techniques for memorizing historical timelines",
-                badge: "Discussion",
-                badgeClass: "badge-discussion",
-                content: `<p>What methods do you use to remember the chronological order of events across different periods? I'm getting confused with the dates!</p>
-                <p>I've tried flashcards, but they don't seem to stick very well for me. I'm looking for more creative approaches.</p>
-                <p>Here are a few techniques I've heard about but haven't tried yet:</p>
-                <ul>
-                    <li>Creating visual timelines with color coding</li>
-                    <li>Making mnemonic devices for key dates</li>
-                    <li>Connecting events to personal interests</li>
-                    <li>Using music or rhythm to remember sequences</li>
-                    <li>Teaching the timeline to someone else</li>
-                </ul>
-                <p>What has worked best for you? I particularly struggle with keeping events from different regions in order!</p>`,
-                author: "John D.",
-                category: "Study Tips",
-                date: "5 hours ago",
-                replies: "24 replies"
-            },
-            3: {
-                title: "Understanding causation in the Industrial Revolution",
-                badge: "Tips",
-                badgeClass: "badge-tips",
-                content: `<p>I've created a mind map that helped me understand the causes and effects of the Industrial Revolution. Here's how I organized the key factors:</p>
-                <h3>Causes:</h3>
-                <p><strong>Technological Innovation:</strong></p>
-                <ul>
-                    <li>Steam power and machinery</li>
-                    <li>Textile manufacturing advances</li>
-                    <li>Transportation improvements</li>
-                </ul>
-                <p><strong>Economic Factors:</strong></p>
-                <ul>
-                    <li>Agricultural revolution</li>
-                    <li>Capital accumulation</li>
-                    <li>Market expansion</li>
-                </ul>
-                <h3>Effects:</h3>
-                <p><strong>Social Changes:</strong></p>
-                <ul>
-                    <li>Urbanization</li>
-                    <li>Working class formation</li>
-                    <li>Family structure changes</li>
-                </ul>
-                <p><strong>Political Impact:</strong></p>
-                <ul>
-                    <li>Rise of labor movements</li>
-                    <li>Reform legislation</li>
-                    <li>Nationalism growth</li>
-                </ul>`,
-                author: "Emma R.",
-                category: "Period 3",
-                date: "1 day ago",
-                replies: "18 replies"
-            },
-            4: {
-                title: "Help with the Cold War LEQ prompt",
-                badge: "Question",
-                badgeClass: "badge-question",
-                content: `<p>I'm working on an LEQ about the Cold War and need help structuring my argument. The prompt asks about the impact on developing nations.</p>
-                <p>I understand the basic concepts:</p>
-                <pre><code>• Superpower competition
-• Proxy wars
-• Economic aid and influence
-• Decolonization context</code></pre>
-                <p>But I'm not sure how to organize this into a coherent essay. Should I focus on geographic regions or thematic approaches?</p>
-                <p>Also, what's the best way to include both American and Soviet perspectives while maintaining a clear thesis?</p>
-                <p>The essay needs to address causation, comparison, and continuity/change over time. Any suggestions on how to balance these elements?</p>`,
-                author: "Michael L.",
-                category: "Period 5",
-                date: "2 days ago",
-                replies: "8 replies"
-            },
-            5: {
-                title: "Timeline of decolonization movements (1945-1975)",
-                badge: "Resource",
-                badgeClass: "badge-resource",
-                content: `<p>I've compiled a comprehensive timeline of decolonization movements across Africa and Asia. Includes key events, leaders, and dates!</p>
-                <h3>Africa:</h3>
-                <ul>
-                    <li><strong>1947:</strong> India gains independence from Britain</li>
-                    <li><strong>1956:</strong> Suez Crisis, Egypt nationalizes canal</li>
-                    <li><strong>1960:</strong> "Year of Africa" - 17 countries gain independence</li>
-                    <li><strong>1975:</strong> Angola and Mozambique gain independence</li>
-                </ul>
-                <h3>Asia:</h3>
-                <ul>
-                    <li><strong>1945:</strong> Indonesia declares independence from Netherlands</li>
-                    <li><strong>1949:</strong> China establishes People's Republic</li>
-                    <li><strong>1954:</strong> Vietnam defeats French at Dien Bien Phu</li>
-                    <li><strong>1975:</strong> Vietnam War ends, reunification</li>
-                </ul>
-                <h3>Key Leaders:</h3>
-                <ul>
-                    <li>Gamal Abdel Nasser (Egypt)</li>
-                    <li>Jomo Kenyatta (Kenya)</li>
-                    <li>Ho Chi Minh (Vietnam)</li>
-                    <li>Mahatma Gandhi (India)</li>
-                </ul>
-                <p>What other key events should I add to this timeline?</p>`,
-                author: "Lisa K.",
-                category: "Period 4",
-                date: "3 days ago",
-                replies: "15 replies"
-            }
-        };
-
+        // Lightweight forum client: load posts from backend, allow logged-in users to create/edit/delete posts
+        let postsById = {};
         let currentPostId = null;
+        let currentSessionEmail = null;
 
-        // Store vote data in localStorage
-        function getVotes() {
-            const votes = localStorage.getItem('forumVotes');
-            return votes ? JSON.parse(votes) : {};
+        async function apiGet(path) {
+            const res = await fetch(path, { credentials: 'include' });
+            return res.json();
         }
 
-        function setVotes(votes) {
-            localStorage.setItem('forumVotes', JSON.stringify(votes));
+        async function apiPostAuth(path, body) {
+            const res = await fetch(path, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include', // Auto-send cookies
+                body: JSON.stringify(body)
+            });
+            return { ok: res.ok, data: await res.json() };
         }
 
-        // Store user's voted posts
-        function getUserVotes() {
-            const userVotes = localStorage.getItem('userVotes');
-            return userVotes ? JSON.parse(userVotes) : {};
+        async function apiPut(path, body) {
+            const res = await fetch(path, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(body)
+            });
+            return { ok: res.ok, data: await res.json() };
         }
 
-        function setUserVotes(userVotes) {
-            localStorage.setItem('userVotes', JSON.stringify(userVotes));
+        async function apiDelete(path) {
+            const res = await fetch(path, { method: 'DELETE', credentials: 'include' });
+            return { ok: res.ok, data: await res.json() };
         }
 
-        // Initialize vote data
-        function initializeVotes() {
-            const votes = getVotes();
-            const defaultVotes = {
-                1: { likes: 24, dislikes: 2 },
-                2: { likes: 18, dislikes: 1 },
-                3: { likes: 35, dislikes: 0 },
-                4: { likes: 15, dislikes: 3 },
-                5: { likes: 28, dislikes: 1 }
-            };
-            
-            // Initialize only if not already set
-            for (const postId in defaultVotes) {
-                if (!votes[postId]) {
-                    votes[postId] = defaultVotes[postId];
-                }
+        function sanitizePreview(html) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || '';
+        }
+
+        function relativeTime(iso) {
+            if (!iso) return '';
+            const then = new Date(iso);
+            const diff = Date.now() - then.getTime();
+            const s = Math.floor(diff / 1000);
+            if (s < 60) return `${s}s ago`;
+            const m = Math.floor(s / 60);
+            if (m < 60) return `${m}m ago`;
+            const h = Math.floor(m / 60);
+            if (h < 24) return `${h}h ago`;
+            const d = Math.floor(h / 24);
+            return `${d}d ago`;
+        }
+
+        function renderPosts(posts) {
+            const container = document.getElementById('postsContainer');
+            container.innerHTML = '';
+            posts.forEach(p => {
+                postsById[p.id] = p;
+                const card = document.createElement('div');
+                card.className = 'discussion-card mdl-card mdl-shadow--2dp';
+                card.setAttribute('data-post-id', p.id);
+
+                const inner = document.createElement('div');
+                inner.className = 'discussion-content';
+                inner.innerHTML = `
+                    <div class="discussion-header">
+                        <span class="discussion-badge ${p.badgeClass||'badge-discussion'}">${p.badge||'Discussion'}</span>
+                        <h3>${p.title}</h3>
+                    </div>
+                    <p class="discussion-preview">${sanitizePreview(p.content).slice(0, 240)}${sanitizePreview(p.content).length>240? '...': ''}</p>
+                    <div class="discussion-meta">
+                        <span class="meta-item"><i class="material-icons-outlined">person</i> ${p.author}</span>
+                        <span class="meta-item"><i class="material-icons-outlined">category</i> ${p.category||''}</span>
+                        <span class="meta-item"><i class="material-icons-outlined">schedule</i> ${relativeTime(p.createdAt)}</span>
+                        <span class="meta-item"><i class="material-icons-outlined">chat_bubble</i> ${p.replies||'0 replies'}</span>
+                    </div>`;
+
+                card.appendChild(inner);
+                container.appendChild(card);
+            });
+
+            // attach click handlers
+            const cards = container.querySelectorAll('.discussion-card');
+            cards.forEach(card => card.addEventListener('click', function(){ openPostDetail(this.getAttribute('data-post-id')); }));
+        }
+
+        // filtering/search
+        function filterAndRender(allPosts, query, category) {
+            let filtered = allPosts.slice();
+            if (query) {
+                const q = query.toLowerCase();
+                filtered = filtered.filter(p => (p.title||'').toLowerCase().includes(q) || (p.content||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q));
             }
-            setVotes(votes);
+            if (category) {
+                filtered = filtered.filter(p => (p.category||'').toLowerCase().includes(category.toLowerCase()));
+            }
+            renderPosts(filtered);
         }
 
-        // Open modal with post details
+        async function loadPosts() {
+            try {
+                const res = await apiGet('/api/posts');
+                const posts = res.posts || [];
+                // store all posts
+                window.__allPosts = posts;
+                filterAndRender(posts, document.getElementById('search-expandable').value.trim(), window.__currentCategoryFilter || '');
+            } catch (e) {
+                console.error('Failed to load posts', e);
+            }
+        }
+
+        async function loadContributors() {
+            try {
+                const res = await apiGet('/api/contributors');
+                const list = res.contributors || [];
+                const ul = document.querySelector('.contributors-list');
+                ul.innerHTML = '';
+                list.forEach(c => {
+                    const li = document.createElement('li');
+                    const initials = (c.email.split('@')[0] || 'U').slice(0,2).toUpperCase();
+                    li.innerHTML = `<div class="contributor-avatar">${initials}</div><div class="contributor-info"><span class="contributor-name">${c.email}</span><span class="contributor-stats">${c.count} posts</span></div>`;
+                    ul.appendChild(li);
+                });
+            } catch (e) {
+                console.error('Failed to load contributors', e);
+            }
+        }
+
         function openPostDetail(postId) {
             currentPostId = postId;
-            const post = postsData[postId];
-            
+            const post = postsById[postId];
             if (!post) return;
-
-            // Set modal content
             document.getElementById('modalTitle').textContent = post.title;
-            document.getElementById('modalBadge').textContent = post.badge;
-            document.getElementById('modalBadge').className = `post-detail-badge ${post.badgeClass}`;
+            document.getElementById('modalBadge').textContent = post.badge || 'Discussion';
+            document.getElementById('modalBadge').className = `post-detail-badge ${post.badgeClass||'badge-discussion'}`;
             document.getElementById('modalContent').innerHTML = post.content;
             document.getElementById('modalAuthor').innerHTML = `<i class="material-icons-outlined">person</i> ${post.author}`;
-            document.getElementById('modalCategory').innerHTML = `<i class="material-icons-outlined">category</i> ${post.category}`;
-            document.getElementById('modalDate').innerHTML = `<i class="material-icons-outlined">schedule</i> ${post.date}`;
-            document.getElementById('modalReplies').innerHTML = `<i class="material-icons-outlined">chat_bubble</i> ${post.replies}`;
+            document.getElementById('modalCategory').innerHTML = `<i class="material-icons-outlined">category</i> ${post.category||''}`;
+            document.getElementById('modalDate').innerHTML = `<i class="material-icons-outlined">schedule</i> ${relativeTime(post.createdAt)}`;
+            document.getElementById('modalReplies').innerHTML = `<i class="material-icons-outlined">chat_bubble</i> ${post.replies||'0 replies'}`;
 
-            // Update vote buttons
-            updateModalVoteButtons(postId);
+            // show edit/delete if current user is author
+            const existingAction = document.getElementById('modalActions');
+            if (existingAction) existingAction.remove();
+            const actions = document.createElement('div');
+            actions.id = 'modalActions';
+            actions.style.marginTop = '12px';
+            if (currentSessionEmail && currentSessionEmail === post.author) {
+                const editBtn = document.createElement('button');
+                editBtn.className = 'mdl-button mdl-js-button mdl-button--primary';
+                editBtn.textContent = 'Edit';
+                editBtn.addEventListener('click', () => startEditPost(post));
+                const delBtn = document.createElement('button');
+                delBtn.className = 'mdl-button mdl-js-button mdl-button--accent';
+                delBtn.style.marginLeft = '8px';
+                delBtn.textContent = 'Delete';
+                delBtn.addEventListener('click', () => deletePost(post.id));
+                actions.appendChild(editBtn);
+                actions.appendChild(delBtn);
+            }
+            document.querySelector('.modal-body').appendChild(actions);
 
-
-            // Show modal
             document.getElementById('postModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        // Close modal
         function closeModal() {
             document.getElementById('postModal').classList.remove('active');
             document.body.style.overflow = 'auto';
             currentPostId = null;
+            // remove any modalActions if present
+            const a = document.getElementById('modalActions'); if (a) a.remove();
         }
 
-        // Update modal vote buttons
-        function updateModalVoteButtons(postId) {
-            const votes = getVotes();
-            const userVotes = getUserVotes();
-            
-            const likeBtn = document.getElementById('modalLikeBtn');
-            const dislikeBtn = document.getElementById('modalDislikeBtn');
-            const likeCount = document.getElementById('modalLikeCount');
-            const dislikeCount = document.getElementById('modalDislikeCount');
-
-            likeCount.textContent = votes[postId]?.likes || 0;
-            dislikeCount.textContent = votes[postId]?.dislikes || 0;
-
-            // Remove voted classes
-            likeBtn.classList.remove('voted');
-            dislikeBtn.classList.remove('voted');
-
-            // Add voted class if user has voted
-            if (userVotes[postId] === 'like') {
-                likeBtn.classList.add('voted');
-            } else if (userVotes[postId] === 'dislike') {
-                dislikeBtn.classList.add('voted');
-            }
+        // edit flow: replace modal content with editable fields
+        function startEditPost(post) {
+            const body = document.querySelector('.modal-body');
+            // simple inline editor
+            document.getElementById('modalTitle').innerHTML = `<input id="editTitle" style="width:100%" value="${post.title.replace(/"/g, '&quot;')}">`;
+            document.getElementById('modalContent').innerHTML = `<textarea id="editContent" rows="8" style="width:100%">${post.content.replace(/</g,'&lt;')}</textarea>`;
+            let actions = document.getElementById('modalActions');
+            actions.innerHTML = '';
+            const save = document.createElement('button'); save.className='mdl-button mdl-js-button mdl-button--raised mdl-button--colored'; save.textContent='Save';
+            const cancel = document.createElement('button'); cancel.className='mdl-button mdl-js-button'; cancel.style.marginLeft='8px'; cancel.textContent='Cancel';
+            save.addEventListener('click', async () => {
+                const newTitle = document.getElementById('editTitle').value.trim();
+                const newContent = document.getElementById('editContent').value.trim();
+                const res = await apiPut(`/api/posts/${post.id}`, { title: newTitle, content: newContent });
+                if (!res.ok) return alert(res.data.error || 'Failed to save');
+                // update local copy and UI
+                postsById[post.id] = res.data.post;
+                await loadPosts();
+                openPostDetail(post.id);
+            });
+            cancel.addEventListener('click', () => openPostDetail(post.id));
+            actions.appendChild(save); actions.appendChild(cancel);
         }
 
-        // Handle voting in modal
-        function modalVote(voteType) {
-            if (!currentPostId) return;
-
-            const votes = getVotes();
-            const userVotes = getUserVotes();
-
-            // Initialize post votes if not exists
-            if (!votes[currentPostId]) {
-                votes[currentPostId] = { likes: 0, dislikes: 0 };
-            }
-
-            const currentVote = userVotes[currentPostId];
-            
-            // If clicking the same vote type, remove the vote
-            if (currentVote === voteType) {
-                if (voteType === 'like') {
-                    votes[currentPostId].likes--;
-                } else {
-                    votes[currentPostId].dislikes--;
-                }
-                delete userVotes[currentPostId];
-            } else {
-                // Remove previous vote if exists
-                if (currentVote === 'like') {
-                    votes[currentPostId].likes--;
-                } else if (currentVote === 'dislike') {
-                    votes[currentPostId].dislikes--;
-                }
-
-                // Add new vote
-                if (voteType === 'like') {
-                    votes[currentPostId].likes++;
-                } else {
-                    votes[currentPostId].dislikes++;
-                }
-                userVotes[currentPostId] = voteType;
-            }
-
-            // Save to localStorage
-            setVotes(votes);
-            setUserVotes(userVotes);
-
-            // Update UI
-            updateModalVoteButtons(currentPostId);
+        async function deletePost(id) {
+            if (!confirm('Delete this post? This cannot be undone.')) return;
+            const res = await apiDelete(`/api/posts/${id}`);
+            if (!res.ok) return alert(res.data.error || 'Failed to delete');
+            await loadPosts();
+            closeModal();
         }
 
-        // Make posts clickable
-        function initializePostClick() {
-            const cards = document.querySelectorAll('.discussion-card');
-            cards.forEach(card => {
-                card.addEventListener('click', function() {
-                    const postId = this.getAttribute('data-post-id');
-                    openPostDetail(postId);
+        // New post modal
+        function openNewPost() { document.getElementById('newPostModal').classList.add('active'); document.body.style.overflow='hidden'; }
+        function closeNewPost(){ document.getElementById('newPostModal').classList.remove('active'); document.body.style.overflow='auto'; document.getElementById('newPostError').textContent=''; }
+
+        async function submitNewPost() {
+            const title = document.getElementById('newTitle').value.trim();
+            const badge = document.getElementById('newBadge').value;
+            const category = document.getElementById('newCategory').value.trim();
+            const content = document.getElementById('newContent').value.trim();
+            const err = document.getElementById('newPostError');
+            err.textContent = '';
+            if (!title || !content) return (err.textContent = 'Title and content are required');
+
+            const { ok, data } = await apiPostAuth('/api/posts', { title, content, badge, category });
+            if (!ok) {
+                if (data.error === 'Unauthorized' || data.error === 'Session expired') {
+                    alert('Session expired. Please log in again.');
+                    window.location.href = 'account.html';
+                    return;
+                }
+                return (err.textContent = data.error || 'Failed to create post');
+            }
+            closeNewPost();
+            // clear form
+            document.getElementById('newTitle').value='';
+            document.getElementById('newContent').value='';
+            document.getElementById('newCategory').value='';
+            // reload posts
+            await loadPosts();
+        }
+
+        // click outside to close post modal
+        document.getElementById('postModal').addEventListener('click', function(e){ if (e.target === this) closeModal(); });
+        document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { closeModal(); closeNewPost(); } });
+
+        document.addEventListener('DOMContentLoaded', async function(){
+            // get session email if logged in
+            try {
+                const s = await apiGet('/api/session');
+                if (s && s.loggedIn) currentSessionEmail = s.email;
+            } catch (e) { }
+
+            // wire new post button
+            document.getElementById('newPostBtn').addEventListener('click', async () => {
+                // check session first via cookie
+                const sessionRes = await apiGet('/api/session');
+                if (!sessionRes.loggedIn) {
+                    alert('Please log in to create posts');
+                    window.location.href='account.html';
+                    return;
+                }
+                currentSessionEmail = sessionRes.email;
+                openNewPost();
+            });
+
+            document.getElementById('submitPostBtn').addEventListener('click', submitNewPost);
+
+            // search
+            document.getElementById('search-expandable').addEventListener('input', () => filterAndRender(window.__allPosts||[], document.getElementById('search-expandable').value.trim(), window.__currentCategoryFilter || ''));
+
+            // historical periods links filtering
+            document.querySelectorAll('.category-list a').forEach(a => {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const txt = a.textContent || '';
+                    window.__currentCategoryFilter = txt.split(')')[0];
+                    filterAndRender(window.__allPosts||[], document.getElementById('search-expandable').value.trim(), window.__currentCategoryFilter);
                 });
             });
-        }
 
-        // Close modal when clicking outside
-        document.getElementById('postModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeVotes();
-            initializePostClick();
+            await loadPosts();
+            await loadContributors();
         });
     </script>
 </body>

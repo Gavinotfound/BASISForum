@@ -3,13 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account</title>
+    <title>Account - AP World History Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Aptos:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title">AP World History Hub</span>
+                <div class="mdl-layout-spacer"></div>
+                <nav class="mdl-navigation">
+                    <a class="mdl-navigation__link" href="index.html">Home</a>
+                    <a class="mdl-navigation__link" href="study-guide.html">Study Guide</a>
+                    <a class="mdl-navigation__link" href="forum.html">Forum</a>
+                    <a class="mdl-navigation__link is-active" href="account.html">Account</a>
+                </nav>
+                <div class="account-menu">
+                    <button id="accountButton" class="account-button" title="Account">
+                        <i class="material-icons-outlined">account_circle</i>
+                    </button>
+                    <div class="account-dropdown" id="accountDropdown">
+                        <div id="accountNotLogged">
+                            <a href="account.html" class="account-option"><i class="material-icons-outlined">login</i> Log in / Sign up</a>
+                        </div>
+                        <div id="accountLogged" style="display:none;">
+                            <a href="account-settings.html" class="account-option"><i class="material-icons-outlined">settings</i> Account Settings</a>
+                            <div class="account-option"><i class="material-icons-outlined">person</i> <span id="accountEmail">User</span></div>
+                            <div class="account-option" id="accountLogout"><i class="material-icons-outlined">logout</i> Logout</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="mdl-layout__content">
     <div class="account-container">
         <div id="login-box" class="form-box">
             <h2>Log In</h2>
@@ -26,7 +58,7 @@
                 <div class="form-actions">
                     <button type="submit">Log In</button>
                 </div>
-                <p>Don't have an account? <span id="to-signup" class="toggle-link">Sign up</span></p >
+                <p>Don't have an account? <span id="to-signup" class="toggle-link">Sign up</span></p>
             </form>
         </div>
 
@@ -49,11 +81,55 @@
                 <div class="form-actions">
                     <button type="submit">Sign Up</button>
                 </div>
-                <p>Already have an account? <span id="to-login" class="toggle-link">Log in</span></p >
+                <p>Already have an account? <span id="to-login" class="toggle-link">Log in</span></p>
             </form>
         </div>
     </div>
 
     <script src="account.js"></script>
+        </main>
+
+        <footer class="mdl-mini-footer">
+            <div class="mdl-mini-footer__left-section">
+                <div class="mdl-logo">AP World History Hub</div>
+                <ul class="mdl-mini-footer__link-list">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
 </body>
+    <script>
+        // Check session on page load and update account dropdown (uses cookies)
+        async function getSession() {
+            try {
+                const res = await fetch('/api/session', { credentials: 'include' });
+                return res.json();
+            } catch (e) {
+                return { loggedIn: false };
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const info = await getSession();
+            const notLogged = document.getElementById('accountNotLogged');
+            const logged = document.getElementById('accountLogged');
+            const emailEl = document.getElementById('accountEmail');
+            if (info.loggedIn) {
+                notLogged.style.display = 'none';
+                logged.style.display = 'block';
+                emailEl.textContent = info.email;
+            } else {
+                notLogged.style.display = 'block';
+                logged.style.display = 'none';
+            }
+
+            document.getElementById('accountLogout').addEventListener('click', async () => {
+                await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+                window.location.reload();
+            });
+        });
+    </script>
 </html>
