@@ -73,3 +73,22 @@ The application builds still report an avoidable Next.js workspace-root warning 
 ### Follow-up Audit Note
 
 The quality gates are now effective, but the test suite currently covers only pure core rules. The next audit should prioritize tests for database query behavior and server-action validation, then address deprecated dependency declarations and remaining Swiss-design inconsistencies in forms and route layouts.
+
+## Iteration 04 — 2026-08-13T16:02:50Z
+
+### Completed
+
+- Removed the deprecated `@types/bcryptjs` stubs from both applications; the installed `bcryptjs` release provides its own TypeScript declarations.
+- Added the explicitly required YAML peer dependency to the core test package, eliminating the direct Vitest/Vite peer-version warning during installation.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: 14 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with strict type validation | Passed for Web and Admin |
+
+### Follow-up Audit Note
+
+Only transitive deprecation notices remain from third-party tooling. They are not directly actionable without broader framework upgrades; the next iteration will focus on product-controlled coverage and UX improvements instead.

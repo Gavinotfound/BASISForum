@@ -26,7 +26,6 @@
   },
   "devDependencies": {
     "@basis-forum/config": "workspace:*",
-    "@types/bcryptjs": "^3.0.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "typescript": "^5.9.3"
