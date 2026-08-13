@@ -1,0 +1,18 @@
+{
+  "name": "@basis-forum/database",
+  "version": "0.1.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "dependencies": {
+    "@auth/drizzle-adapter": "^1.11.3",
+    "@supabase/supabase-js": "latest",
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@basis-forum/config": "workspace:*",
+    "@types/pg": "^8.21.0",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "^5.9.3"
+  }
+}

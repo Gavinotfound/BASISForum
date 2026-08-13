@@ -1,0 +1,114 @@
+'use client';
+
+import React from 'react';
+import {
+  Box, AppBar, Toolbar, Typography, Container, Button, Card, CardContent,
+  Chip, Grid, Avatar, CircularProgress, ButtonBase,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { LanguageSelector, useLanguage } from '../LanguageProvider';
+import { DisplayModeSelector } from '../DisplayModeProvider';
+
+export const Navbar = ({ user, onSignIn, onSignOut, onSearch, onProfile, onBookmarks, onNotifications, onHome }: { user?: any; onSignIn?: () => void; onSignOut?: () => void; onSearch?: () => void; onProfile?: () => void; onBookmarks?: () => void; onNotifications?: () => void; onHome?: () => void }) => {
+  const { t } = useLanguage();
+  return (
+    <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'background.default', backdropFilter: 'none', borderBottom: '1px solid', borderColor: 'divider' }}>
+      <Container maxWidth="lg">
+        <Toolbar disableGutters sx={{ minHeight: { xs: 60, md: 68 }, justifyContent: 'space-between', gap: 2 }}>
+          <ButtonBase component="a" href="/" onClick={onHome} aria-label="Go to BasisForum home" sx={{ color: 'text.primary', display: 'flex', alignItems: 'center', gap: 1, whiteSpace: 'nowrap', textAlign: 'left', textDecoration: 'none', '&:hover': { opacity: .72 } }}>
+            <Typography component="span" sx={{ color: 'text.primary', fontWeight: 900, fontSize: '1.25rem', letterSpacing: '-.07em' }}>B</Typography>
+            <Typography variant="h6" component="span" sx={{ color: 'text.primary', fontWeight: 800, letterSpacing: '-.05em' }}>BASISForum</Typography>
+          </ButtonBase>
+          <Box sx={{ display: 'flex', gap: { xs: 0.25, md: 0.75 }, alignItems: 'center', overflowX: 'auto' }}>
+            <Button sx={{ color: 'text.primary', px: { xs: 0.65, md: 1 }, minWidth: 0 }} onClick={onSearch}>{t('nav.search')}</Button>
+            {user ? <>
+              <Button sx={{ color: 'text.primary', px: { xs: 0.65, md: 1 }, minWidth: 0 }} onClick={onBookmarks}>{t('nav.saved')}</Button>
+              <Button sx={{ color: 'text.primary', px: { xs: 0.65, md: 1 }, minWidth: 0 }} onClick={onNotifications}>{t('nav.updates')}</Button>
+              <Button sx={{ color: 'text.primary', px: { xs: 0.65, md: 1 }, minWidth: 0 }} onClick={onProfile}>{t('nav.profile')}</Button>
+              <Avatar sx={{ width: 31, height: 31, bgcolor: 'text.primary', color: 'background.default', fontSize: 13, fontWeight: 900 }}>{(user.name || 'S').slice(0, 1).toUpperCase()}</Avatar>
+              <Button sx={{ color: 'text.secondary', px: { xs: 0.65, md: 1 }, minWidth: 0 }} onClick={onSignOut}>{t('nav.signOut')}</Button>
+            </> : <Button variant="contained" color="secondary" onClick={onSignIn}>{t('nav.signIn')}</Button>}
+            <LanguageSelector compact />
+            <DisplayModeSelector compact />
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
+};
+
+export const LoadingScreen = ({ label }: { label?: string }) => {
+  const { t } = useLanguage();
+  return <Box sx={{ minHeight: '45vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2.25, textAlign: 'center' }}>
+    <Box sx={{ width: 64, height: 64, border: '1px solid #FFFFFF', display: 'grid', placeItems: 'center' }}><CircularProgress size={30} thickness={4.5} sx={{ color: 'white' }} /></Box>
+    <Box><Typography variant="h6" sx={{ fontWeight: 800 }}>BASISForum</Typography><Typography variant="body2" color="text.secondary">{label || t('loading.default')}</Typography></Box>
+  </Box>;
+};
+
+export const HeroBanner = ({ name, onNewThread }: { name: string; onNewThread?: () => void }) => {
+  const { t } = useLanguage();
+  return <Box sx={{ mb: { xs: 5, md: 8 }, minHeight: { xs: '72vw', md: 'min(67vw, 760px)' }, position: 'relative', overflow: 'hidden', color: '#FFFFFF', borderTop: '1px solid #FFFFFF', borderBottom: '1px solid #FFFFFF', backgroundColor: '#000000', backgroundImage: 'url(/images/study-poster-monochrome.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(0,0,0,.52)' }} />
+    <Box sx={{ position: 'absolute', top: 0, right: 0, width: { xs: '22%', md: '31%' }, height: '100%', bgcolor: '#000000' }} />
+    <Box sx={{ position: 'relative', zIndex: 1, height: '100%', minHeight: { xs: '72vw', md: 'min(67vw, 760px)' }, p: { xs: 2.25, md: 5 }, display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1.45fr) minmax(160px, .55fr)' }, alignItems: 'end', gap: { xs: 4, md: 2 } }}>
+      <Box sx={{ maxWidth: 900 }}>
+        <Typography variant="overline" sx={{ display: 'block', mb: 2, color: '#FFFFFF' }}>{t('hero.badge')} / ISSUE 01 / BASISFORUM</Typography>
+        <Typography variant="h1" sx={{ maxWidth: '11ch', mb: 2.5, color: '#FFFFFF', textTransform: 'uppercase' }}>{t('hero.title', { name })}</Typography>
+        <Typography variant="body1" sx={{ maxWidth: 440, color: '#FFFFFF', fontSize: { xs: '.92rem', md: '1.08rem' }, lineHeight: 1.5 }}>{t('hero.body')}</Typography>
+      </Box>
+      <Box sx={{ alignSelf: { xs: 'start', md: 'end' }, justifySelf: { xs: 'start', md: 'end' }, width: '100%', maxWidth: 240, borderTop: '1px solid #FFFFFF', pt: 1.25 }}>
+        <Typography variant="overline" sx={{ display: 'block', mb: 1.5, color: '#FFFFFF' }}>DIRECTED BY / STUDENTS</Typography>
+        <Button variant="contained" color="primary" startIcon={<AddIcon />} size="large" onClick={onNewThread} sx={{ width: '100%' }}>{t('hero.cta')}</Button>
+      </Box>
+    </Box>
+  </Box>;
+};
+
+export const CategoryBadge = ({ label }: { label: string }) => <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: .75, minWidth: 0 }}><Box aria-hidden sx={{ width: 7, height: 7, flex: '0 0 auto', bgcolor: 'var(--bf-text)' }} /><Typography variant="overline" sx={{ color: 'var(--bf-text)', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</Typography></Box>;
+
+export const ThreadCard = ({ title, author, category, replies, score = 0, updatedAt, isSticky = false, onClick }: { title: string; author: string; category: string; replies: number; score?: number; updatedAt?: string; isSticky?: boolean; onClick?: () => void }) => {
+  const emphasized = isSticky || score >= 5;
+  const activity = updatedAt ? new Intl.DateTimeFormat(undefined, { month: 'short', day: '2-digit' }).format(new Date(updatedAt)) : '—';
+  return <Box component="article" onClick={onClick} sx={{ cursor: 'pointer', minHeight: 48, display: 'grid', gridTemplateColumns: { xs: '86px minmax(0,1fr) 74px', md: '120px minmax(0,1fr) 132px 88px 126px' }, gap: 0, alignItems: 'stretch', borderBottom: '1px solid var(--bf-divider)', transition: 'background-color 120ms linear', '&:hover': { bgcolor: 'var(--bf-hover)' }, '& > *': { minWidth: 0, px: { md: 1.25 }, py: 1.15 }, '& > * + *': { borderLeft: { md: '1px solid var(--bf-divider)' } } }}>
+    <Box sx={{ display: 'flex', alignItems: 'center' }}><CategoryBadge label={category} /></Box>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: .75, overflow: 'hidden' }}><Typography component="h2" sx={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: emphasized ? { xs: '.92rem', md: '1.02rem' } : { xs: '.82rem', md: '.9rem' }, fontWeight: emphasized ? 800 : 600, letterSpacing: '-.015em' }}>{title}</Typography>{emphasized ? <Typography variant="overline" sx={{ color: 'inherit', flex: '0 0 auto' }}>HOT</Typography> : null}</Box>
+    <Typography variant="overline" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', color: 'var(--bf-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{author.toUpperCase()}</Typography>
+    <Typography variant="overline" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontVariantNumeric: 'tabular-nums', color: score < 0 ? 'var(--bf-burgundy)' : 'var(--bf-text)' }}>{replies}</Typography>
+    <Typography variant="overline" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'flex-end', fontVariantNumeric: 'tabular-nums', color: 'var(--bf-muted)' }}>{activity}</Typography>
+  </Box>;
+};
+
+export const CommunityStats = () => {
+  const { t } = useLanguage();
+  return <Box sx={{ py: 2.25, borderTop: '1px solid #FFFFFF', borderBottom: '1px solid #404040' }}>
+    <Typography variant="overline" sx={{ color: '#A3A3A3' }}>{t('stats.eyebrow')}</Typography>
+    <Typography variant="h4" sx={{ mt: 1, mb: 4, color: '#FFFFFF', whiteSpace: 'pre-line' }}>{t('stats.title')}</Typography>
+    <Box sx={{ display: 'grid', gap: 2 }}><Typography variant="body2"><strong>01 / 1,240</strong> — {t('stats.students')}</Typography><Typography variant="body2"><strong>02 / 8,450</strong> — {t('stats.notes')}</Typography><Typography variant="body2"><strong>03 / 12</strong> — {t('stats.groups')}</Typography></Box>
+  </Box>;
+};
+
+type LoginFormState = { error?: string };
+export const LoginForm = ({ action }: { action: (previousState: LoginFormState, formData: FormData) => Promise<LoginFormState> }) => {
+  const { t } = useLanguage();
+  const [state, formAction, isPending] = React.useActionState(action, {});
+  return <Card sx={{ maxWidth: 400, mx: 'auto', mt: 8, p: 2 }}><CardContent><Typography variant="h5" sx={{ mb: 3, fontWeight: 800, textAlign: 'center' }}>{t('auth.welcome')}</Typography><Box component="form" action={formAction} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}><Typography variant="body2" color="text.secondary">{t('auth.emailOrUsername')}</Typography><input name="email" type="text" required autoComplete="username" placeholder={t('auth.emailPlaceholder')} style={{ padding: '12px', borderRadius: 0 }} /><Typography variant="body2" color="text.secondary">{t('auth.password')}</Typography><input name="password" type="password" required autoComplete="current-password" style={{ padding: '12px', borderRadius: 0 }} />{state.error ? <Typography role="alert" variant="body2" color="error" sx={{ mt: 0.5 }}>{state.error}</Typography> : null}<Button type="submit" variant="contained" color="primary" size="large" disabled={isPending} sx={{ mt: 2 }}>{isPending ? t('auth.signingIn') : t('nav.signIn')}</Button><Button color="inherit" size="small">{t('auth.forgot')}</Button></Box></CardContent></Card>;
+};
+
+export const RegisterForm = ({ action }: { action: (formData: FormData) => void | Promise<void> }) => {
+  const { t } = useLanguage();
+  return <Card sx={{ maxWidth: 400, mx: 'auto', mt: 8, p: 2 }}><CardContent><Typography variant="h5" sx={{ mb: 3, fontWeight: 800, textAlign: 'center' }}>{t('auth.join')}</Typography><Box component="form" action={action} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}><Typography variant="body2" color="text.secondary">{t('auth.fullName')}</Typography><input name="name" type="text" required style={{ padding: '12px', borderRadius: 0 }} /><Typography variant="body2" color="text.secondary">{t('auth.email')}</Typography><input name="email" type="email" required style={{ padding: '12px', borderRadius: 0 }} /><Typography variant="body2" color="text.secondary">{t('auth.password')}</Typography><input name="password" type="password" required style={{ padding: '12px', borderRadius: 0 }} /><Button type="submit" variant="contained" color="primary" size="large" sx={{ mt: 2 }}>{t('auth.create')}</Button></Box></CardContent></Card>;
+};
+
+type ThreadFormState = { error?: string };
+export const ThreadForm = ({ action, subjects }: { action: (previousState: ThreadFormState, formData: FormData) => Promise<ThreadFormState>; subjects: string[] }) => {
+  const { t } = useLanguage();
+  const [state, formAction, isPending] = React.useActionState(action, {});
+  return <Card sx={{ p: { xs: 2.5, md: 4 }, maxWidth: 860, mx: 'auto' }}><Typography variant="h4" sx={{ mb: 1, fontWeight: 800 }}>{t('form.newDiscussion')}</Typography><Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>{t('form.newDiscussionBody')}</Typography><Box component="form" action={formAction} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}><Box><Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontWeight: 700 }}>{t('form.subject')}</Typography><select name="subject" required defaultValue="General" style={{ width: '100%', padding: '12px', borderRadius: 0, font: 'inherit' }}>{subjects.map((subject) => <option key={subject} value={subject}>{subject}</option>)}</select></Box><Box><Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontWeight: 700 }}>{t('form.title')}</Typography><input name="title" type="text" required minLength={4} maxLength={120} placeholder={t('form.titlePlaceholder')} style={{ width: '100%', padding: '12px', borderRadius: 0, font: 'inherit', boxSizing: 'border-box' }} /><Typography variant="caption" color="text.secondary">{t('form.titleHelp')}</Typography></Box><Box><Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontWeight: 700 }}>{t('form.details')}</Typography><textarea name="content" required minLength={12} maxLength={8000} rows={9} placeholder={t('form.detailsPlaceholder')} style={{ width: '100%', padding: '12px', borderRadius: 0, fontFamily: 'inherit', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} /><Typography variant="caption" color="text.secondary">{t('form.detailsHelp')}</Typography></Box>{state.error ? <Typography role="alert" variant="body2" color="error">{state.error}</Typography> : null}<Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}><Button type="submit" variant="contained" color="primary" size="large" disabled={isPending}>{isPending ? t('form.publishing') : t('form.publish')}</Button><Typography variant="caption" color="text.secondary">{t('form.visibility')}</Typography></Box></Box></Card>;
+};
+
+export const CommentForm = ({ action, placeholder = 'Add a reply...' }: { action: (formData: FormData) => void | Promise<void>; placeholder?: string }) => {
+  const { t } = useLanguage();
+  return <Box component="form" action={action} sx={{ mt: 3 }}><textarea name="content" required rows={3} placeholder={placeholder} style={{ width: '100%', padding: '12px', borderRadius: 0, fontFamily: 'inherit', marginBottom: '8px' }} /><Box sx={{ display: 'flex', justifyContent: 'flex-end' }}><Button type="submit" variant="contained" color="primary">{t('form.reply')}</Button></Box></Box>;
+};
+
+export const CommentItem = ({ author, content, createdAt }: { author: string; content: string; createdAt: string }) => <Box sx={{ py: 2, borderBottom: '1px solid #404040' }}><Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}><Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{author}</Typography><Typography variant="caption" color="text.secondary">{new Date(createdAt).toLocaleString()}</Typography></Box><Typography variant="body1">{content}</Typography></Box>;

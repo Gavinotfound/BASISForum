@@ -1,0 +1,35 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --max-warnings=0"
+  },
+  "dependencies": {
+    "@auth/drizzle-adapter": "^1.11.3",
+    "@basis-forum/core": "workspace:*",
+    "@basis-forum/database": "workspace:*",
+    "@basis-forum/ui": "workspace:*",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.2.0",
+    "@mui/material": "^9.2.0",
+    "bcryptjs": "^3.0.3",
+    "drizzle-orm": "^0.45.2",
+    "next": "latest",
+    "next-auth": "5.0.0-beta.32",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@basis-forum/config": "workspace:*",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/node": "26.1.2",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@basis-forum/core",
+  "version": "0.1.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "dependencies": {
+    "@basis-forum/database": "workspace:*"
+  },
+  "devDependencies": {
+    "@basis-forum/config": "workspace:*",
+    "typescript": "^5.9.3"
+  }
+}

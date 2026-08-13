@@ -1,0 +1,23 @@
+{
+  "name": "@basis-forum/ui",
+  "version": "0.1.0",
+  "main": "./index.tsx",
+  "types": "./index.tsx",
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.2.0",
+    "@mui/material": "^9.2.0",
+    "clsx": "latest",
+    "react": "latest",
+    "tailwind-merge": "latest"
+  },
+  "devDependencies": {
+    "@basis-forum/config": "workspace:*",
+    "@types/react": "latest",
+    "autoprefixer": "latest",
+    "postcss": "latest",
+    "tailwindcss": "latest",
+    "typescript": "^5.9.3"
+  }
+}

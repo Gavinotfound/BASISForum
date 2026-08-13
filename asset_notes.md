@@ -1,0 +1,1 @@
+Swiss-style hero asset: local file `apps/web/public/images/study-poster-monochrome.jpg`, copied from the image-search result titled “Studying In Shadows Image - Student, Library, Monochrome” (StockCake result; original search source URL was not provided by the result catalog). Used as a monochrome editorial study-poster background.

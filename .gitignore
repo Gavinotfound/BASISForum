@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+.next/
+.turbo/
+dist/
+coverage/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Tooling and operating-system files
+*.log
+.DS_Store
+*.tsbuildinfo
+
+# Local Manus verification artifacts
+visual_verification_notes.md
+verification_notes.md
+terminal_full_output/
+
+# Database generated files
+db-data/
+
+# Editor state
+.vscode/
+.idea/
+
+# Python or other local tooling
+__pycache__/
+*.pyc
