@@ -30,7 +30,7 @@ export type Resource = {
   author_id: string;
   content: string;
   is_thread_starter: boolean;
-  metadata?: any;
+  metadata?: unknown;
   created_at: string;
   updated_at: string;
 };

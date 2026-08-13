@@ -9,7 +9,26 @@ import AddIcon from '@mui/icons-material/Add';
 import { LanguageSelector, useLanguage } from '../LanguageProvider';
 import { DisplayModeSelector } from '../DisplayModeProvider';
 
-export const Navbar = ({ user, onSignIn, onSignOut, onSearch, onProfile, onBookmarks, onNotifications, onHome }: { user?: any; onSignIn?: () => void; onSignOut?: () => void; onSearch?: () => void; onProfile?: () => void; onBookmarks?: () => void; onNotifications?: () => void; onHome?: () => void }) => {
+export type ForumUser = {
+  id?: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  role?: string;
+};
+
+type NavbarProps = {
+  user?: ForumUser;
+  onSignIn?: () => void;
+  onSignOut?: () => void;
+  onSearch?: () => void;
+  onProfile?: () => void;
+  onBookmarks?: () => void;
+  onNotifications?: () => void;
+  onHome?: () => void;
+};
+
+export const Navbar = ({ user, onSignIn, onSignOut, onSearch, onProfile, onBookmarks, onNotifications, onHome }: NavbarProps) => {
   const { t } = useLanguage();
   return (
     <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'background.default', backdropFilter: 'none', borderBottom: '1px solid', borderColor: 'divider' }}>

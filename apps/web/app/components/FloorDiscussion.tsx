@@ -22,8 +22,21 @@ type FloorComment = {
   author_username?: string;
   content: string;
   created_at: string;
-  metadata?: ReplyContext | null;
+  metadata?: unknown;
   vote: { likes: number; dislikes: number; score: number; currentUserVote: 1 | -1 | 0 };
+};
+
+const readReplyContext = (metadata: unknown): ReplyContext['replyTo'] | undefined => {
+  if (!metadata || typeof metadata !== 'object') return undefined;
+  const replyTo = (metadata as { replyTo?: unknown }).replyTo;
+  if (!replyTo || typeof replyTo !== 'object') return undefined;
+
+  const candidate = replyTo as { id?: unknown; authorName?: unknown; authorUsername?: unknown };
+  return {
+    id: typeof candidate.id === 'string' ? candidate.id : undefined,
+    authorName: typeof candidate.authorName === 'string' ? candidate.authorName : undefined,
+    authorUsername: typeof candidate.authorUsername === 'string' || candidate.authorUsername === null ? candidate.authorUsername : undefined,
+  };
 };
 
 type ReplyState = { error?: string };
@@ -54,17 +67,18 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
     for (const comment of comments) {
       let normalizedParentId = comment.parent_id;
       const directParent = comment.parent_id ? byId.get(comment.parent_id) : undefined;
+      const metadataReplyTo = readReplyContext(comment.metadata);
 
       // Legacy deeper records are displayed as a second-layer response to the floor.
       if (directParent?.parent_id) {
         normalizedParentId = directParent.parent_id;
-        context.set(comment.id, comment.metadata?.replyTo || {
+        context.set(comment.id, metadataReplyTo || {
           id: directParent.id,
           authorName: directParent.author_name,
           authorUsername: directParent.author_username,
         });
-      } else if (comment.metadata?.replyTo) {
-        context.set(comment.id, comment.metadata.replyTo);
+      } else if (metadataReplyTo) {
+        context.set(comment.id, metadataReplyTo);
       }
 
       if (!normalizedParentId || normalizedParentId === starterId) {

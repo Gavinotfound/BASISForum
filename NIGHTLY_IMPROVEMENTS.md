@@ -196,3 +196,24 @@ The route layer now has loading and error recovery states. The next audit should
 ### Follow-up Audit Note
 
 The primary authoring controls now have explicit accessible names. Future accessibility work should concentrate on full keyboard-flow verification and live-region feedback after server actions, which benefits from browser-based interaction tests.
+
+## Iteration 10 — 2026-08-13T16:23:27Z
+
+### Completed
+
+- Removed the final explicit `any` annotations from authored source code by introducing a shared `ForumUser` UI contract and using `unknown` for database JSON metadata at the system boundary.
+- Added runtime-safe parsing of reply metadata before it is consumed by the two-layer discussion renderer, protecting the UI from malformed or legacy JSON without weakening the public metadata type.
+- Confirmed that all authored TypeScript and TSX files are free of explicit `any` annotations; generated Next.js artifacts are excluded from this result.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| Authored-source explicit-`any` scan | Passed: none found |
+| `pnpm test` | Passed: 23 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with strict type validation | Passed for Web and Admin |
+
+### Follow-up Audit Note
+
+The project now has strict application builds, no explicit untyped escape hatches in authored source, and guarded JSON consumption at the UI boundary. Further improvements should target data-path scalability or add controlled integration fixtures rather than broad type cleanup.
