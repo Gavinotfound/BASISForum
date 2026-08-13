@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema';
 import { Thread, User, Resource } from './types';
-import { and, asc, count, desc, eq, ilike, inArray, isNull, or } from 'drizzle-orm';
+import { and, asc, count, desc, eq, ilike, inArray, isNull, or, type SQL } from 'drizzle-orm';
 
 const pool = new Pool({
   connectionString:
@@ -30,9 +30,28 @@ export type ForumThread = Thread & {
   reply_count: number;
 };
 
-export const getThreads = async (sort: ThreadSort = 'latest'): Promise<ForumThread[]> => {
+export type ThreadQueryOptions = {
+  sort?: ThreadSort;
+  authorId?: string;
+  subject?: string;
+  threadIds?: string[];
+};
+
+export const getThreads = async (input: ThreadSort | ThreadQueryOptions = 'latest'): Promise<ForumThread[]> => {
+  const options = typeof input === 'string' ? { sort: input } : input;
+  const sort = options.sort || 'latest';
+  const filters: SQL[] = [];
+
+  if (options.authorId) filters.push(eq(schema.threads.authorId, options.authorId));
+  if (options.subject) filters.push(eq(schema.threads.subject, options.subject));
+  if (options.threadIds) {
+    if (options.threadIds.length === 0) return [];
+    filters.push(inArray(schema.threads.id, options.threadIds));
+  }
+
   try {
     const result = await db.query.threads.findMany({
+      where: filters.length > 0 ? and(...filters) : undefined,
       orderBy: [desc(schema.threads.createdAt)],
       with: { author: true },
     });
@@ -280,10 +299,7 @@ export const updateUserProfile = async (userId: string, update: ProfileUpdate) =
   return user;
 };
 
-export const getUserThreads = async (userId: string) => {
-  const threads = await getThreads('latest');
-  return threads.filter((thread) => thread.author_id === userId);
-};
+export const getUserThreads = async (userId: string) => getThreads({ sort: 'latest', authorId: userId });
 
 export const toggleBookmark = async (userId: string, threadId: string) => {
   const [existing] = await db
@@ -310,16 +326,14 @@ export const getBookmarkStatus = async (userId: string | undefined, threadId: st
 };
 
 export const getBookmarkedThreads = async (userId: string) => {
-  const bookmarks = await db.select().from(schema.bookmarks).where(eq(schema.bookmarks.userId, userId));
-  const ids = new Set(bookmarks.map((bookmark) => bookmark.threadId));
-  const threads = await getThreads('latest');
-  return threads.filter((thread) => ids.has(thread.id));
+  const bookmarks = await db.select({ threadId: schema.bookmarks.threadId }).from(schema.bookmarks).where(eq(schema.bookmarks.userId, userId));
+  return getThreads({ sort: 'latest', threadIds: bookmarks.map((bookmark) => bookmark.threadId) });
 };
 
 export const searchThreads = async (input: { query?: string; subject?: string; sort?: ThreadSort }) => {
   const query = input.query?.trim() || '';
   const subject = input.subject?.trim() || '';
-  const allThreads = await getThreads(input.sort === 'hot' ? 'hot' : 'latest');
+  const allThreads = await getThreads({ sort: input.sort === 'hot' ? 'hot' : 'latest', subject: subject || undefined });
 
   if (!query && !subject) return allThreads;
 

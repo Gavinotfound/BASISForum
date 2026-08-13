@@ -217,3 +217,23 @@ The primary authoring controls now have explicit accessible names. Future access
 ### Follow-up Audit Note
 
 The project now has strict application builds, no explicit untyped escape hatches in authored source, and guarded JSON consumption at the UI boundary. Further improvements should target data-path scalability or add controlled integration fixtures rather than broad type cleanup.
+
+## Iteration 11 — 2026-08-13T16:26:30Z
+
+### Completed
+
+- Extended `getThreads` with optional indexed author, subject, and thread-ID filters while retaining the original sorting API for existing callers.
+- Replaced in-memory filtering in profile-thread and bookmarked-thread retrieval with database-level author and primary-key filtering.
+- Applied the existing subject index directly in thread search before content matching, reducing unnecessary thread hydration and vote/comment summary work for category-scoped searches.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: 23 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with strict type validation | Passed for Web and Admin |
+
+### Follow-up Audit Note
+
+Profile, bookmark, and subject-filter pathways now use their supporting schema indexes. The homepage remains intentionally unpaginated for the current small community; introducing pagination requires a deliberate product-level UX decision so older discussions are not silently hidden.
