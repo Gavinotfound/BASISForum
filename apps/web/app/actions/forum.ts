@@ -150,7 +150,7 @@ export async function postComment(
         targetType: 'comment',
         targetId: comment.id,
         threadId,
-        message: `${session.user?.name || 'A student'} replied to ${parentComment ? 'your comment' : 'your discussion'}.`,
+        message: `${session?.user?.name || 'A student'} replied to ${parentComment ? 'your comment' : 'your discussion'}.`,
       });
     }
   } catch (error) {

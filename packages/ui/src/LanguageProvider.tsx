@@ -4,6 +4,8 @@ import React from 'react';
 import { Box, MenuItem, Select, Tooltip } from '@mui/material';
 import { languageLabels, locales, type Locale, translate } from './i18n';
 
+export type { Locale } from './i18n';
+
 type LanguageContextValue = {
   locale: Locale;
   setLocale: (locale: Locale) => void;

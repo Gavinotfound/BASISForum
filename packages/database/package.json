@@ -7,6 +7,7 @@
     "@auth/drizzle-adapter": "^1.11.3",
     "@supabase/supabase-js": "latest",
     "drizzle-orm": "^0.45.2",
+    "next-auth": "5.0.0-beta.32",
     "pg": "^8.23.0"
   },
   "devDependencies": {

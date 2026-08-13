@@ -1,4 +1,5 @@
 {
+  "extends": "../../packages/config/tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2017",
     "lib": [
@@ -8,8 +9,9 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
     "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
     "incremental": true,
     "module": "esnext",
     "esModuleInterop": true,

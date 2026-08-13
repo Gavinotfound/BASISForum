@@ -38,12 +38,12 @@ export default function ProfileEditor({
         <Typography color="text.secondary" sx={{ mb: 3 }}>Tell classmates what you are studying and build a recognizable learning identity.</Typography>
 
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
-          <TextField label="Display name" name="name" required defaultValue={profile.name || ''} inputProps={{ minLength: 2, maxLength: 60 }} />
-          <TextField label="Username" name="username" required defaultValue={profile.username || ''} inputProps={{ minLength: 2, maxLength: 30 }} />
+          <TextField label="Display name" name="name" required defaultValue={profile.name || ''} slotProps={{ htmlInput: { minLength: 2, maxLength: 60 } }} />
+          <TextField label="Username" name="username" required defaultValue={profile.username || ''} slotProps={{ htmlInput: { minLength: 2, maxLength: 30 } }} />
           <TextField label="School" name="school" defaultValue={profile.school || ''} />
           <TextField label="Grade" name="grade" defaultValue={profile.grade || ''} placeholder="e.g. Grade 11" />
         </Box>
-        <TextField label="About me" name="bio" defaultValue={profile.bio || ''} multiline rows={4} fullWidth sx={{ mt: 2 }} inputProps={{ maxLength: 500 }} placeholder="What classes, exams, or learning goals are you focused on?" />
+        <TextField label="About me" name="bio" defaultValue={profile.bio || ''} multiline rows={4} fullWidth sx={{ mt: 2 }} slotProps={{ htmlInput: { maxLength: 500 } }} placeholder="What classes, exams, or learning goals are you focused on?" />
 
         <Typography variant="subtitle2" sx={{ mt: 3, mb: 1 }}>Favorite subjects</Typography>
         <FormGroup row>

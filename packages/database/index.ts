@@ -355,7 +355,7 @@ export const getNotifications = async (userId: string) => {
   return db.query.notifications.findMany({
     where: eq(schema.notifications.userId, userId),
     orderBy: [desc(schema.notifications.createdAt)],
-    with: { actor: true },
+    with: { actor: true, thread: true },
     limit: 50,
   });
 };

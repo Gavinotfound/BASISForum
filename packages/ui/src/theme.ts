@@ -43,11 +43,30 @@ export const createBasisTheme = (mode: DisplayMode = 'dark') => {
       },
       MuiButton: {
         styleOverrides: {
-          root: { borderRadius: 0, minHeight: 38, padding: '9px 14px', transition: 'background-color 120ms linear, color 120ms linear', '&:hover': { transform: 'none', boxShadow: 'none', backgroundColor: tokens.navy, color: '#FFFFFF' }, '&:focus-visible': { outline: `1px solid ${tokens.navy}`, outlineOffset: 2 } },
-          containedPrimary: { backgroundColor: tokens.text, color: tokens.background, '&:hover': { backgroundColor: tokens.navy, color: '#FFFFFF' } },
-          containedSecondary: { backgroundColor: tokens.text, color: tokens.background, '&:hover': { backgroundColor: tokens.navy, color: '#FFFFFF' } },
-          containedError: { backgroundColor: tokens.burgundy, color: '#FFFFFF', '&:hover': { backgroundColor: tokens.burgundyHover } },
-          outlined: { borderColor: tokens.controlBorder, color: tokens.text, backgroundColor: 'transparent', '&:hover': { borderColor: tokens.navy, backgroundColor: tokens.navy, color: '#FFFFFF' } },
+          root: {
+            borderRadius: 0,
+            minHeight: 38,
+            padding: '9px 14px',
+            transition: 'background-color 120ms linear, color 120ms linear',
+            '&:hover': { transform: 'none', boxShadow: 'none', backgroundColor: tokens.navy, color: '#FFFFFF' },
+            '&:focus-visible': { outline: `1px solid ${tokens.navy}`, outlineOffset: 2 },
+            '&.MuiButton-contained.MuiButton-colorPrimary, &.MuiButton-contained.MuiButton-colorSecondary': {
+              backgroundColor: tokens.text,
+              color: tokens.background,
+              '&:hover': { backgroundColor: tokens.navy, color: '#FFFFFF' },
+            },
+            '&.MuiButton-contained.MuiButton-colorError': {
+              backgroundColor: tokens.burgundy,
+              color: '#FFFFFF',
+              '&:hover': { backgroundColor: tokens.burgundyHover },
+            },
+            '&.MuiButton-outlined': {
+              borderColor: tokens.controlBorder,
+              color: tokens.text,
+              backgroundColor: 'transparent',
+              '&:hover': { borderColor: tokens.navy, backgroundColor: tokens.navy, color: '#FFFFFF' },
+            },
+          },
         },
       },
       MuiPaper: { styleOverrides: { root: { borderRadius: 0, backgroundColor: 'transparent', backgroundImage: 'none', border: 'none', boxShadow: 'none', backdropFilter: 'none' } } },

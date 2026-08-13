@@ -54,7 +54,7 @@ export async function castVote(
         targetType,
         targetId,
         threadId,
-        message: `${session.user?.name || 'A student'} ${summary.currentUserVote === 1 ? 'liked' : 'disliked'} your ${targetType === 'thread' ? 'discussion' : 'comment'}.`,
+        message: `${session?.user?.name || 'A student'} ${summary.currentUserVote === 1 ? 'liked' : 'disliked'} your ${targetType === 'thread' ? 'discussion' : 'comment'}.`,
       });
     }
     revalidatePath(`/threads/${slug}`);

@@ -68,7 +68,7 @@ export function ReportButton({
               <MenuItem value="" disabled>Select a reason</MenuItem>
               {reasons.map((reason) => <MenuItem key={reason} value={reason}>{reason}</MenuItem>)}
             </TextField>
-            <TextField name="details" label="Optional details" multiline rows={4} inputProps={{ maxLength: 1000 }} placeholder="Add context that helps moderators review this report." />
+            <TextField name="details" label="Optional details" multiline rows={4} slotProps={{ htmlInput: { maxLength: 1000 } }} placeholder="Add context that helps moderators review this report." />
             {state.error ? <Alert severity="error">{state.error}</Alert> : null}
             {state.success ? <Alert severity="success">{state.success}</Alert> : null}
           </DialogContent>

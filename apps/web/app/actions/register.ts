@@ -4,7 +4,9 @@ import { db, users } from "@basis-forum/database";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 
-export async function registerUser(formData: FormData) {
+type RegisterState = { error?: string };
+
+export async function registerUser(_previousState: RegisterState, formData: FormData): Promise<RegisterState> {
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;

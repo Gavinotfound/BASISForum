@@ -50,3 +50,26 @@ None.
 ### Follow-up Audit Note
 
 The application builds still report an avoidable Next.js workspace-root warning because `/home/ubuntu/package-lock.json` is discovered above this pnpm workspace. The next iteration will explicitly set each application’s Turbopack root to the monorepo directory, removing the ambiguity without deleting unrelated files outside the project.
+
+## Iteration 03 — 2026-08-13T15:59:22Z
+
+### Completed
+
+- Set an explicit monorepo `turbopack.root` for both Next.js applications, removing the misleading multi-lockfile workspace-root warning without touching unrelated files.
+- Made both applications inherit the shared strict TypeScript baseline, disabled irrelevant declaration generation for app packages, and removed `typescript.ignoreBuildErrors` from both production build configurations.
+- Resolved all 14 TypeScript diagnostics found while enabling the gate, including Material UI v9 prop migrations, missing package dependency declarations, a missing notification-thread relation, session null guards, public locale type exports, and valid theme-override selectors.
+- Improved registration UX by converting the form to a stateful server-action flow: validation and duplicate-account errors can now remain visible in the form, with localized pending labels in all four supported languages.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| Strict Web TypeScript check | Passed |
+| Strict Admin TypeScript check | Passed |
+| `pnpm test` | Passed: 14 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with type validation enabled | Passed for Web and Admin |
+
+### Follow-up Audit Note
+
+The quality gates are now effective, but the test suite currently covers only pure core rules. The next audit should prioritize tests for database query behavior and server-action validation, then address deprecated dependency declarations and remaining Swiss-design inconsistencies in forms and route layouts.
