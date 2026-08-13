@@ -92,3 +92,26 @@ The quality gates are now effective, but the test suite currently covers only pu
 ### Follow-up Audit Note
 
 Only transitive deprecation notices remain from third-party tooling. They are not directly actionable without broader framework upgrades; the next iteration will focus on product-controlled coverage and UX improvements instead.
+
+## Iteration 05 — 2026-08-13T16:06:45Z
+
+### Completed
+
+- Audited the live homepage and login route; findings are recorded in `UX_AUDIT_2026-08-13.md`.
+- Replaced authentication card wrappers with direct editorial form sections structured by top and bottom rules, matching the strict zero-radius, no-card Swiss layout system.
+- Added explicit accessible labels and input identifiers, correct autocomplete values, visible localized form state, and meaningful reciprocal navigation between login and registration.
+- Removed the inert password-reset control rather than exposing a non-functional interaction.
+- Added server-side registration validation for display name length, normalized email format, and an eight-character password minimum to complement browser validation.
+- Localized the new authentication labels in English, Simplified Chinese, French, and Icelandic.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: 14 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with strict type validation | Passed for Web and Admin |
+
+### Follow-up Audit Note
+
+The authentication flow now has a stronger visual hierarchy and validation path. The next improvement should move the remaining profile `Paper` layouts to direct Swiss structural rules and add test coverage around server-action validation where practical.

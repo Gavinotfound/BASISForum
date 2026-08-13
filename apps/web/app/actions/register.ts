@@ -7,11 +7,13 @@ import { redirect } from "next/navigation";
 type RegisterState = { error?: string };
 
 export async function registerUser(_previousState: RegisterState, formData: FormData): Promise<RegisterState> {
-  const name = formData.get('name') as string;
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  const name = String(formData.get('name') || '').trim();
+  const email = String(formData.get('email') || '').trim().toLowerCase();
+  const password = String(formData.get('password') || '');
 
-  if (!email || !password) return { error: "Missing fields" };
+  if (name.length < 2 || name.length > 60) return { error: 'Enter a display name between 2 and 60 characters.' };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: 'Enter a valid email address.' };
+  if (password.length < 8) return { error: 'Use a password with at least 8 characters.' };
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
