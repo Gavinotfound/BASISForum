@@ -115,3 +115,24 @@ Only transitive deprecation notices remain from third-party tooling. They are no
 ### Follow-up Audit Note
 
 The authentication flow now has a stronger visual hierarchy and validation path. The next improvement should move the remaining profile `Paper` layouts to direct Swiss structural rules and add test coverage around server-action validation where practical.
+
+## Iteration 06 — 2026-08-13T16:09:36Z
+
+### Completed
+
+- Audited the live profile route and added the result to `UX_AUDIT_2026-08-13.md`.
+- Replaced both `Paper` wrappers in the profile editor with semantic `Box` form and aside regions, removing vestigial rounded-card configuration from the implementation.
+- Added structural Swiss rule lines to the editor and learning snapshot without changing the existing effective information hierarchy.
+- Added stable identifiers for all profile fields and an accessible label relationship for the profile and snapshot regions.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: 14 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with strict type validation | Passed for Web and Admin |
+
+### Follow-up Audit Note
+
+The major user-editable forms now use the project’s declared visual language directly. The next highest-value coverage work is making action validation independently testable, followed by reviewing database query efficiency and caching behavior.
