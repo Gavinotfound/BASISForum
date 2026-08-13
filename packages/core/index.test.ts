@@ -6,6 +6,7 @@ import {
   buildReplyNotification,
   clampProfileSubjects,
   isModerationRole,
+  validateRegistration,
 } from './index';
 
 describe('forum subject taxonomy', () => {
@@ -64,6 +65,44 @@ describe('clampProfileSubjects', () => {
 
   it('returns an empty selection when every submitted value is invalid', () => {
     expect(clampProfileSubjects(['', 'physics', ' computer science '])).toEqual([]);
+  });
+});
+
+describe('validateRegistration', () => {
+  it('normalizes a valid account payload before persistence', () => {
+    expect(validateRegistration({
+      name: '  Avery Student  ',
+      email: ' Avery@Example.COM ',
+      password: 'secure-passphrase',
+    })).toEqual({
+      ok: true,
+      data: {
+        name: 'Avery Student',
+        email: 'avery@example.com',
+        password: 'secure-passphrase',
+      },
+    });
+  });
+
+  it.each(['', 'A', 'a'.repeat(61)])('rejects an invalid display-name length', (name) => {
+    expect(validateRegistration({ name, email: 'avery@example.com', password: 'secure-passphrase' })).toEqual({
+      ok: false,
+      error: 'Enter a display name between 2 and 60 characters.',
+    });
+  });
+
+  it.each(['', 'avery', 'avery@example', '@example.com'])('rejects an invalid email address', (email) => {
+    expect(validateRegistration({ name: 'Avery', email, password: 'secure-passphrase' })).toEqual({
+      ok: false,
+      error: 'Enter a valid email address.',
+    });
+  });
+
+  it('rejects a password shorter than eight characters', () => {
+    expect(validateRegistration({ name: 'Avery', email: 'avery@example.com', password: 'short' })).toEqual({
+      ok: false,
+      error: 'Use a password with at least 8 characters.',
+    });
   });
 });
 

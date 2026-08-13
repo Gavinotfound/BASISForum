@@ -136,3 +136,23 @@ The authentication flow now has a stronger visual hierarchy and validation path.
 ### Follow-up Audit Note
 
 The major user-editable forms now use the project’s declared visual language directly. The next highest-value coverage work is making action validation independently testable, followed by reviewing database query efficiency and caching behavior.
+
+## Iteration 07 — 2026-08-13T16:12:30Z
+
+### Completed
+
+- Extracted registration normalization and validation from the Web server action into `@basis-forum/core`, giving account rules one reusable, domain-level source of truth.
+- Added typed valid and invalid registration result contracts so callers must handle failure outcomes explicitly.
+- Added nine unit-test cases covering input trimming, email lowercasing, valid input, display-name bounds, malformed email addresses, and password length.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: 23 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with strict type validation | Passed for Web and Admin |
+
+### Follow-up Audit Note
+
+Registration rules are now independently testable. The remaining material quality opportunities are query-path efficiency, route-level error handling, and broader user-flow tests that require a controlled database fixture.
