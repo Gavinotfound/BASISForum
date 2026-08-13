@@ -156,3 +156,23 @@ The major user-editable forms now use the project’s declared visual language d
 ### Follow-up Audit Note
 
 Registration rules are now independently testable. The remaining material quality opportunities are query-path efficiency, route-level error handling, and broader user-flow tests that require a controlled database fixture.
+
+## Iteration 08 — 2026-08-13T16:15:30Z
+
+### Completed
+
+- Added global client route-error boundaries to both Web and Admin applications, addressing the audit finding that unexpected route failures had no user-facing recovery path.
+- Built concise Swiss-style recovery states with safe retry actions, non-destructive return links, descriptive accessible headings, and no error-stack disclosure to users.
+- Logged the underlying error only to the browser console for technical diagnosis.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: 23 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with strict type validation | Passed for Web and Admin |
+
+### Follow-up Audit Note
+
+The route layer now has loading and error recovery states. The next audit should focus on database query patterns and deliberate caching/revalidation behavior, because this is the remaining area most likely to affect real-user responsiveness as the forum grows.
