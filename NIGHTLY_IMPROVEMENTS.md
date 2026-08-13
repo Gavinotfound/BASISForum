@@ -176,3 +176,23 @@ Registration rules are now independently testable. The remaining material qualit
 ### Follow-up Audit Note
 
 The route layer now has loading and error recovery states. The next audit should focus on database query patterns and deliberate caching/revalidation behavior, because this is the remaining area most likely to affect real-user responsiveness as the forum grows.
+
+## Iteration 09 — 2026-08-13T16:18:25Z
+
+### Completed
+
+- Added explicit `id` and `htmlFor` associations for the shared new-discussion subject, title, and detail controls.
+- Added an accessible label to the shared comment editor, preserving the compact visual design while making its purpose available to assistive technologies.
+- Kept all validation constraints and existing form behavior unchanged.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: 23 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with strict type validation | Passed for Web and Admin |
+
+### Follow-up Audit Note
+
+The primary authoring controls now have explicit accessible names. Future accessibility work should concentrate on full keyboard-flow verification and live-region feedback after server actions, which benefits from browser-based interaction tests.
