@@ -237,3 +237,26 @@ The project now has strict application builds, no explicit untyped escape hatche
 ### Follow-up Audit Note
 
 Profile, bookmark, and subject-filter pathways now use their supporting schema indexes. The homepage remains intentionally unpaginated for the current small community; introducing pagination requires a deliberate product-level UX decision so older discussions are not silently hidden.
+
+## Iteration 12 — 2026-08-13T16:31:00Z
+
+### Final Production Verification
+
+- Confirmed the deployed forum homepage responds after the final PM2 restart and retains the intended Swiss thread-grid interface.
+- Confirmed the registration route remains reachable through a text-only fallback after a one-off interactive browser timeout; it returned the expected application shell and loading state.
+- Verified the repository now contains eleven focused, clean commits spanning linting, test infrastructure, strict typing, accessibility, resiliency, UX, and indexed query performance.
+
+### Achieved Quality Gates
+
+| Gate | Final State |
+|---|---|
+| Git working tree before verification record | Clean |
+| Core unit tests | 23 passing, 100% core coverage |
+| Monorepo lint | Passing with zero warnings |
+| Web and Admin production builds | Passing with strict type validation enabled |
+| Authored explicit `any` annotations | None |
+| PM2 production processes | Web and Admin online after latest restart |
+
+### Remaining Deliberate Product Decisions
+
+Pagination, cursor design, and a controlled database-backed integration test fixture remain worthwhile future work, but each changes forum-product behavior or test-environment architecture rather than correcting a defect. No critical, safe, independently actionable issue remains in the current codebase audit.
