@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "main": "./index.ts",
   "types": "./index.ts",
+  "scripts": {
+    "test": "vitest run --coverage"
+  },
   "dependencies": {
     "@basis-forum/database": "workspace:*"
   },
   "devDependencies": {
     "@basis-forum/config": "workspace:*",
-    "typescript": "^5.9.3"
+    "@vitest/coverage-v8": "^3.2.4",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   }
 }

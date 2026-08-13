@@ -29,3 +29,24 @@
 ### Blockers for Review
 
 None.
+
+## Iteration 02 — 2026-08-13T15:49:07Z
+
+### Completed
+
+- Added a first-class `pnpm test` workspace command backed by a cached Turborepo `test` task.
+- Added Vitest with V8 coverage to `@basis-forum/core`, keeping the test runner explicitly declared by the package that uses it.
+- Added 14 focused unit tests for the core subject and report taxonomies, moderation-role authorization, profile-subject normalization and cap, and both reply-notification variants.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: 14 tests |
+| Core V8 coverage | 100% statements, branches, functions, and lines |
+| `pnpm lint` | Passed |
+| Sequential Web and Admin production builds | Passed |
+
+### Follow-up Audit Note
+
+The application builds still report an avoidable Next.js workspace-root warning because `/home/ubuntu/package-lock.json` is discovered above this pnpm workspace. The next iteration will explicitly set each application’s Turbopack root to the monorepo directory, removing the ambiguity without deleting unrelated files outside the project.
