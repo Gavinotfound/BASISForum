@@ -377,3 +377,7 @@ The deduplication migration removed six duplicate pending report rows, left one 
 ### Follow-up stabilization
 
 The live API endpoint successfully returned `{ "bookmarked": true }` and persisted the bookmark, confirming the route repair. The final client follow-up removes `useTransition` from the imperative fetch path and uses an explicit `isSaving` state with `try`/`catch`/`finally`, preventing a completed save request from leaving the button permanently disabled. The full test, lint, and strict Web/Admin build gates passed again.
+
+### Production smoke confirmation
+
+After the final deployment, an authenticated Playwright smoke test logged in as the test account and exercised the exact forum Save control plus `/bookmarks`: saving returned HTTP 200 and changed the article control to **Saved**; the discussion appeared in the saved list; unsaving returned HTTP 200, restored **Save**, and removed the discussion from that list. The harness completed with `login`, `saved`, `listed`, `unsaved`, and `removed` all set to `true`.
