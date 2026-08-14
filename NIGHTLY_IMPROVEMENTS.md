@@ -360,3 +360,7 @@ The initial theme release is superseded by this repair commit. The repaired buil
 - Reworked reply submission to return structured success state instead of interrupting the stateful form with a server redirect. The discussion composer now reloads the revalidated thread at the newly created comment anchor, preserving the existing two-layer flattening behavior and `@author` metadata.
 - Made Dialog, Autocomplete, Tooltip, Snackbar, Menu, and Popover surfaces explicitly opaque through the shared token-driven Material UI theme.
 - Verified 23 unit tests at 100% core coverage, zero-warning lint, and strict sequential Web/Admin production builds.
+
+### Production verification
+
+The deduplication migration removed six duplicate pending report rows, left one canonical report for the affected target, and established the partial uniqueness index. The report dialog was visually confirmed opaque after deployment. A user-approved labelled verification reply was submitted beneath floor `#1`; it persisted, reloaded at its comment anchor, and rendered as a second-layer response.
