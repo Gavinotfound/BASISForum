@@ -306,3 +306,10 @@ The selector now offers seven mode entries. Future additions should be treated a
 ### Deployment Note
 
 The initial theme release is superseded by this repair commit. The repaired build must be redeployed and smoke-tested before the new modes are declared live.
+
+### Repaired Deployment Verification
+
+- Rebuilt and restarted both PM2 services after the repair; `basis-forum-web` and `basis-forum-admin` are online.
+- The live Web service returned HTTP 200 without the route-error fallback.
+- Direct server rendering with `basis_display_mode=archive`, `verdigris`, and `sakura` each returned a healthy page and emitted its configured palette token, confirming persisted-mode SSR support for all approved modes.
+- The external interactive browser navigation timed out once after the restart, but the direct HTTP and server-rendered palette checks completed successfully and showed no current application error.
