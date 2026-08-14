@@ -53,3 +53,7 @@ The Admin shell now frees additional usable width on phones by narrowing the ico
 ## Residual assurance
 
 The public, unauthenticated routes received direct screenshot verification. Authenticated thread-detail, profile, new-thread, and Admin report data surfaces were additionally audited at source level; their responsive layout code was updated accordingly and passed strict builds. The live production smoke pass after deployment should repeat the public breakpoint checks and confirm the server’s healthy responses.
+
+## Live production confirmation
+
+After deployment, the public index was captured again with real production data at **320px** and **1920px**. The mobile result retained its full brand and utility navigation, distinct sorting row, readable category/title/reply hierarchy, and no former header collision. The wide-desktop result retained a broad, bounded thread grid with clear metadata columns and balanced outer margins. Both PM2 services were online after the sequential strict production builds.

@@ -335,3 +335,7 @@ The initial theme release is superseded by this repair commit. The repaired buil
 | Strict sequential production build | Passed for Web and Admin |
 | Post-change local visual checks | Passed at 320px, 375px, 768px, and 1920px |
 
+### Live Deployment Verification
+
+- Deployed the responsive release with sequential strict Web/Admin builds and PM2 restarts; both services are online.
+- Re-captured the public index with live data at 320px and 1920px. The former mobile clipping and sort/header collision are absent, while the expanded wide-screen grid remains bounded and readable.
