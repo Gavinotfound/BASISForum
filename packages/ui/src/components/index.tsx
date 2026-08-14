@@ -39,14 +39,14 @@ export const Navbar = ({ user, onSignIn, onSignOut, onSearch, onProfile, onBookm
             <Typography variant="h6" component="span" sx={{ color: 'text.primary', fontWeight: 800, letterSpacing: '-.05em', fontSize: { xs: '1rem', sm: '1.1rem' } }}>BASISForum</Typography>
           </ButtonBase>
           <Box aria-label="Forum navigation" sx={{ minWidth: 0, width: { xs: '100%', sm: 'auto' }, display: 'flex', justifyContent: { xs: 'flex-start', sm: 'flex-end' }, gap: { xs: 0.35, sm: 0.75 }, alignItems: 'center', overflowX: 'auto', overscrollBehaviorX: 'contain', pb: { xs: 0.25, sm: 0 }, '&::-webkit-scrollbar': { display: 'none' } }}>
-            <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0 }} onClick={onSearch}>{t('nav.search')}</Button>
+            <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0, minHeight: 44 }} onClick={onSearch}>{t('nav.search')}</Button>
             {user ? <>
-              <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0 }} onClick={onBookmarks}>{t('nav.saved')}</Button>
-              <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0 }} onClick={onNotifications}>{t('nav.updates')}</Button>
-              <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0 }} onClick={onProfile}>{t('nav.profile')}</Button>
+              <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0, minHeight: 44 }} onClick={onBookmarks}>{t('nav.saved')}</Button>
+              <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0, minHeight: 44 }} onClick={onNotifications}>{t('nav.updates')}</Button>
+              <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0, minHeight: 44 }} onClick={onProfile}>{t('nav.profile')}</Button>
               <Avatar sx={{ width: 31, height: 31, flex: '0 0 auto', bgcolor: 'text.primary', color: 'background.default', fontSize: 13, fontWeight: 900 }}>{(user.name || 'S').slice(0, 1).toUpperCase()}</Avatar>
-              <Button sx={{ color: 'text.secondary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0 }} onClick={onSignOut}>{t('nav.signOut')}</Button>
-            </> : <Button variant="contained" color="secondary" sx={{ flex: '0 0 auto' }} onClick={onSignIn}>{t('nav.signIn')}</Button>}
+              <Button sx={{ color: 'text.secondary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0, minHeight: 44 }} onClick={onSignOut}>{t('nav.signOut')}</Button>
+            </> : <Button variant="contained" color="secondary" sx={{ flex: '0 0 auto', minHeight: 44 }} onClick={onSignIn}>{t('nav.signIn')}</Button>}
             <Box sx={{ flex: '0 0 auto' }}><LanguageSelector compact /></Box>
             <Box sx={{ flex: '0 0 auto' }}><DisplayModeSelector compact /></Box>
           </Box>

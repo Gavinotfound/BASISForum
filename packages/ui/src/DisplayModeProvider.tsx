@@ -52,14 +52,14 @@ export const DisplayModeProvider = ({ children, initialMode = 'dark' }: { childr
 
 export const DisplayModeSelector = ({ compact = false }: { compact?: boolean }) => {
   const { mode, setMode } = useDisplayMode();
-  return <Tooltip title="Display mode"><Box sx={{ display: 'inline-flex', alignItems: 'center', minWidth: compact ? 76 : 136 }}>
+  return <Tooltip title="Display mode"><Box sx={{ display: 'inline-flex', alignItems: 'center', minWidth: compact ? 76 : 136, minHeight: 44 }}>
     <Select
       value={mode}
       onChange={(event) => setMode(event.target.value as DisplayMode)}
       size="small"
       variant="standard"
       inputProps={{ 'aria-label': 'Display mode' }}
-      sx={{ color: 'text.primary', fontWeight: 700, fontSize: 11, '&:before, &:after': { display: 'none' }, '& .MuiSelect-icon': { color: 'text.secondary' }, '& .MuiSelect-select': { py: 0.4, pr: '20px !important' } }}
+      sx={{ minHeight: 44, color: 'text.primary', fontWeight: 700, fontSize: 11, '&:before, &:after': { display: 'none' }, '& .MuiSelect-icon': { color: 'text.secondary' }, '& .MuiSelect-select': { minHeight: 44, display: 'flex', alignItems: 'center', py: '0 !important', pr: '20px !important' } }}
     >
       {displayModes.map((value) => <MenuItem key={value} value={value}>{compact ? value.toUpperCase() : themeModes[value].label}</MenuItem>)}
     </Select>

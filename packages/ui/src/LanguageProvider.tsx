@@ -47,7 +47,7 @@ export const LanguageSelector = ({ compact = false }: { compact?: boolean }) => 
   const { locale, setLocale, t } = useLanguage();
   return (
     <Tooltip title={t('nav.language')}>
-      <Box sx={{ display: 'inline-flex', alignItems: 'center', minWidth: compact ? 72 : 118 }}>
+      <Box sx={{ display: 'inline-flex', alignItems: 'center', minWidth: compact ? 72 : 118, minHeight: 44 }}>
         <Select
           value={locale}
           onChange={(event) => {
@@ -60,7 +60,7 @@ export const LanguageSelector = ({ compact = false }: { compact?: boolean }) => 
           size="small"
           variant="standard"
           inputProps={{ 'aria-label': t('nav.language') }}
-          sx={{ color: 'text.primary', fontWeight: 700, fontSize: 11, '&:before, &:after': { display: 'none' }, '& .MuiSelect-icon': { color: 'text.secondary' }, '& .MuiSelect-select': { py: 0.4, pr: '20px !important' } }}
+          sx={{ minHeight: 44, color: 'text.primary', fontWeight: 700, fontSize: 11, '&:before, &:after': { display: 'none' }, '& .MuiSelect-icon': { color: 'text.secondary' }, '& .MuiSelect-select': { minHeight: 44, display: 'flex', alignItems: 'center', py: '0 !important', pr: '20px !important' } }}
         >
           {locales.map((code) => <MenuItem key={code} value={code}>{compact ? code : languageLabels[code]}</MenuItem>)}
         </Select>
