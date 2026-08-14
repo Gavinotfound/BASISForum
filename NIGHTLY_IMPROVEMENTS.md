@@ -286,3 +286,23 @@ Pagination, cursor design, and a controlled database-backed integration test fix
 ### Follow-up Note
 
 The selector now offers seven mode entries. Future additions should be treated as explicit product decisions rather than incremental palette accumulation, so the interface remains concise and the theme system retains its editorial discipline.
+
+## Iteration 14 — 2026-08-14T01:01:00Z
+
+### Production Regression Repair
+
+- The first production smoke check exposed a server-rendering regression: importing `isDisplayMode` through the UI package’s client-marked root entry caused Next.js to reject the function call from Web and Admin server components.
+- Moved both server-side imports to the pure `@basis-forum/ui/src/theme-config` module, retaining the same guard while keeping the UI root entry client-only.
+- The repair is deliberately minimal and restores persisted display-mode SSR without changing the approved mode tokens or selector behavior.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: 23 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with strict type validation | Passed for Web and Admin |
+
+### Deployment Note
+
+The initial theme release is superseded by this repair commit. The repaired build must be redeployed and smoke-tested before the new modes are declared live.

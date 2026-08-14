@@ -1,4 +1,5 @@
-import { BasisProvider, DisplayModeSelector, LanguageSelector, isDisplayMode } from '@basis-forum/ui';
+import { BasisProvider, DisplayModeSelector, LanguageSelector } from '@basis-forum/ui';
+import { isDisplayMode } from '@basis-forum/ui/src/theme-config';
 import { isLocale, translate } from '@basis-forum/ui/i18n';
 import { Box, Typography, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';

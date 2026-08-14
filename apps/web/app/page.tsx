@@ -1,5 +1,6 @@
 import React from 'react';
-import { BasisProvider, isDisplayMode } from '@basis-forum/ui';
+import { BasisProvider } from '@basis-forum/ui';
+import { isDisplayMode } from '@basis-forum/ui/src/theme-config';
 import { getThreads, type ThreadSort } from '@basis-forum/database';
 import { auth } from '@/auth';
 import { cookies } from 'next/headers';
