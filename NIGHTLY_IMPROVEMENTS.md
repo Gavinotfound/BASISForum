@@ -390,3 +390,5 @@ After the final deployment, an authenticated Playwright smoke test logged in as 
 - Verification passed: 23 core tests at 100% coverage, zero-warning lint, and strict sequential Web/Admin production builds.
 
 - Production smoke testing also exposed that direct thread loads did not seed the selected display mode from the `basis_display_mode` cookie. The thread route now passes the validated cookie mode into `BasisProvider`, eliminating dark-default flashes and ensuring Archive/Sakura foreground tokens apply before hydration.
+
+- Final deployment smoke testing caught a server-component boundary error caused by importing `isDisplayMode` through the client-facing UI barrel. The thread route now imports the pure validator directly from `@basis-forum/ui/src/theme-config`, matching the homepage’s proven server-safe pattern; strict Web type checking and lint pass again.

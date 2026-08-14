@@ -1,5 +1,6 @@
 import React from 'react';
-import { BasisProvider, CategoryBadge, isDisplayMode } from '@basis-forum/ui';
+import { BasisProvider, CategoryBadge } from '@basis-forum/ui';
+import { isDisplayMode } from '@basis-forum/ui/src/theme-config';
 import { cookies } from 'next/headers';
 import { Typography, Box } from '@mui/material';
 import { getBookmarkStatus, getCommentsByThreadId, getThreadBySlug, getVoteSummaries } from '@basis-forum/database';
