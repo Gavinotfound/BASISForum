@@ -313,3 +313,25 @@ The initial theme release is superseded by this repair commit. The repaired buil
 - The live Web service returned HTTP 200 without the route-error fallback.
 - Direct server rendering with `basis_display_mode=archive`, `verdigris`, and `sakura` each returned a healthy page and emitted its configured palette token, confirming persisted-mode SSR support for all approved modes.
 - The external interactive browser navigation timed out once after the restart, but the direct HTTP and server-rendered palette checks completed successfully and showed no current application error.
+
+## Iteration 15 — 2026-08-14T01:48:42Z
+
+### Completed
+
+- Completed a responsive visual audit at 320px, 375px, 768px, 1366px, and 1920px across the public index and login surfaces, with source-level review of authenticated discussion, profile, search, and Admin interfaces.
+- Rebuilt the shared header as a two-tier mobile composition and a compact single-row tablet/desktop composition, removing clipped utility controls at narrow widths.
+- Added fluid shared page gutters and bounded wide-screen content widths so the interface uses 1920px canvases intentionally without losing editorial hierarchy.
+- Reworked the mobile discussion index: sorting now occupies its own row, compact rows prioritize category/title/replies, and the full metadata grid returns at desktop widths.
+- Improved responsive profile fields, subject controls, nested-reply indentation, discussion composer rhythm, and search-filter progression.
+- Replaced the Admin queue’s forced 760px mobile table with stacked moderation records below the medium breakpoint; desktop retains the dense table view.
+- Created `RESPONSIVE_AUDIT_2026-08-14.md` with evidence, findings, specific changes, and verification limitations.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: 23 tests, 100% core coverage |
+| `pnpm lint` | Passed with zero warnings |
+| Strict sequential production build | Passed for Web and Admin |
+| Post-change local visual checks | Passed at 320px, 375px, 768px, and 1920px |
+

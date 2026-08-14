@@ -15,21 +15,24 @@ export default function ClientPage({ user, threads, sort }: { user?: ForumUser; 
   const isHot = sort === 'hot';
   const submitSearch = (event: React.FormEvent) => { event.preventDefault(); if (query.trim()) router.push(`/search?q=${encodeURIComponent(query.trim())}`); };
 
-  return <Box sx={{ maxWidth: 1220, mx: 'auto' }}>
-    <Box component="header" sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '150px minmax(300px,1fr) auto' }, gap: { xs: 1.25, md: 2 }, alignItems: 'center', pt: { xs: 1.5, md: 2.25 }, pb: 1.25, borderBottom: '2px solid var(--bf-text)' }}>
-      <Box><Typography component="h1" sx={{ fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-.055em' }}>BASISFORUM</Typography><Typography variant="overline" sx={{ color: 'var(--bf-muted)' }}>INDEX / 01</Typography></Box>
-      <Box component="form" onSubmit={submitSearch} sx={{ borderBottom: '1px solid var(--bf-text)', display: 'flex', alignItems: 'center', gap: 1 }}>
+  const sortControls = <Box aria-label="Thread sorting" sx={{ display: 'flex', gap: 0.5, flex: '0 0 auto' }}><Button size="small" variant={!isHot ? 'text' : 'outlined'} onClick={() => router.push('/?sort=latest')}>{t('feed.latest')}</Button><Button size="small" variant={isHot ? 'text' : 'outlined'} onClick={() => router.push('/?sort=hot')}>{t('feed.hot')}</Button></Box>;
+
+  return <Box sx={{ maxWidth: { lg: 1440, xl: 1680 }, mx: 'auto' }}>
+    <Box component="header" sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '128px minmax(0,1fr) auto', md: '150px minmax(300px,1fr) auto' }, gap: { xs: 1.25, sm: 1.5, md: 2 }, alignItems: 'center', pt: { xs: 1.75, md: 2.5 }, pb: { xs: 1.25, md: 1.5 }, borderBottom: '2px solid var(--bf-text)' }}>
+      <Box><Typography component="h1" sx={{ fontSize: { xs: '1rem', sm: '1.1rem' }, fontWeight: 800, letterSpacing: '-.055em' }}>BASISFORUM</Typography><Typography variant="overline" sx={{ color: 'var(--bf-muted)' }}>INDEX / 01</Typography></Box>
+      <Box component="form" onSubmit={submitSearch} sx={{ minWidth: 0, borderBottom: '1px solid var(--bf-text)', display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography component="label" htmlFor="forum-search" variant="overline" sx={{ color: 'var(--bf-muted)', whiteSpace: 'nowrap' }}>SEARCH</Typography>
-        <input id="forum-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search threads" aria-label="Search threads" style={{ padding: '6px 0', minWidth: 0, border: 0, color: 'var(--bf-text)', background: 'transparent', font: 'inherit', outline: 'none' }} />
+        <input id="forum-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search threads" aria-label="Search threads" style={{ width: '100%', padding: '6px 0', minWidth: 0, border: 0, color: 'var(--bf-text)', background: 'transparent', font: 'inherit', outline: 'none' }} />
       </Box>
-      {user ? <Button variant="outlined" size="small" onClick={() => router.push('/new-thread')}>{t('nav.newPost')}</Button> : <Button variant="outlined" size="small" onClick={() => router.push('/login')}>{t('nav.signIn')}</Button>}
+      {user ? <Button variant="outlined" size="small" sx={{ justifySelf: { xs: 'stretch', sm: 'auto' } }} onClick={() => router.push('/new-thread')}>{t('nav.newPost')}</Button> : <Button variant="outlined" size="small" sx={{ justifySelf: { xs: 'stretch', sm: 'auto' } }} onClick={() => router.push('/login')}>{t('nav.signIn')}</Button>}
     </Box>
 
-    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '86px minmax(0,1fr) 74px', md: '120px minmax(0,1fr) 132px 88px 126px' }, gap: 0, borderBottom: '1px solid var(--bf-divider)', color: 'var(--bf-muted)' }}>
-      <Typography variant="overline" sx={{ py: 1, borderRight: { md: '1px solid var(--bf-divider)' }, px: { md: 1.25 } }}>CATEGORY</Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, py: .4, px: { md: 1.25 }, borderRight: { md: '1px solid var(--bf-divider)' } }}><Typography variant="overline">THREAD / {threads.length} TOTAL</Typography><Box sx={{ display: 'flex', gap: .25 }}><Button size="small" variant={!isHot ? 'text' : 'outlined'} onClick={() => router.push('/?sort=latest')}>{t('feed.latest')}</Button><Button size="small" variant={isHot ? 'text' : 'outlined'} onClick={() => router.push('/?sort=hot')}>{t('feed.hot')}</Button></Box></Box>
+    <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', justifyContent: 'space-between', gap: 1, py: 0.75, borderBottom: '1px solid var(--bf-divider)', color: 'var(--bf-muted)' }}><Typography variant="overline">THREADS / {threads.length}</Typography>{sortControls}</Box>
+    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '76px minmax(0,1fr) 44px', sm: '96px minmax(0,1fr) 58px', md: '120px minmax(0,1fr) 132px 88px 126px' }, gap: 0, borderBottom: '1px solid var(--bf-divider)', color: 'var(--bf-muted)' }}>
+      <Typography variant="overline" sx={{ py: { xs: 0.8, md: 1 }, borderRight: { md: '1px solid var(--bf-divider)' }, px: { md: 1.25 } }}>CATEGORY</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, py: { xs: 0.8, md: 0.4 }, px: { md: 1.25 }, borderRight: { md: '1px solid var(--bf-divider)' } }}><Typography variant="overline">THREAD / {threads.length} TOTAL</Typography><Box sx={{ display: { xs: 'none', md: 'block' } }}>{sortControls}</Box></Box>
       <Typography variant="overline" sx={{ display: { xs: 'none', md: 'block' }, py: 1, borderRight: '1px solid var(--bf-divider)', px: 1.25 }}>AUTHOR</Typography>
-      <Typography variant="overline" sx={{ py: 1, borderRight: { md: '1px solid var(--bf-divider)' }, px: { md: 1.25 }, textAlign: 'right' }}>REPLIES</Typography>
+      <Typography variant="overline" sx={{ py: { xs: 0.8, md: 1 }, borderRight: { md: '1px solid var(--bf-divider)' }, px: { md: 1.25 }, textAlign: 'right' }}>REPLIES</Typography>
       <Typography variant="overline" sx={{ display: { xs: 'none', md: 'block' }, py: 1, px: 1.25, textAlign: 'right' }}>LAST ACTIVE</Typography>
     </Box>
 

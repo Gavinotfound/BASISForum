@@ -32,8 +32,8 @@ export default function ProfileEditor({
   const selected = Array.isArray(profile.favoriteSubjects) ? profile.favoriteSubjects.map(String) : [];
 
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) 260px' }, gap: 3 }}>
-      <Box component="form" action={formAction} aria-labelledby="profile-editor-title" sx={{ pt: 2, pb: 3, borderTop: '2px solid var(--bf-text)', borderBottom: '1px solid var(--bf-divider)' }}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1fr) 280px' }, gap: { xs: 2.5, md: 3, lg: 4 } }}>
+      <Box component="form" action={formAction} aria-labelledby="profile-editor-title" sx={{ pt: { xs: 1.5, md: 2 }, pb: { xs: 2.5, md: 3 }, borderTop: '2px solid var(--bf-text)', borderBottom: '1px solid var(--bf-divider)' }}>
         <Typography id="profile-editor-title" variant="h4" sx={{ fontWeight: 800, mb: 0.75 }}>Your Study Profile</Typography>
         <Typography color="text.secondary" sx={{ mb: 3 }}>Tell classmates what you are studying and build a recognizable learning identity.</Typography>
 
@@ -46,7 +46,7 @@ export default function ProfileEditor({
         <TextField id="profile-bio" label="About me" name="bio" defaultValue={profile.bio || ''} multiline rows={4} fullWidth sx={{ mt: 2 }} slotProps={{ htmlInput: { maxLength: 500 } }} placeholder="What classes, exams, or learning goals are you focused on?" />
 
         <Typography variant="subtitle2" sx={{ mt: 3, mb: 1 }}>Favorite subjects</Typography>
-        <FormGroup row>
+        <FormGroup row sx={{ columnGap: { xs: 0, sm: 1 }, '& .MuiFormControlLabel-root': { ml: 0, mr: { xs: 0, sm: 1.5 }, width: { xs: '100%', sm: 'auto' }, minHeight: 40 } }}>
           {subjects.map((subject) => (
             <FormControlLabel key={subject} control={<Checkbox name="subjects" value={subject} defaultChecked={selected.includes(subject)} />} label={subject} />
           ))}
@@ -57,7 +57,7 @@ export default function ProfileEditor({
         <Button type="submit" variant="contained" sx={{ mt: 3 }} disabled={isPending}>{isPending ? 'Saving…' : 'Save profile'}</Button>
       </Box>
 
-      <Box component="aside" aria-labelledby="learning-snapshot-title" sx={{ pt: 2, borderTop: '1px solid var(--bf-divider)', height: 'fit-content' }}>
+      <Box component="aside" aria-labelledby="learning-snapshot-title" sx={{ pt: { xs: 1.5, lg: 2 }, pb: { xs: 2, lg: 0 }, borderTop: '1px solid var(--bf-divider)', height: 'fit-content' }}>
         <Typography id="learning-snapshot-title" variant="h6" sx={{ fontWeight: 800, mb: 2 }}>Learning Snapshot</Typography>
         <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800 }}>{profile.reputationScore || 0}</Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5 }}>reputation points</Typography>

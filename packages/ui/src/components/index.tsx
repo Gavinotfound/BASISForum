@@ -32,23 +32,23 @@ export const Navbar = ({ user, onSignIn, onSignOut, onSearch, onProfile, onBookm
   const { t } = useLanguage();
   return (
     <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'background.default', backdropFilter: 'none', borderBottom: '1px solid', borderColor: 'divider' }}>
-      <Container maxWidth="lg">
-        <Toolbar disableGutters sx={{ minHeight: { xs: 60, md: 68 }, justifyContent: 'space-between', gap: 2 }}>
-          <ButtonBase component="a" href="/" onClick={onHome} aria-label="Go to BasisForum home" sx={{ color: 'text.primary', display: 'flex', alignItems: 'center', gap: 1, whiteSpace: 'nowrap', textAlign: 'left', textDecoration: 'none', '&:hover': { opacity: .72 } }}>
-            <Typography component="span" sx={{ color: 'text.primary', fontWeight: 900, fontSize: '1.25rem', letterSpacing: '-.07em' }}>B</Typography>
-            <Typography variant="h6" component="span" sx={{ color: 'text.primary', fontWeight: 800, letterSpacing: '-.05em' }}>BASISForum</Typography>
+      <Container maxWidth={false} sx={{ maxWidth: { lg: 1440, xl: 1680 }, px: { xs: 2, sm: 3, md: 4, lg: 5 } }}>
+        <Toolbar disableGutters sx={{ minHeight: { xs: 'auto', sm: 60, md: 68 }, py: { xs: 0.75, sm: 0 }, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'auto minmax(0, 1fr)' }, gap: { xs: 0.75, sm: 2 }, alignItems: 'center' }}>
+          <ButtonBase component="a" href="/" onClick={onHome} aria-label="Go to BasisForum home" sx={{ color: 'text.primary', justifySelf: 'start', display: 'flex', alignItems: 'center', gap: 1, whiteSpace: 'nowrap', textAlign: 'left', textDecoration: 'none', '&:hover': { opacity: .72 } }}>
+            <Typography component="span" sx={{ color: 'text.primary', fontWeight: 900, fontSize: { xs: '1.1rem', sm: '1.25rem' }, letterSpacing: '-.07em' }}>B</Typography>
+            <Typography variant="h6" component="span" sx={{ color: 'text.primary', fontWeight: 800, letterSpacing: '-.05em', fontSize: { xs: '1rem', sm: '1.1rem' } }}>BASISForum</Typography>
           </ButtonBase>
-          <Box sx={{ display: 'flex', gap: { xs: 0.25, md: 0.75 }, alignItems: 'center', overflowX: 'auto' }}>
-            <Button sx={{ color: 'text.primary', px: { xs: 0.65, md: 1 }, minWidth: 0 }} onClick={onSearch}>{t('nav.search')}</Button>
+          <Box aria-label="Forum navigation" sx={{ minWidth: 0, width: { xs: '100%', sm: 'auto' }, display: 'flex', justifyContent: { xs: 'flex-start', sm: 'flex-end' }, gap: { xs: 0.35, sm: 0.75 }, alignItems: 'center', overflowX: 'auto', overscrollBehaviorX: 'contain', pb: { xs: 0.25, sm: 0 }, '&::-webkit-scrollbar': { display: 'none' } }}>
+            <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0 }} onClick={onSearch}>{t('nav.search')}</Button>
             {user ? <>
-              <Button sx={{ color: 'text.primary', px: { xs: 0.65, md: 1 }, minWidth: 0 }} onClick={onBookmarks}>{t('nav.saved')}</Button>
-              <Button sx={{ color: 'text.primary', px: { xs: 0.65, md: 1 }, minWidth: 0 }} onClick={onNotifications}>{t('nav.updates')}</Button>
-              <Button sx={{ color: 'text.primary', px: { xs: 0.65, md: 1 }, minWidth: 0 }} onClick={onProfile}>{t('nav.profile')}</Button>
-              <Avatar sx={{ width: 31, height: 31, bgcolor: 'text.primary', color: 'background.default', fontSize: 13, fontWeight: 900 }}>{(user.name || 'S').slice(0, 1).toUpperCase()}</Avatar>
-              <Button sx={{ color: 'text.secondary', px: { xs: 0.65, md: 1 }, minWidth: 0 }} onClick={onSignOut}>{t('nav.signOut')}</Button>
-            </> : <Button variant="contained" color="secondary" onClick={onSignIn}>{t('nav.signIn')}</Button>}
-            <LanguageSelector compact />
-            <DisplayModeSelector compact />
+              <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0 }} onClick={onBookmarks}>{t('nav.saved')}</Button>
+              <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0 }} onClick={onNotifications}>{t('nav.updates')}</Button>
+              <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0 }} onClick={onProfile}>{t('nav.profile')}</Button>
+              <Avatar sx={{ width: 31, height: 31, flex: '0 0 auto', bgcolor: 'text.primary', color: 'background.default', fontSize: 13, fontWeight: 900 }}>{(user.name || 'S').slice(0, 1).toUpperCase()}</Avatar>
+              <Button sx={{ color: 'text.secondary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0 }} onClick={onSignOut}>{t('nav.signOut')}</Button>
+            </> : <Button variant="contained" color="secondary" sx={{ flex: '0 0 auto' }} onClick={onSignIn}>{t('nav.signIn')}</Button>}
+            <Box sx={{ flex: '0 0 auto' }}><LanguageSelector compact /></Box>
+            <Box sx={{ flex: '0 0 auto' }}><DisplayModeSelector compact /></Box>
           </Box>
         </Toolbar>
       </Container>
@@ -88,9 +88,9 @@ export const CategoryBadge = ({ label }: { label: string }) => <Box sx={{ displa
 export const ThreadCard = ({ title, author, category, replies, score = 0, updatedAt, isSticky = false, onClick }: { title: string; author: string; category: string; replies: number; score?: number; updatedAt?: string; isSticky?: boolean; onClick?: () => void }) => {
   const emphasized = isSticky || score >= 5;
   const activity = updatedAt ? new Intl.DateTimeFormat(undefined, { month: 'short', day: '2-digit' }).format(new Date(updatedAt)) : '—';
-  return <Box component="article" onClick={onClick} sx={{ cursor: 'pointer', minHeight: 48, display: 'grid', gridTemplateColumns: { xs: '86px minmax(0,1fr) 74px', md: '120px minmax(0,1fr) 132px 88px 126px' }, gap: 0, alignItems: 'stretch', borderBottom: '1px solid var(--bf-divider)', transition: 'background-color 120ms linear', '&:hover': { bgcolor: 'var(--bf-hover)' }, '& > *': { minWidth: 0, px: { md: 1.25 }, py: 1.15 }, '& > * + *': { borderLeft: { md: '1px solid var(--bf-divider)' } } }}>
+  return <Box component="article" onClick={onClick} sx={{ cursor: 'pointer', minHeight: { xs: 52, md: 48 }, display: 'grid', gridTemplateColumns: { xs: '76px minmax(0,1fr) 44px', sm: '96px minmax(0,1fr) 58px', md: '120px minmax(0,1fr) 132px 88px 126px' }, gap: 0, alignItems: 'stretch', borderBottom: '1px solid var(--bf-divider)', transition: 'background-color 120ms linear', '&:hover': { bgcolor: 'var(--bf-hover)' }, '& > *': { minWidth: 0, px: { xs: 0, md: 1.25 }, py: { xs: 1.1, md: 1.15 } }, '& > * + *': { borderLeft: { md: '1px solid var(--bf-divider)' } } }}>
     <Box sx={{ display: 'flex', alignItems: 'center' }}><CategoryBadge label={category} /></Box>
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: .75, overflow: 'hidden' }}><Typography component="h2" sx={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: emphasized ? { xs: '.92rem', md: '1.02rem' } : { xs: '.82rem', md: '.9rem' }, fontWeight: emphasized ? 800 : 600, letterSpacing: '-.015em' }}>{title}</Typography>{emphasized ? <Typography variant="overline" sx={{ color: 'inherit', flex: '0 0 auto' }}>HOT</Typography> : null}</Box>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: .75, overflow: 'hidden' }}><Typography component="h2" sx={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: emphasized ? { xs: '.88rem', sm: '.92rem', md: '1.02rem' } : { xs: '.78rem', sm: '.84rem', md: '.9rem' }, fontWeight: emphasized ? 800 : 600, letterSpacing: '-.015em' }}>{title}</Typography>{emphasized ? <Typography variant="overline" sx={{ color: 'inherit', flex: '0 0 auto' }}>HOT</Typography> : null}</Box>
     <Typography variant="overline" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', color: 'var(--bf-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{author.toUpperCase()}</Typography>
     <Typography variant="overline" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontVariantNumeric: 'tabular-nums', color: score < 0 ? 'var(--bf-burgundy)' : 'var(--bf-text)' }}>{replies}</Typography>
     <Typography variant="overline" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'flex-end', fontVariantNumeric: 'tabular-nums', color: 'var(--bf-muted)' }}>{activity}</Typography>

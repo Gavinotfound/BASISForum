@@ -104,9 +104,9 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
     const replyTo = flattenedContext.get(comment.id);
     const label = depth === 0 ? `#${floor}` : t('discussion.replyTo', { floor });
 
-    return <Box key={comment.id} id={`comment-${comment.id}`} sx={{ ml: { xs: depth ? 1.5 : 0, md: depth ? 3 : 0 }, mt: depth ? 1.5 : 0, position: 'relative', '&:before': depth ? { content: '""', position: 'absolute', left: -11, top: 0, bottom: 0, width: 1, bgcolor: 'var(--bf-divider)' } : {} }}>
-      <Paper variant="outlined" sx={{ p: { xs: 2.25, md: 2.75 }, bgcolor: 'transparent', backgroundImage: 'none', backdropFilter: 'none', borderTop: '1px solid var(--bf-divider)', borderLeft: depth ? '1px solid var(--bf-divider)' : 'none', transition: 'background-color 120ms linear', '&:hover': { bgcolor: 'var(--bf-hover)' } }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'flex-start', mb: 1.75 }}>
+    return <Box key={comment.id} id={`comment-${comment.id}`} sx={{ ml: { xs: depth ? 1 : 0, sm: depth ? 1.5 : 0, md: depth ? 3 : 0 }, mt: depth ? { xs: 1, md: 1.5 } : 0, position: 'relative', '&:before': depth ? { content: '""', position: 'absolute', left: { xs: -8, sm: -11 }, top: 0, bottom: 0, width: 1, bgcolor: 'var(--bf-divider)' } : {} }}>
+      <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2.25, md: 2.75 }, bgcolor: 'transparent', backgroundImage: 'none', backdropFilter: 'none', borderTop: '1px solid var(--bf-divider)', borderLeft: depth ? '1px solid var(--bf-divider)' : 'none', transition: 'background-color 120ms linear', '&:hover': { bgcolor: 'var(--bf-hover)' } }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: { xs: 1, md: 2 }, alignItems: 'flex-start', mb: { xs: 1.25, md: 1.75 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.1 }}>
             <Typography variant="overline" sx={{ color: depth ? 'var(--bf-muted)' : 'var(--bf-text)', minWidth: 34 }}>{depth === 0 ? `#${floor}` : '↳'}</Typography>
             <Box>
@@ -130,8 +130,8 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
   };
 
   return <Box>
-    <Box id="reply-composer" sx={{ mb: 4 }}>
-      {canReply ? <Paper variant="outlined" sx={{ py: { xs: 2.5, md: 3.5 }, borderTop: '2px solid var(--bf-text)', borderBottom: '1px solid var(--bf-divider)', bgcolor: 'transparent', backgroundImage: 'none', backdropFilter: 'none' }}>
+    <Box id="reply-composer" sx={{ mb: { xs: 3, md: 4 } }}>
+      {canReply ? <Paper variant="outlined" sx={{ py: { xs: 2, sm: 2.5, md: 3.5 }, borderTop: '2px solid var(--bf-text)', borderBottom: '1px solid var(--bf-divider)', bgcolor: 'transparent', backgroundImage: 'none', backdropFilter: 'none' }}>
         <Typography variant="overline" sx={{ display: 'block', color: 'var(--bf-muted)', mb: 1 }}>{t('discussion.add')}</Typography>
         <Typography variant="h6" sx={{ fontWeight: 900, mb: 0.5 }}>{replyTarget ? t('discussion.replying', { target: replyTarget.label }) : t('discussion.join')}</Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>{replyTarget ? t('discussion.selectedHelp') : t('discussion.directHelp', { author: starterAuthor })}</Typography>
