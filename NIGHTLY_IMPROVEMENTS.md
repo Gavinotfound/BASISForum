@@ -388,3 +388,5 @@ After the final deployment, an authenticated Playwright smoke test logged in as 
 - Corrected the floor grouping rule: replies to a floor remain visible below that floor, while only truly third-or-deeper legacy records are flattened back to the floor and annotated with `@author` context.
 - Added a modular `forumCampaignSlot` configuration object plus an optional top-of-index campaign module. It supports `cinematic` monochrome-plus-accent, `swiss-grid`, and `widescreen-photo` templates; swapping templates, copy, target link, or sponsor designation requires only a configuration edit. The default uses a generated independent-cinema 21:9 auditorium still with a text-safe left field.
 - Verification passed: 23 core tests at 100% coverage, zero-warning lint, and strict sequential Web/Admin production builds.
+
+- Production smoke testing also exposed that direct thread loads did not seed the selected display mode from the `basis_display_mode` cookie. The thread route now passes the validated cookie mode into `BasisProvider`, eliminating dark-default flashes and ensuring Archive/Sakura foreground tokens apply before hydration.

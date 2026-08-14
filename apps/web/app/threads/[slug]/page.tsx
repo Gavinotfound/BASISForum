@@ -1,5 +1,6 @@
 import React from 'react';
-import { BasisProvider, CategoryBadge } from '@basis-forum/ui';
+import { BasisProvider, CategoryBadge, isDisplayMode } from '@basis-forum/ui';
+import { cookies } from 'next/headers';
 import { Typography, Box } from '@mui/material';
 import { getBookmarkStatus, getCommentsByThreadId, getThreadBySlug, getVoteSummaries } from '@basis-forum/database';
 import { auth } from '@/auth';
@@ -21,11 +22,14 @@ export default async function ThreadDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const cookieStore = await cookies();
+  const requestedMode = cookieStore.get('basis_display_mode')?.value;
+  const mode = isDisplayMode(requestedMode) ? requestedMode : 'dark';
   const [session, thread] = await Promise.all([auth(), getThreadBySlug(slug)]);
 
   if (!thread) {
     return (
-      <BasisProvider>
+      <BasisProvider mode={mode}>
         <ClientLayout user={session?.user}>
           <Typography variant="h4">Thread not found</Typography>
         </ClientLayout>
