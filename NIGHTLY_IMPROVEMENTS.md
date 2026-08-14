@@ -398,3 +398,5 @@ After the final deployment, an authenticated Playwright smoke test logged in as 
 ### Persistent Admin campaign management
 
 A singleton `campaign_settings` record and idempotent migration now store the live top-forum placement. The Admin portal includes an administrator-only campaign editor for visibility, template, community/sponsor label, eyebrow, title, copy, CTA, destination, accent, and widescreen image source. Server-side validation constrains template and kind choices, text limits, URLs, image sources, and hex accents; every saved change creates a moderation log entry and revalidates the homepage. The Web index now reads the persistent record rather than a source-level campaign object. The full test suite, zero-warning lint gate, and strict sequential Web/Admin build all passed.
+
+- Live campaign-management smoke verification passed under the administrator session. Saving the unchanged seeded campaign returned the in-portal success state, persisted the singleton row, wrote the `campaign_update` moderation log, and left the public homepage campaign headline and CTA visible after revalidation.
