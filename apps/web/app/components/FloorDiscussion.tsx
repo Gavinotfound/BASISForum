@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import VoteControls from './VoteControls';
 import { ReportButton } from './CommunityControls';
@@ -39,7 +39,7 @@ const readReplyContext = (metadata: unknown): ReplyContext['replyTo'] | undefine
   };
 };
 
-type ReplyState = { error?: string };
+type ReplyState = { error?: string; success?: string; commentId?: string };
 type ReplyTarget = { id: string; label: string } | null;
 
 type FloorDiscussionProps = {
@@ -57,6 +57,12 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
   const [state, formAction, isPending] = React.useActionState(action, {});
   const [replyTarget, setReplyTarget] = useState<ReplyTarget>(null);
   const { t } = useLanguage();
+
+  useEffect(() => {
+    if (!state.success) return;
+    window.location.hash = state.commentId ? `comment-${state.commentId}` : 'reply-composer';
+    window.location.reload();
+  }, [state.commentId, state.success]);
 
   const { topLevelComments, childrenByParent, flattenedContext } = useMemo(() => {
     const byId = new Map(comments.map((comment) => [comment.id, comment]));
@@ -139,6 +145,7 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
           <input type="hidden" name="parentId" value={replyTarget?.id || ''} />
           <textarea name="content" required minLength={1} maxLength={4000} rows={4} placeholder={replyTarget ? t('discussion.replyPlaceholder', { target: replyTarget.label }) : t('discussion.placeholder')} />
           {state.error ? <Typography role="alert" variant="body2" color="error">{state.error}</Typography> : null}
+          {state.success ? <Typography role="status" variant="body2" sx={{ color: 'var(--bf-muted)' }}>{state.success}</Typography> : null}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
             <Button type="submit" variant="contained" disabled={isPending}>{isPending ? t('discussion.posting') : t('discussion.postReply')}</Button>
             {replyTarget ? <Button type="button" variant="text" onClick={() => setReplyTarget(null)}>{t('discussion.replyToThread')}</Button> : null}

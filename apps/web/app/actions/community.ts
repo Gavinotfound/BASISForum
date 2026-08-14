@@ -2,6 +2,7 @@
 
 import {
   createReport,
+  getPendingReportByReporterTarget,
   getCommentById,
   getThreadById,
   markNotificationsRead,
@@ -74,7 +75,18 @@ export async function submitReport(
   if (!REPORT_REASONS.includes(reason as (typeof REPORT_REASONS)[number])) return { error: '请选择有效的举报原因。' };
   if (details.length > 1000) return { error: '补充说明不能超过 1,000 个字符。' };
 
-  await createReport({ reporterId: user.id, targetType, targetId, threadId, reason, details: details || undefined });
+  const existing = await getPendingReportByReporterTarget({ reporterId: user.id, targetType, targetId });
+  if (existing) return { error: '你已经举报过该内容，管理员正在审核。' };
+
+  try {
+    await createReport({ reporterId: user.id, targetType, targetId, threadId, reason, details: details || undefined });
+  } catch (error) {
+    const databaseError = error as { code?: string } | undefined;
+    if (databaseError?.code === '23505') return { error: '你已经举报过该内容，管理员正在审核。' };
+    console.error('Report submission failed:', error);
+    return { error: '举报提交失败，请稍后重试。' };
+  }
+
   revalidatePath(`/threads/${thread.slug}`);
   return { success: '举报已提交，管理员会尽快审核。' };
 }

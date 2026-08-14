@@ -350,3 +350,13 @@ The initial theme release is superseded by this repair commit. The repaired buil
 - Raised the actual MUI input-root and outer hit containers for compact language and display-mode selectors to 44px; DOM hierarchy diagnostics confirmed the visible text node is smaller but the actionable parent receives the full 44px target.
 - Added `MOBILE_DEVICE_EMULATION_AUDIT_2026-08-14.md` documenting measurements, limitations, and recommended physical-device follow-up.
 - Deployed the fix after successful 23-test, zero-warning lint, and strict sequential Web/Admin build gates.
+
+## Iteration 17 — 2026-08-14T04:35:38Z
+
+### Completed
+
+- Eliminated report spam at three layers: the report modal closes and disables after successful submission, the server action returns a clear existing-report message, and a partial production database uniqueness index now allows only one pending report per reporter and target.
+- Safely consolidated production report spam before enforcing the index: the deduplication migration retained the earliest pending report and removed six duplicate records from the affected queue entry.
+- Reworked reply submission to return structured success state instead of interrupting the stateful form with a server redirect. The discussion composer now reloads the revalidated thread at the newly created comment anchor, preserving the existing two-layer flattening behavior and `@author` metadata.
+- Made Dialog, Autocomplete, Tooltip, Snackbar, Menu, and Popover surfaces explicitly opaque through the shared token-driven Material UI theme.
+- Verified 23 unit tests at 100% core coverage, zero-warning lint, and strict sequential Web/Admin production builds.

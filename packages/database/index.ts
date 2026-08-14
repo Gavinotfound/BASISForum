@@ -378,6 +378,22 @@ export const markNotificationsRead = async (userId: string) => {
   await db.update(schema.notifications).set({ readAt: new Date() }).where(and(eq(schema.notifications.userId, userId), isNull(schema.notifications.readAt)));
 };
 
+export const getPendingReportByReporterTarget = async (data: {
+  reporterId: string;
+  targetType: 'thread' | 'comment';
+  targetId: string;
+}) => {
+  return db.query.reports.findFirst({
+    where: and(
+      eq(schema.reports.reporterId, data.reporterId),
+      eq(schema.reports.targetType, data.targetType),
+      eq(schema.reports.targetId, data.targetId),
+      eq(schema.reports.status, 'pending'),
+    ),
+    columns: { id: true },
+  });
+};
+
 export const createReport = async (data: {
   reporterId: string;
   targetType: 'thread' | 'comment';

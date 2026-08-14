@@ -76,6 +76,8 @@ export async function postThread(_previousState: ThreadFormState, formData: Form
 
 export type CommentFormState = {
   error?: string;
+  success?: string;
+  commentId?: string;
 };
 
 export async function postComment(
@@ -158,5 +160,5 @@ export async function postComment(
   }
 
   revalidatePath(`/threads/${slug}`);
-  redirect(`/threads/${slug}#comment-${comment.id}`);
+  return { success: '回复已发布。', commentId: comment.id };
 }

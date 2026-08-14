@@ -147,10 +147,11 @@ export const reports = pgTable('reports', {
   resolutionNote: text('resolution_note'),
   createdAt: timestamp('created_at').defaultNow(),
   resolvedAt: timestamp('resolved_at'),
-}, (report) => ({
+},   (report) => ({
   reportsStatusCreatedIdx: index('reports_status_created_idx').on(report.status, report.createdAt),
   reportsThreadIdx: index('reports_thread_idx').on(report.threadId),
   reportsReporterCreatedIdx: index('reports_reporter_created_idx').on(report.reporterId, report.createdAt),
+  onePendingReportPerTarget: uniqueIndex('reports_reporter_target_pending_unique').on(report.reporterId, report.targetType, report.targetId).where(sql`${report.status} = 'pending'`),
 }));
 
 export const votes = pgTable(

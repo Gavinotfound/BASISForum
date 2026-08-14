@@ -54,13 +54,14 @@ export function ReportButton({
 }) {
   const [open, setOpen] = useState(false);
   const [state, formAction, isPending] = useActionState(action, {});
+  const reported = Boolean(state.success);
 
   return (
     <>
-      <Button type="button" size="small" color="inherit" startIcon={<FlagOutlinedIcon fontSize="small" />} onClick={() => setOpen(true)} disabled={!canReport}>
-        {compact ? 'Report' : 'Report content'}
+      <Button type="button" size="small" color="inherit" startIcon={<FlagOutlinedIcon fontSize="small" />} onClick={() => setOpen(true)} disabled={!canReport || reported}>
+        {reported ? 'Reported' : compact ? 'Report' : 'Report content'}
       </Button>
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+      <Dialog open={open && !reported} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
         <Box component="form" action={formAction}>
           <DialogTitle>Report content</DialogTitle>
           <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
