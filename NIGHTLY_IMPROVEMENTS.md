@@ -414,3 +414,5 @@ A production DOM and computed-style audit confirmed that the affected nested rep
 The final nested-reply visual repair replaced the affected Material UI Paper wrapper with a plain semantic article surface. This eliminates the generated Paper layer implicated in the visually blank child card, retains the Swiss rule-based layout, and preserves explicit background, foreground, floor, author, and recipient-context styling.
 
 A follow-up compositor audit added explicit stacking isolation to nested replies and elevated every direct article child above inherited layers. This prevents an overlapping visual layer from masking nested author or body text while retaining the semantic surface and Swiss divider structure. Full quality gates pass.
+
+The final visual diagnostic proved that an elevated foreground renders correctly above the affected nested-card mask. The permanent component contract now applies that elevated paint order to nested reply boxes, typography, and controls, preserving the regular semantic colors while preventing blank child surfaces. The complete test, lint, and strict-build gate passes.
