@@ -122,6 +122,7 @@ export async function postComment(
           id: parentComment.id,
           authorName: parentComment.author?.name || parentComment.author?.username || 'Student',
           authorUsername: parentComment.author?.username || null,
+          excerpt: parentComment.content.slice(0, 160),
         },
       };
     }

@@ -12,6 +12,7 @@ type ReplyContext = {
     id?: string;
     authorName?: string;
     authorUsername?: string | null;
+    excerpt?: string;
   };
 };
 
@@ -31,11 +32,12 @@ const readReplyContext = (metadata: unknown): ReplyContext['replyTo'] | undefine
   const replyTo = (metadata as { replyTo?: unknown }).replyTo;
   if (!replyTo || typeof replyTo !== 'object') return undefined;
 
-  const candidate = replyTo as { id?: unknown; authorName?: unknown; authorUsername?: unknown };
+  const candidate = replyTo as { id?: unknown; authorName?: unknown; authorUsername?: unknown; excerpt?: unknown };
   return {
     id: typeof candidate.id === 'string' ? candidate.id : undefined,
     authorName: typeof candidate.authorName === 'string' ? candidate.authorName : undefined,
     authorUsername: typeof candidate.authorUsername === 'string' || candidate.authorUsername === null ? candidate.authorUsername : undefined,
+    excerpt: typeof candidate.excerpt === 'string' ? candidate.excerpt : undefined,
   };
 };
 
@@ -86,6 +88,7 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
           id: directParent.id,
           authorName: directParent.author_name,
           authorUsername: directParent.author_username,
+          excerpt: directParent.content.slice(0, 160),
         });
       }
 
@@ -124,8 +127,8 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
           </Box>
           {canReply ? <Button size="small" onClick={() => selectReplyTarget(comment.id, `${label} · ${comment.author_name}`)}>{t('discussion.reply')}</Button> : null}
         </Box>
+        {replyTo?.authorName ? <Box component="aside" aria-label={`Replying to ${replyTo.authorName}`} sx={{ mb: 1.25, pl: 1.25, borderLeft: '2px solid var(--bf-interactive)', color: 'var(--bf-muted)' }}><Typography variant="overline" sx={{ display: 'block', color: 'inherit' }}>{`IN REPLY TO @${replyTo.authorName.toUpperCase()}`}</Typography><Typography variant="caption" sx={{ display: 'block', color: 'inherit', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{replyTo.excerpt ? `“${replyTo.excerpt}”` : 'A previous reply in this floor.'}</Typography></Box> : null}
         <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.78, mb: 2, color: 'var(--bf-text)' }}>
-          {replyTo?.authorName ? <Box component="span" sx={{ color: 'var(--bf-muted)', fontWeight: 700 }}>{`@${replyTo.authorName} `}</Box> : null}
           {comment.content}
         </Typography>
         <Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center', flexWrap: 'wrap' }}>

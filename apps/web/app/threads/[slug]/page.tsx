@@ -63,7 +63,7 @@ export default async function ThreadDetailPage({
   const canInteract = Boolean(session?.user);
 
   return (
-    <BasisProvider>
+    <BasisProvider mode={mode}>
       <ClientLayout user={session?.user}>
         <Box component="article" sx={{ mb: 7, pt: 2, color: 'var(--bf-text)', borderTop: '2px solid var(--bf-text)' }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '160px minmax(0,1fr)' }, gap: { xs: 1.5, md: 4 }, mb: 3 }}>
