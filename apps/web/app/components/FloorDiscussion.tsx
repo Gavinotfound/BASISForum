@@ -116,7 +116,7 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
     const label = depth === 0 ? `#${floor}` : t('discussion.replyTo', { floor });
 
     return <Box key={comment.id} id={`comment-${comment.id}`} sx={{ ml: { xs: depth ? 1 : 0, sm: depth ? 1.5 : 0, md: depth ? 3 : 0 }, mt: depth ? { xs: 1, md: 1.5 } : 0, position: 'relative', '&:before': depth ? { content: '""', position: 'absolute', left: { xs: -8, sm: -11 }, top: 0, bottom: 0, width: 1, bgcolor: 'var(--bf-divider)' } : {} }}>
-      <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2.25, md: 2.75 }, bgcolor: depth ? 'var(--bf-surface)' : 'transparent', color: 'var(--bf-text) !important', backgroundImage: 'none', backdropFilter: 'none', borderTop: '1px solid var(--bf-divider)', borderLeft: depth ? '1px solid var(--bf-divider)' : 'none', transition: 'background-color 120ms linear', '&:hover': { bgcolor: depth ? 'var(--bf-surface)' : 'var(--bf-hover)' }, ...(depth ? { '& .MuiTypography-root': { color: 'var(--bf-text) !important' }, '& .MuiTypography-caption, & .MuiTypography-overline': { color: 'var(--bf-muted) !important' } } : {}) }}>
+      <Box component="article" sx={{ p: { xs: 1.5, sm: 2.25, md: 2.75 }, bgcolor: depth ? 'var(--bf-surface)' : 'transparent', color: 'var(--bf-text) !important', borderTop: '1px solid var(--bf-divider)', borderLeft: depth ? '1px solid var(--bf-divider)' : 'none', transition: 'background-color 120ms linear', '&:hover': { bgcolor: depth ? 'var(--bf-surface)' : 'var(--bf-hover)' }, ...(depth ? { '& .MuiTypography-root': { color: 'var(--bf-text) !important' }, '& .MuiTypography-caption, & .MuiTypography-overline': { color: 'var(--bf-muted) !important' } } : {}) }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: { xs: 1, md: 2 }, alignItems: 'flex-start', mb: { xs: 1.25, md: 1.75 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.1 }}>
             <Typography variant="overline" sx={{ color: depth ? 'var(--bf-muted)' : 'var(--bf-text)', minWidth: 34 }}>{depth === 0 ? `#${floor}` : '↳'}</Typography>
@@ -136,7 +136,7 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
           <VoteControls targetType="comment" targetId={comment.id} initialVote={comment.vote} action={voteAction} canVote={canVote} compact />
           <ReportButton canReport={canVote} action={reportAction.bind(null, 'comment', comment.id)} compact />
         </Box>
-      </Paper>
+      </Box>
       {children.map((child) => renderComment(child, floor, 1))}
     </Box>;
   };

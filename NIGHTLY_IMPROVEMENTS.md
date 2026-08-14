@@ -410,3 +410,5 @@ The reply hierarchy audit confirmed that second-layer records already persisted 
 ### Nested reply visual-surface repair
 
 A production DOM and computed-style audit confirmed that the affected nested reply content was present but rendered against an ambiguous transparent Paper/hover surface. Second-layer replies now use an explicit semantic surface, force readable foreground and caption colors, and add a high-contrast `REPLY TO FLOOR #…` identity strip. This removes the visually blank card state across all display modes. Full tests, lint, and strict Web/Admin production builds pass.
+
+The final nested-reply visual repair replaced the affected Material UI Paper wrapper with a plain semantic article surface. This eliminates the generated Paper layer implicated in the visually blank child card, retains the Swiss rule-based layout, and preserves explicit background, foreground, floor, author, and recipient-context styling.
