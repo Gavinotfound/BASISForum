@@ -373,3 +373,7 @@ The deduplication migration removed six duplicate pending report rows, left one 
 - Replaced the build-specific bookmark server-action transport with an authenticated `POST /api/bookmarks/[threadId]` endpoint. The endpoint validates the signed-in user and target thread, toggles the database bookmark, revalidates the saved-list and thread paths, and returns a structured JSON error instead of allowing an unhandled route error.
 - Updated the client Save control to use the stable endpoint and show recoverable network or API errors in place; it no longer depends on a stale server-action identifier.
 - Passed 23 unit tests at 100% core coverage, zero-warning lint, and strict sequential Web/Admin builds. The production save/unsave and saved-list smoke checks remain scheduled immediately after deployment.
+
+### Follow-up stabilization
+
+The live API endpoint successfully returned `{ "bookmarked": true }` and persisted the bookmark, confirming the route repair. The final client follow-up removes `useTransition` from the imperative fetch path and uses an explicit `isSaving` state with `try`/`catch`/`finally`, preventing a completed save request from leaving the button permanently disabled. The full test, lint, and strict Web/Admin build gates passed again.

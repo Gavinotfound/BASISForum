@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { useState } from 'react';
 import { useActionState } from 'react';
 import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -21,26 +21,27 @@ export function BookmarkButton({
 }) {
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
   const [message, setMessage] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [isSaving, setIsSaving] = useState(false);
 
-  const toggle = () => {
-    if (!canBookmark || isPending) return;
+  const toggle = async () => {
+    if (!canBookmark || isSaving) return;
     setMessage(null);
-    startTransition(async () => {
-      try {
-        const response = await fetch(`/api/bookmarks/${threadId}`, { method: 'POST' });
-        const result = await response.json() as { bookmarked: boolean; error?: string };
-        if (!response.ok || result.error) setMessage(result.error || 'Saving this discussion failed. Please try again.');
-        else setBookmarked(result.bookmarked);
-      } catch {
-        setMessage('Saving this discussion failed. Please check your connection and try again.');
-      }
-    });
+    setIsSaving(true);
+    try {
+      const response = await fetch(`/api/bookmarks/${threadId}`, { method: 'POST' });
+      const result = await response.json() as { bookmarked: boolean; error?: string };
+      if (!response.ok || result.error) setMessage(result.error || 'Saving this discussion failed. Please try again.');
+      else setBookmarked(result.bookmarked);
+    } catch {
+      setMessage('Saving this discussion failed. Please check your connection and try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
     <Box sx={{ display: 'inline-flex', flexDirection: 'column', gap: 0.5 }}>
-      <Button type="button" variant={bookmarked ? 'contained' : 'outlined'} size="small" startIcon={bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />} disabled={!canBookmark || isPending} onClick={toggle}>
+      <Button type="button" variant={bookmarked ? 'contained' : 'outlined'} size="small" startIcon={bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />} disabled={!canBookmark || isSaving} onClick={toggle}>
         {bookmarked ? 'Saved' : 'Save'}
       </Button>
       {message ? <span style={{ color: '#d32f2f', fontSize: 12 }}>{message}</span> : null}
