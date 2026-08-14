@@ -1,5 +1,5 @@
 import React from 'react';
-import { BasisProvider } from '@basis-forum/ui';
+import { BasisProvider, isDisplayMode } from '@basis-forum/ui';
 import { getThreads, type ThreadSort } from '@basis-forum/database';
 import { auth } from '@/auth';
 import { cookies } from 'next/headers';
@@ -17,7 +17,7 @@ export default async function Home({
   const sort: ThreadSort = requestedSort === 'hot' ? 'hot' : 'latest';
   const [session, threads, cookieStore] = await Promise.all([auth(), getThreads(sort), cookies()]);
   const savedMode = cookieStore.get('basis_display_mode')?.value;
-  const mode = savedMode === 'light' || savedMode === 'low-contrast' || savedMode === 'amot' ? savedMode : 'dark';
+  const mode = isDisplayMode(savedMode) ? savedMode : 'dark';
 
   return (
     <BasisProvider mode={mode}>

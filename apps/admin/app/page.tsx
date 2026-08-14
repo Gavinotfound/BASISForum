@@ -1,4 +1,4 @@
-import { BasisProvider, DisplayModeSelector, LanguageSelector } from '@basis-forum/ui';
+import { BasisProvider, DisplayModeSelector, LanguageSelector, isDisplayMode } from '@basis-forum/ui';
 import { isLocale, translate } from '@basis-forum/ui/i18n';
 import { Box, Typography, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -20,7 +20,7 @@ export default async function AdminDashboard() {
   const storedLocale = cookieStore.get('basis_locale')?.value;
   const locale = isLocale(storedLocale) ? storedLocale : 'en';
   const storedMode = cookieStore.get('basis_display_mode')?.value;
-  const mode = storedMode === 'light' || storedMode === 'low-contrast' || storedMode === 'amot' ? storedMode : 'dark';
+  const mode = isDisplayMode(storedMode) ? storedMode : 'dark';
   const t = (key: string, vars?: Record<string, string | number>) => translate(locale, key, vars);
   if (!user || !isModerationRole(user.role)) redirect('http://49.233.13.58:3000/login');
 
@@ -42,7 +42,7 @@ export default async function AdminDashboard() {
         </Box>
         <Box sx={{ display: { xs: 'none', md: 'flex' }, mb: 2.5, gap: 1.5, flexWrap: 'wrap' }}><LanguageSelector /><DisplayModeSelector /></Box>
         <List sx={{ p: 0 }}>
-          {navigation.map((item) => <ListItem key={item.text} sx={{ minHeight: 44, p: 0, pl: item.active ? 1 : 0, mb: 1, borderLeft: item.active ? '2px solid var(--bf-navy)' : '2px solid transparent', color: item.active ? 'var(--bf-text)' : 'var(--bf-muted)' }}><ListItemIcon sx={{ minWidth: { xs: 0, md: 32 }, color: 'inherit', justifyContent: 'center' }}>{item.icon}</ListItemIcon><ListItemText primary={<Typography component="span" sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '.12em', display: { xs: 'none', md: 'block' } }}>{item.text}</Typography>} /></ListItem>)}
+          {navigation.map((item) => <ListItem key={item.text} sx={{ minHeight: 44, p: 0, pl: item.active ? 1 : 0, mb: 1, borderLeft: item.active ? '2px solid var(--bf-interactive)' : '2px solid transparent', color: item.active ? 'var(--bf-text)' : 'var(--bf-muted)' }}><ListItemIcon sx={{ minWidth: { xs: 0, md: 32 }, color: 'inherit', justifyContent: 'center' }}>{item.icon}</ListItemIcon><ListItemText primary={<Typography component="span" sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '.12em', display: { xs: 'none', md: 'block' } }}>{item.text}</Typography>} /></ListItem>)}
         </List>
         <Box sx={{ mt: 'auto', pt: 2, borderTop: '1px solid var(--bf-divider)' }}><Typography variant="overline" sx={{ color: 'var(--bf-muted)', display: { xs: 'none', md: 'block' } }}>{user.role}</Typography><Typography variant="body2" sx={{ fontWeight: 700, display: { xs: 'none', md: 'block' } }}>{user.name}</Typography></Box>
       </Box>

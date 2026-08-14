@@ -1,4 +1,4 @@
-export type DisplayMode = 'dark' | 'light' | 'low-contrast' | 'amot';
+export type DisplayMode = 'dark' | 'light' | 'low-contrast' | 'amot' | 'archive' | 'verdigris' | 'sakura';
 
 export type ThemeTokens = {
   label: string;
@@ -10,7 +10,8 @@ export type ThemeTokens = {
   muted: string;
   divider: string;
   controlBorder: string;
-  navy: string;
+  interactive: string;
+  interactiveHover: string;
   burgundy: string;
   burgundyHover: string;
   selectionForeground: string;
@@ -31,7 +32,8 @@ export const themeModes: Record<DisplayMode, ThemeTokens> = {
     muted: '#A3A3A3',
     divider: '#404040',
     controlBorder: '#666666',
-    navy: '#112B55',
+    interactive: '#112B55',
+    interactiveHover: '#112B55',
     burgundy: '#6F1D2A',
     burgundyHover: '#8E2D3A',
     selectionForeground: '#000000',
@@ -46,7 +48,8 @@ export const themeModes: Record<DisplayMode, ThemeTokens> = {
     muted: '#5E5E5E',
     divider: '#B7B7B7',
     controlBorder: '#7A7A7A',
-    navy: '#112B55',
+    interactive: '#112B55',
+    interactiveHover: '#112B55',
     burgundy: '#6F1D2A',
     burgundyHover: '#8E2D3A',
     selectionForeground: '#FFFFFF',
@@ -61,7 +64,8 @@ export const themeModes: Record<DisplayMode, ThemeTokens> = {
     muted: '#A0A0A0',
     divider: '#353535',
     controlBorder: '#5C5C5C',
-    navy: '#112B55',
+    interactive: '#112B55',
+    interactiveHover: '#112B55',
     burgundy: '#6F1D2A',
     burgundyHover: '#8E2D3A',
     selectionForeground: '#121212',
@@ -76,10 +80,59 @@ export const themeModes: Record<DisplayMode, ThemeTokens> = {
     muted: '#94A3B8',
     divider: '#314157',
     controlBorder: '#586B85',
-    navy: '#0022FF',
+    interactive: '#0022FF',
+    interactiveHover: '#0022FF',
     burgundy: '#6F1D2A',
     burgundyHover: '#8E2D3A',
     selectionForeground: '#0A1118',
+  },
+  archive: {
+    label: 'Archive',
+    isDark: false,
+    background: '#F7F0E3',
+    surface: '#F7F0E3',
+    surfaceHover: '#D8E7E4',
+    text: '#15211D',
+    muted: '#526158',
+    divider: '#6C756C',
+    controlBorder: '#809087',
+    interactive: '#1B5E76',
+    interactiveHover: '#174B5E',
+    burgundy: '#812D37',
+    burgundyHover: '#A43B45',
+    selectionForeground: '#F7F0E3',
+  },
+  verdigris: {
+    label: 'Verdigris',
+    isDark: true,
+    background: '#0D1B16',
+    surface: '#0D1B16',
+    surfaceHover: '#163D34',
+    text: '#EAF7EF',
+    muted: '#B0C7BA',
+    divider: '#557064',
+    controlBorder: '#6C8B7B',
+    interactive: '#1F7A6E',
+    interactiveHover: '#185E55',
+    burgundy: '#9C3444',
+    burgundyHover: '#BC4758',
+    selectionForeground: '#FFFFFF',
+  },
+  sakura: {
+    label: 'Sakura',
+    isDark: false,
+    background: '#FFF6F8',
+    surface: '#FFF6F8',
+    surfaceHover: '#F7DDE5',
+    text: '#2A1420',
+    muted: '#6B4B5B',
+    divider: '#9A6D7D',
+    controlBorder: '#B68595',
+    interactive: '#A82E5B',
+    interactiveHover: '#862447',
+    burgundy: '#7B263D',
+    burgundyHover: '#9B3853',
+    selectionForeground: '#FFFFFF',
   },
 };
 

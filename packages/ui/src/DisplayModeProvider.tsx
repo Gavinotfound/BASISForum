@@ -39,7 +39,8 @@ export const DisplayModeProvider = ({ children, initialMode = 'dark' }: { childr
     root.style.setProperty('--bf-muted', tokens.muted);
     root.style.setProperty('--bf-divider', tokens.divider);
     root.style.setProperty('--bf-control-border', tokens.controlBorder);
-    root.style.setProperty('--bf-navy', tokens.navy);
+    root.style.setProperty('--bf-interactive', tokens.interactive);
+    root.style.setProperty('--bf-interactive-hover', tokens.interactiveHover);
     root.style.setProperty('--bf-burgundy', tokens.burgundy);
     window.localStorage.setItem('basis_display_mode', mode);
     document.cookie = `basis_display_mode=${mode}; path=/; max-age=31536000; samesite=lax`;

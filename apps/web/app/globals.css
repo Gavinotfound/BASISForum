@@ -11,7 +11,8 @@
   --bf-muted: #A3A3A3;
   --bf-divider: #404040;
   --bf-control-border: #666666;
-  --bf-navy: #112B55;
+  --bf-interactive: #112B55;
+  --bf-interactive-hover: #112B55;
   --bf-burgundy: #6F1D2A;
 }
 
@@ -31,7 +32,7 @@ input, textarea, select {
   transition: border-color 120ms linear;
 }
 
-input:focus, textarea:focus, select:focus { border-bottom-color: var(--bf-navy) !important; }
+input:focus, textarea:focus, select:focus { border-bottom-color: var(--bf-interactive) !important; }
 textarea { line-height: 1.65; resize: vertical; }
 option { background: var(--bf-bg); color: var(--bf-text); }
 ::selection { background: var(--bf-text); color: var(--bf-bg); }

@@ -260,3 +260,29 @@ Profile, bookmark, and subject-filter pathways now use their supporting schema i
 ### Remaining Deliberate Product Decisions
 
 Pagination, cursor design, and a controlled database-backed integration test fixture remain worthwhile future work, but each changes forum-product behavior or test-environment architecture rather than correcting a defect. No critical, safe, independently actionable issue remains in the current codebase audit.
+
+## Iteration 13 — 2026-08-14T00:57:20Z
+
+### Completed
+
+- Added the approved **Archive**, **Verdigris**, and **Sakura** display modes to the centralized `themeModes` configuration; all selector labels and persisted-mode validation derive from this single source of truth.
+- Replaced the legacy color-named `navy` role with semantic `interactive` and `interactiveHover` tokens throughout shared Material UI styling, global native-control CSS, and the Admin active-navigation rule.
+- Updated Web and Admin server-side cookie parsing to use the shared `isDisplayMode` guard, so every configured display mode survives a full request without falling back to Dark.
+- Preserved the existing Dark, Light, Low Contrast, and AMOT token values and interaction behavior while giving new modes their own purposeful accents: Archive blue-teal, Verdigris teal, and Sakura pink.
+- Validated the approved themes’ text, metadata, divider, interactive, and destructive contrast pairs with the repository contrast checker.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| Archive contrast pairs | Main text 14.62:1; interactive button text 6.37:1 |
+| Verdigris contrast pairs | Main text 16.07:1; interactive button text 5.16:1 |
+| Sakura contrast pairs | Main text 16.23:1; interactive button text 6.55:1 |
+| Legacy token and manual mode-allowlist scan | Passed: none found |
+| `pnpm test` | Passed: 23 tests, 100% core coverage |
+| `pnpm lint` | Passed |
+| Sequential production builds with strict type validation | Passed for Web and Admin |
+
+### Follow-up Note
+
+The selector now offers seven mode entries. Future additions should be treated as explicit product decisions rather than incremental palette accumulation, so the interface remains concise and the theme system retains its editorial discipline.
