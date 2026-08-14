@@ -364,3 +364,12 @@ The initial theme release is superseded by this repair commit. The repaired buil
 ### Production verification
 
 The deduplication migration removed six duplicate pending report rows, left one canonical report for the affected target, and established the partial uniqueness index. The report dialog was visually confirmed opaque after deployment. A user-approved labelled verification reply was submitted beneath floor `#1`; it persisted, reloaded at its comment anchor, and rendered as a second-layer response.
+
+## Iteration 18 — 2026-08-14T05:05:45Z
+
+### Bookmark recovery
+
+- Diagnosed the live Save failure as a stale Next.js server-action reference after deployment (`Server Reference ID did not match the expected format`), which could drive the active route into its recovery boundary.
+- Replaced the build-specific bookmark server-action transport with an authenticated `POST /api/bookmarks/[threadId]` endpoint. The endpoint validates the signed-in user and target thread, toggles the database bookmark, revalidates the saved-list and thread paths, and returns a structured JSON error instead of allowing an unhandled route error.
+- Updated the client Save control to use the stable endpoint and show recoverable network or API errors in place; it no longer depends on a stale server-action identifier.
+- Passed 23 unit tests at 100% core coverage, zero-warning lint, and strict sequential Web/Admin builds. The production save/unsave and saved-list smoke checks remain scheduled immediately after deployment.

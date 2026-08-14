@@ -5,7 +5,7 @@ import { getBookmarkStatus, getCommentsByThreadId, getThreadBySlug, getVoteSumma
 import { auth } from '@/auth';
 import { postComment } from '../../actions/forum';
 import { castVote } from '../../actions/votes';
-import { submitReport, toggleBookmarkAction } from '../../actions/community';
+import { submitReport } from '../../actions/community';
 import ClientLayout from '../../components/ClientLayout';
 import FloorDiscussion from '../../components/FloorDiscussion';
 import VoteControls from '../../components/VoteControls';
@@ -53,7 +53,6 @@ export default async function ThreadDetailPage({
     }));
   const submitComment = postComment.bind(null, thread.id, slug);
   const submitVote = castVote.bind(null, thread.id, slug);
-  const toggleSaved = toggleBookmarkAction.bind(null, thread.id);
   const submitThreadReport = submitReport.bind(null, thread.id, 'thread', thread.id);
   const authorName = thread.author?.name || thread.author?.username || 'Student';
   const canInteract = Boolean(session?.user);
@@ -70,7 +69,7 @@ export default async function ThreadDetailPage({
           <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', fontSize: { xs: '1rem', md: '1.15rem' }, lineHeight: 1.75, mb: 4, maxWidth: 760, color: '#FFFFFF' }}>{starterPost?.content || 'This discussion has no content yet.'}</Typography>
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center', pt: 1.5, borderTop: '1px solid #404040' }}>
             <VoteControls targetType="thread" targetId={thread.id} initialVote={voteSummaries.get(`thread:${thread.id}`) || emptyVote} action={submitVote} canVote={canInteract} />
-            <BookmarkButton initialBookmarked={bookmarked} canBookmark={canInteract} action={toggleSaved} />
+            <BookmarkButton initialBookmarked={bookmarked} canBookmark={canInteract} threadId={thread.id} />
             <ReportButton canReport={canInteract} action={submitThreadReport} />
           </Box>
         </Box>

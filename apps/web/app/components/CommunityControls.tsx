@@ -13,11 +13,11 @@ type State = { error?: string; success?: string };
 export function BookmarkButton({
   initialBookmarked,
   canBookmark,
-  action,
+  threadId,
 }: {
   initialBookmarked: boolean;
   canBookmark: boolean;
-  action: () => Promise<{ bookmarked: boolean; error?: string }>;
+  threadId: string;
 }) {
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
   const [message, setMessage] = useState<string | null>(null);
@@ -27,9 +27,14 @@ export function BookmarkButton({
     if (!canBookmark || isPending) return;
     setMessage(null);
     startTransition(async () => {
-      const result = await action();
-      if (result.error) setMessage(result.error);
-      else setBookmarked(result.bookmarked);
+      try {
+        const response = await fetch(`/api/bookmarks/${threadId}`, { method: 'POST' });
+        const result = await response.json() as { bookmarked: boolean; error?: string };
+        if (!response.ok || result.error) setMessage(result.error || 'Saving this discussion failed. Please try again.');
+        else setBookmarked(result.bookmarked);
+      } catch {
+        setMessage('Saving this discussion failed. Please check your connection and try again.');
+      }
     });
   };
 
