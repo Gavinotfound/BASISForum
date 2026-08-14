@@ -116,19 +116,20 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
     const label = depth === 0 ? `#${floor}` : t('discussion.replyTo', { floor });
 
     return <Box key={comment.id} id={`comment-${comment.id}`} sx={{ ml: { xs: depth ? 1 : 0, sm: depth ? 1.5 : 0, md: depth ? 3 : 0 }, mt: depth ? { xs: 1, md: 1.5 } : 0, position: 'relative', '&:before': depth ? { content: '""', position: 'absolute', left: { xs: -8, sm: -11 }, top: 0, bottom: 0, width: 1, bgcolor: 'var(--bf-divider)' } : {} }}>
-      <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2.25, md: 2.75 }, bgcolor: 'transparent', color: 'var(--bf-text)', backgroundImage: 'none', backdropFilter: 'none', borderTop: '1px solid var(--bf-divider)', borderLeft: depth ? '1px solid var(--bf-divider)' : 'none', transition: 'background-color 120ms linear', '&:hover': { bgcolor: 'var(--bf-hover)' } }}>
+      <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2.25, md: 2.75 }, bgcolor: depth ? 'var(--bf-surface)' : 'transparent', color: 'var(--bf-text) !important', backgroundImage: 'none', backdropFilter: 'none', borderTop: '1px solid var(--bf-divider)', borderLeft: depth ? '1px solid var(--bf-divider)' : 'none', transition: 'background-color 120ms linear', '&:hover': { bgcolor: depth ? 'var(--bf-surface)' : 'var(--bf-hover)' }, ...(depth ? { '& .MuiTypography-root': { color: 'var(--bf-text) !important' }, '& .MuiTypography-caption, & .MuiTypography-overline': { color: 'var(--bf-muted) !important' } } : {}) }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: { xs: 1, md: 2 }, alignItems: 'flex-start', mb: { xs: 1.25, md: 1.75 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.1 }}>
             <Typography variant="overline" sx={{ color: depth ? 'var(--bf-muted)' : 'var(--bf-text)', minWidth: 34 }}>{depth === 0 ? `#${floor}` : '↳'}</Typography>
             <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 900 }}>{comment.author_name}</Typography>
+              {depth ? <Box component="span" sx={{ display: 'inline-flex', px: 0.6, py: 0.25, mb: 0.45, bgcolor: 'var(--bf-text)', color: 'var(--bf-selection-fg)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', fontSize: 9, fontWeight: 800, letterSpacing: '.11em', lineHeight: 1.2 }}>{`REPLY TO FLOOR #${floor}`}</Box> : null}
+              <Typography variant="subtitle2" sx={{ fontWeight: 900, color: 'var(--bf-text) !important' }}>{comment.author_name}</Typography>
               <Typography variant="caption" color="text.secondary">{label} · {comment.created_at ? new Date(comment.created_at).toLocaleString() : t('discussion.justNow')}</Typography>
             </Box>
           </Box>
           {canReply ? <Button size="small" onClick={() => selectReplyTarget(comment.id, `${label} · ${comment.author_name}`)}>{t('discussion.reply')}</Button> : null}
         </Box>
         {replyTo?.authorName ? <Box component="aside" aria-label={`Replying to ${replyTo.authorName}`} sx={{ mb: 1.25, pl: 1.25, borderLeft: '2px solid var(--bf-interactive)', color: 'var(--bf-muted)' }}><Typography variant="overline" sx={{ display: 'block', color: 'inherit' }}>{`IN REPLY TO @${replyTo.authorName.toUpperCase()}`}</Typography><Typography variant="caption" sx={{ display: 'block', color: 'inherit', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{replyTo.excerpt ? `“${replyTo.excerpt}”` : 'A previous reply in this floor.'}</Typography></Box> : null}
-        <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.78, mb: 2, color: 'var(--bf-text)' }}>
+        <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.78, mb: 2, color: 'var(--bf-text) !important', opacity: '1 !important' }}>
           {comment.content}
         </Typography>
         <Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center', flexWrap: 'wrap' }}>

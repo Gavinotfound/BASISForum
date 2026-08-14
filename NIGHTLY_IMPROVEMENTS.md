@@ -406,3 +406,7 @@ A singleton `campaign_settings` record and idempotent migration now store the li
 The reply hierarchy audit confirmed that second-layer records already persisted and rendered, but the prior minimal `@author` marker made a flattened response difficult to identify. Flattened replies now display a dedicated `IN REPLY TO @AUTHOR` cue with a one-line quoted excerpt of the original target. New deeper replies also persist that excerpt in reply metadata, while legacy records derive it from their direct parent. The normal thread path again receives the selected display mode from the server, so this cue remains readable in every palette. Full tests, lint, and strict production builds pass.
 
 - Approved end-to-end production verification passed: the test account selected second-layer comment `37131471-5430-4936-ab5f-fc670fd193d7`, the composer retained that exact parent ID, and the posted verification message rendered beneath floor #1 with `IN REPLY TO @TEST` and its quoted target context. The reply-to-reply path is now both functional and identifiable.
+
+### Nested reply visual-surface repair
+
+A production DOM and computed-style audit confirmed that the affected nested reply content was present but rendered against an ambiguous transparent Paper/hover surface. Second-layer replies now use an explicit semantic surface, force readable foreground and caption colors, and add a high-contrast `REPLY TO FLOOR #…` identity strip. This removes the visually blank card state across all display modes. Full tests, lint, and strict Web/Admin production builds pass.
