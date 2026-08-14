@@ -42,6 +42,8 @@ export const DisplayModeProvider = ({ children, initialMode = 'dark' }: { childr
     root.style.setProperty('--bf-interactive', tokens.interactive);
     root.style.setProperty('--bf-interactive-hover', tokens.interactiveHover);
     root.style.setProperty('--bf-burgundy', tokens.burgundy);
+    root.style.setProperty('--bf-burgundy-hover', tokens.burgundyHover);
+    root.style.setProperty('--bf-selection-fg', tokens.selectionForeground);
     window.localStorage.setItem('basis_display_mode', mode);
     document.cookie = `basis_display_mode=${mode}; path=/; max-age=31536000; samesite=lax`;
   }, [mode]);

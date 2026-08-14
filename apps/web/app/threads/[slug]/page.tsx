@@ -60,14 +60,14 @@ export default async function ThreadDetailPage({
   return (
     <BasisProvider>
       <ClientLayout user={session?.user}>
-        <Box component="article" sx={{ mb: 7, pt: 2, borderTop: '2px solid #FFFFFF' }}>
+        <Box component="article" sx={{ mb: 7, pt: 2, color: 'var(--bf-text)', borderTop: '2px solid var(--bf-text)' }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '160px minmax(0,1fr)' }, gap: { xs: 1.5, md: 4 }, mb: 3 }}>
-            <Box><CategoryBadge label={thread.subject} /><Typography variant="overline" sx={{ display: 'block', mt: 1, color: '#A3A3A3' }}>POSTED BY / {authorName.toUpperCase()} / {thread.createdAt ? new Date(thread.createdAt).toLocaleDateString() : 'TODAY'}</Typography></Box>
-            <Typography variant="overline" sx={{ textAlign: { xs: 'left', md: 'right' }, color: '#A3A3A3' }}>ORIGINAL POST / 001</Typography>
+            <Box><CategoryBadge label={thread.subject} /><Typography variant="overline" sx={{ display: 'block', mt: 1, color: 'var(--bf-muted)' }}>POSTED BY / {authorName.toUpperCase()} / {thread.createdAt ? new Date(thread.createdAt).toLocaleDateString() : 'TODAY'}</Typography></Box>
+            <Typography variant="overline" sx={{ textAlign: { xs: 'left', md: 'right' }, color: 'var(--bf-muted)' }}>ORIGINAL POST / 001</Typography>
           </Box>
           <Typography variant="h2" sx={{ mb: 4, maxWidth: 1100, overflowWrap: 'anywhere', textTransform: 'uppercase' }}>{thread.title}</Typography>
-          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', fontSize: { xs: '1rem', md: '1.15rem' }, lineHeight: 1.75, mb: 4, maxWidth: 760, color: '#FFFFFF' }}>{starterPost?.content || 'This discussion has no content yet.'}</Typography>
-          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center', pt: 1.5, borderTop: '1px solid #404040' }}>
+          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', fontSize: { xs: '1rem', md: '1.15rem' }, lineHeight: 1.75, mb: 4, maxWidth: 760, color: 'var(--bf-text)' }}>{starterPost?.content || 'This discussion has no content yet.'}</Typography>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center', pt: 1.5, borderTop: '1px solid var(--bf-divider)' }}>
             <VoteControls targetType="thread" targetId={thread.id} initialVote={voteSummaries.get(`thread:${thread.id}`) || emptyVote} action={submitVote} canVote={canInteract} />
             <BookmarkButton initialBookmarked={bookmarked} canBookmark={canInteract} threadId={thread.id} />
             <ReportButton canReport={canInteract} action={submitThreadReport} />

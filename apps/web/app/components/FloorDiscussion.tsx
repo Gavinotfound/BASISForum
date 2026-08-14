@@ -74,17 +74,19 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
       let normalizedParentId = comment.parent_id;
       const directParent = comment.parent_id ? byId.get(comment.parent_id) : undefined;
       const metadataReplyTo = readReplyContext(comment.metadata);
+      const parentIsFloor = Boolean(directParent && (!directParent.parent_id || directParent.parent_id === starterId));
 
-      // Legacy deeper records are displayed as a second-layer response to the floor.
-      if (directParent?.parent_id) {
+      // A normal second-layer reply remains beneath its selected floor. Only legacy
+      // third-or-deeper records are lifted to the floor and receive an @author context.
+      if (metadataReplyTo) {
+        context.set(comment.id, metadataReplyTo);
+      } else if (directParent && !parentIsFloor && directParent.parent_id) {
         normalizedParentId = directParent.parent_id;
-        context.set(comment.id, metadataReplyTo || {
+        context.set(comment.id, {
           id: directParent.id,
           authorName: directParent.author_name,
           authorUsername: directParent.author_username,
         });
-      } else if (metadataReplyTo) {
-        context.set(comment.id, metadataReplyTo);
       }
 
       if (!normalizedParentId || normalizedParentId === starterId) {
@@ -111,7 +113,7 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
     const label = depth === 0 ? `#${floor}` : t('discussion.replyTo', { floor });
 
     return <Box key={comment.id} id={`comment-${comment.id}`} sx={{ ml: { xs: depth ? 1 : 0, sm: depth ? 1.5 : 0, md: depth ? 3 : 0 }, mt: depth ? { xs: 1, md: 1.5 } : 0, position: 'relative', '&:before': depth ? { content: '""', position: 'absolute', left: { xs: -8, sm: -11 }, top: 0, bottom: 0, width: 1, bgcolor: 'var(--bf-divider)' } : {} }}>
-      <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2.25, md: 2.75 }, bgcolor: 'transparent', backgroundImage: 'none', backdropFilter: 'none', borderTop: '1px solid var(--bf-divider)', borderLeft: depth ? '1px solid var(--bf-divider)' : 'none', transition: 'background-color 120ms linear', '&:hover': { bgcolor: 'var(--bf-hover)' } }}>
+      <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2.25, md: 2.75 }, bgcolor: 'transparent', color: 'var(--bf-text)', backgroundImage: 'none', backdropFilter: 'none', borderTop: '1px solid var(--bf-divider)', borderLeft: depth ? '1px solid var(--bf-divider)' : 'none', transition: 'background-color 120ms linear', '&:hover': { bgcolor: 'var(--bf-hover)' } }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: { xs: 1, md: 2 }, alignItems: 'flex-start', mb: { xs: 1.25, md: 1.75 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.1 }}>
             <Typography variant="overline" sx={{ color: depth ? 'var(--bf-muted)' : 'var(--bf-text)', minWidth: 34 }}>{depth === 0 ? `#${floor}` : '↳'}</Typography>
@@ -122,7 +124,7 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
           </Box>
           {canReply ? <Button size="small" onClick={() => selectReplyTarget(comment.id, `${label} · ${comment.author_name}`)}>{t('discussion.reply')}</Button> : null}
         </Box>
-        <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.78, mb: 2, color: 'text.primary' }}>
+        <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.78, mb: 2, color: 'var(--bf-text)' }}>
           {replyTo?.authorName ? <Box component="span" sx={{ color: 'var(--bf-muted)', fontWeight: 700 }}>{`@${replyTo.authorName} `}</Box> : null}
           {comment.content}
         </Typography>

@@ -381,3 +381,10 @@ The live API endpoint successfully returned `{ "bookmarked": true }` and persist
 ### Production smoke confirmation
 
 After the final deployment, an authenticated Playwright smoke test logged in as the test account and exercised the exact forum Save control plus `/bookmarks`: saving returned HTTP 200 and changed the article control to **Saved**; the discussion appeared in the saved list; unsaving returned HTTP 200, restored **Save**, and removed the discussion from that list. The harness completed with `login`, `saved`, `listed`, `unsaved`, and `removed` all set to `true`.
+
+### Theme, reply hierarchy, and campaign-slot release
+
+- Repaired light-mode readability leaks in the discussion header, comment body, and vote controls by replacing hard-coded dark-theme values with centralized semantic CSS tokens. Archive now measures **14.62:1** main-text contrast and Sakura **16.23:1** against their backgrounds; their muted text remains above 5.7:1.
+- Corrected the floor grouping rule: replies to a floor remain visible below that floor, while only truly third-or-deeper legacy records are flattened back to the floor and annotated with `@author` context.
+- Added a modular `forumCampaignSlot` configuration object plus an optional top-of-index campaign module. It supports `cinematic` monochrome-plus-accent, `swiss-grid`, and `widescreen-photo` templates; swapping templates, copy, target link, or sponsor designation requires only a configuration edit. The default uses a generated independent-cinema 21:9 auditorium still with a text-safe left field.
+- Verification passed: 23 core tests at 100% coverage, zero-warning lint, and strict sequential Web/Admin production builds.

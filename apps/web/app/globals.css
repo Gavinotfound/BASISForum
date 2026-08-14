@@ -14,6 +14,8 @@
   --bf-interactive: #112B55;
   --bf-interactive-hover: #112B55;
   --bf-burgundy: #6F1D2A;
+  --bf-burgundy-hover: #8E2D3A;
+  --bf-selection-fg: #000000;
 }
 
 * { box-sizing: border-box; border-radius: 0 !important; box-shadow: none !important; }

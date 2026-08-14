@@ -50,7 +50,7 @@ function RollingScore({ score, compact }: { score: number; compact: boolean }) {
     return () => cancelAnimationFrame(frame);
   }, [score]);
 
-  const color = score === 0 ? '#A3A3A3' : '#FFFFFF';
+  const color = score === 0 ? 'var(--bf-muted)' : 'var(--bf-text)';
   const text = shownScore > 0 ? `+${shownScore}` : `${shownScore}`;
 
   return (
@@ -104,7 +104,7 @@ export default function VoteControls({
 
   return (
     <Box sx={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 0.3 }}>
-      <Box sx={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', py: 0.35, borderLeft: '1px solid #404040', borderRight: '1px solid #404040' }}>
+      <Box sx={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', py: 0.35, borderLeft: '1px solid var(--bf-divider)', borderRight: '1px solid var(--bf-divider)' }}>
         <IconButton
           size="small"
           type="button"
@@ -113,11 +113,11 @@ export default function VoteControls({
           title={canVote ? 'Upvote' : 'Sign in to vote'}
           aria-label="Upvote"
           sx={{
-            color: vote.currentUserVote === 1 ? '#000000' : '#A3A3A3',
-            bgcolor: vote.currentUserVote === 1 ? '#FFFFFF' : 'transparent',
+            color: vote.currentUserVote === 1 ? 'var(--bf-bg)' : 'var(--bf-muted)',
+            bgcolor: vote.currentUserVote === 1 ? 'var(--bf-text)' : 'transparent',
             transition: 'background-color 120ms linear',
-            '&:hover': { color: '#FFFFFF', bgcolor: '#112B55' },
-            '&:focus-visible': { outline: '1px solid #112B55', outlineOffset: 1 },
+            '&:hover': { color: 'var(--bf-selection-fg)', bgcolor: 'var(--bf-interactive-hover)' },
+            '&:focus-visible': { outline: '1px solid var(--bf-interactive)', outlineOffset: 1 },
           }}
         >
           <ArrowUpwardIcon sx={{ fontSize: iconSize }} />
@@ -131,11 +131,11 @@ export default function VoteControls({
           title={canVote ? 'Downvote' : 'Sign in to vote'}
           aria-label="Downvote"
           sx={{
-            color: vote.currentUserVote === -1 ? '#FFFFFF' : '#A3A3A3',
-            bgcolor: vote.currentUserVote === -1 ? '#6F1D2A' : 'transparent',
+            color: vote.currentUserVote === -1 ? '#FFFFFF' : 'var(--bf-muted)',
+            bgcolor: vote.currentUserVote === -1 ? 'var(--bf-burgundy)' : 'transparent',
             transition: 'background-color 120ms linear',
-            '&:hover': { color: '#FFFFFF', bgcolor: '#6F1D2A' },
-            '&:focus-visible': { outline: '1px solid #112B55', outlineOffset: 1 },
+            '&:hover': { color: '#FFFFFF', bgcolor: 'var(--bf-burgundy-hover)' },
+            '&:focus-visible': { outline: '1px solid var(--bf-interactive)', outlineOffset: 1 },
           }}
         >
           <ArrowDownwardIcon sx={{ fontSize: iconSize }} />
