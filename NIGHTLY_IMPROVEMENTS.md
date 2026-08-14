@@ -339,3 +339,14 @@ The initial theme release is superseded by this repair commit. The repaired buil
 
 - Deployed the responsive release with sequential strict Web/Admin builds and PM2 restarts; both services are online.
 - Re-captured the public index with live data at 320px and 1920px. The former mobile clipping and sort/header collision are absent, while the expanded wide-screen grid remains bounded and readable.
+
+## Iteration 16 — 2026-08-14T04:00:19Z
+
+### Completed
+
+- Ran post-deployment mobile-device emulation with iPhone 13-style and Pixel 5-style viewport, device scale factor, coarse pointer, and touch input profiles.
+- Verified touch-driven vertical scroll movement on both profiles, with no horizontal document overflow at 390px and 393px viewports.
+- Identified 38px top navigation buttons as the only confirmed compact touch-target issue and raised their mobile hit area to 44px.
+- Raised the actual MUI input-root and outer hit containers for compact language and display-mode selectors to 44px; DOM hierarchy diagnostics confirmed the visible text node is smaller but the actionable parent receives the full 44px target.
+- Added `MOBILE_DEVICE_EMULATION_AUDIT_2026-08-14.md` documenting measurements, limitations, and recommended physical-device follow-up.
+- Deployed the fix after successful 23-test, zero-warning lint, and strict sequential Web/Admin build gates.
