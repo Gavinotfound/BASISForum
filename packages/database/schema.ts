@@ -181,6 +181,24 @@ export const moderationLogs = pgTable('moderation_logs', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
+/** A singleton, Admin-managed configuration record for the forum’s top campaign slot. */
+export const campaignSettings = pgTable('campaign_settings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  key: text('key').notNull().unique(),
+  enabled: boolean('enabled').notNull().default(true),
+  template: text('template').notNull().default('cinematic'),
+  kind: text('kind').notNull().default('community'),
+  eyebrow: text('eyebrow').notNull(),
+  title: text('title').notNull(),
+  body: text('body').notNull(),
+  actionLabel: text('action_label'),
+  href: text('href'),
+  accent: text('accent'),
+  imageSrc: text('image_src'),
+  updatedBy: uuid('updated_by').references(() => users.id, { onDelete: 'set null' }),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
 // --- Relations ---
 
 export const usersRelations = relations(users, ({ many }) => ({

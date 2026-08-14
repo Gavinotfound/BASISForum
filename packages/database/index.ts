@@ -560,7 +560,7 @@ export const setUserRole = async (data: { userId: string; role: AdminRole }) => 
   return user;
 };
 
-export const createModerationLog = async (data: { moderatorId: string; targetType: 'thread' | 'user' | 'report'; targetId: string; action: string; reason?: string }) => {
+export const createModerationLog = async (data: { moderatorId: string; targetType: 'thread' | 'user' | 'report' | 'campaign'; targetId: string; action: string; reason?: string }) => {
   const [log] = await db.insert(schema.moderationLogs).values(data).returning();
   return log;
 };
@@ -620,3 +620,103 @@ export const createComment = async (data: {
 
 export * from './types';
 export * from './schema';
+
+// --- Forum Campaign Settings ---
+
+export type CampaignTemplate = 'cinematic' | 'swiss-grid' | 'widescreen-photo';
+export type CampaignKind = 'community' | 'sponsor';
+
+export type ForumCampaignSettings = {
+  enabled: boolean;
+  template: CampaignTemplate;
+  kind: CampaignKind;
+  eyebrow: string;
+  title: string;
+  body: string;
+  actionLabel?: string;
+  href?: string;
+  accent?: string;
+  imageSrc?: string;
+  updatedAt?: Date | null;
+};
+
+export type ForumCampaignSettingsInput = Omit<ForumCampaignSettings, 'updatedAt'>;
+
+const FORUM_CAMPAIGN_KEY = 'forum_top';
+const defaultForumCampaignSettings: ForumCampaignSettings = {
+  enabled: true,
+  template: 'cinematic',
+  kind: 'community',
+  eyebrow: 'COMMUNITY PROGRAM / 2026',
+  title: 'MAKE ROOM FOR THE NEXT IDEA.',
+  body: 'A reserved top-of-forum space for student projects, campus initiatives, and future sponsor messages.',
+  actionLabel: 'EXPLORE PROGRAM',
+  href: '/search',
+  accent: '#812D37',
+  imageSrc: '/images/campaign-independent-cinema.jpg',
+};
+
+const mapForumCampaign = (row: typeof schema.campaignSettings.$inferSelect): ForumCampaignSettings => ({
+  enabled: row.enabled,
+  template: row.template as CampaignTemplate,
+  kind: row.kind as CampaignKind,
+  eyebrow: row.eyebrow,
+  title: row.title,
+  body: row.body,
+  actionLabel: row.actionLabel || undefined,
+  href: row.href || undefined,
+  accent: row.accent || undefined,
+  imageSrc: row.imageSrc || undefined,
+  updatedAt: row.updatedAt,
+});
+
+export const getForumCampaignSettings = async (): Promise<ForumCampaignSettings> => {
+  try {
+    const row = await db.query.campaignSettings.findFirst({
+      where: eq(schema.campaignSettings.key, FORUM_CAMPAIGN_KEY),
+    });
+    return row ? mapForumCampaign(row) : defaultForumCampaignSettings;
+  } catch (error) {
+    console.error('Campaign settings lookup failed:', error);
+    return defaultForumCampaignSettings;
+  }
+};
+
+export const upsertForumCampaignSettings = async (
+  settings: ForumCampaignSettingsInput,
+  updatedBy: string,
+): Promise<ForumCampaignSettings & { id: string }> => {
+  const [row] = await db
+    .insert(schema.campaignSettings)
+    .values({
+      key: FORUM_CAMPAIGN_KEY,
+      ...settings,
+      actionLabel: settings.actionLabel || null,
+      href: settings.href || null,
+      accent: settings.accent || null,
+      imageSrc: settings.imageSrc || null,
+      updatedBy,
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: schema.campaignSettings.key,
+      set: {
+        enabled: settings.enabled,
+        template: settings.template,
+        kind: settings.kind,
+        eyebrow: settings.eyebrow,
+        title: settings.title,
+        body: settings.body,
+        actionLabel: settings.actionLabel || null,
+        href: settings.href || null,
+        accent: settings.accent || null,
+        imageSrc: settings.imageSrc || null,
+        updatedBy,
+        updatedAt: new Date(),
+      },
+    })
+    .returning();
+
+  if (!row) throw new Error('Campaign settings could not be saved');
+  return { id: row.id, ...mapForumCampaign(row) };
+};
