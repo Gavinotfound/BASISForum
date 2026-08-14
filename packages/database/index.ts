@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema';
 import { Thread, User, Resource } from './types';
-import { and, asc, count, desc, eq, ilike, inArray, isNull, or, type SQL } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gte, ilike, inArray, isNull, or, type SQL } from 'drizzle-orm';
 
 const pool = new Pool({
   connectionString:
@@ -414,6 +414,139 @@ export const resolveReport = async (data: {
     .where(eq(schema.reports.id, data.reportId))
     .returning();
   return report;
+};
+
+export type AdminRole = 'student' | 'moderator' | 'admin';
+
+export type AdminDashboard = {
+  metrics: {
+    totalMembers: number;
+    totalThreads: number;
+    totalReplies: number;
+    totalVotes: number;
+    newMembers24h: number;
+    newThreads24h: number;
+    newReplies24h: number;
+    votes24h: number;
+    pendingReports: number;
+    resolvedReports7d: number;
+  };
+  subjectActivity: Array<{ subject: string; threads: number }>;
+  recentThreads: ForumThread[];
+  topDiscussions: ForumThread[];
+  members: Array<{
+    id: string;
+    name: string | null;
+    username: string | null;
+    email: string;
+    role: AdminRole;
+    reputationScore: number;
+    createdAt: Date | null;
+    threadCount: number;
+    replyCount: number;
+  }>;
+};
+
+export const getAdminDashboard = async (): Promise<AdminDashboard> => {
+  const now = new Date();
+  const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const subjectThreadCount = count();
+
+  const [
+    [totalMembers],
+    [totalThreads],
+    [totalReplies],
+    [totalVotes],
+    [newMembers24h],
+    [newThreads24h],
+    [newReplies24h],
+    [votes24h],
+    [pendingReports],
+    [resolvedReports7d],
+    subjectActivity,
+    members,
+  ] = await Promise.all([
+    db.select({ value: count() }).from(schema.users),
+    db.select({ value: count() }).from(schema.threads),
+    db.select({ value: count() }).from(schema.resources).where(eq(schema.resources.isThreadStarter, false)),
+    db.select({ value: count() }).from(schema.votes),
+    db.select({ value: count() }).from(schema.users).where(gte(schema.users.createdAt, dayAgo)),
+    db.select({ value: count() }).from(schema.threads).where(gte(schema.threads.createdAt, dayAgo)),
+    db.select({ value: count() }).from(schema.resources).where(and(eq(schema.resources.isThreadStarter, false), gte(schema.resources.createdAt, dayAgo))),
+    db.select({ value: count() }).from(schema.votes).where(gte(schema.votes.createdAt, dayAgo)),
+    db.select({ value: count() }).from(schema.reports).where(eq(schema.reports.status, 'pending')),
+    db.select({ value: count() }).from(schema.reports).where(and(gte(schema.reports.resolvedAt, weekAgo), or(eq(schema.reports.status, 'reviewed'), eq(schema.reports.status, 'dismissed'), eq(schema.reports.status, 'actioned')))),
+    db.select({ subject: schema.threads.subject, threads: subjectThreadCount }).from(schema.threads).groupBy(schema.threads.subject).orderBy(desc(subjectThreadCount)).limit(6),
+    db.query.users.findMany({ orderBy: [desc(schema.users.createdAt)], limit: 24 }),
+  ]);
+
+  const memberIds = members.map((member) => member.id);
+  const [threadCounts, replyCounts, recentThreads, topDiscussions] = await Promise.all([
+    memberIds.length > 0
+      ? db.select({ authorId: schema.threads.authorId, total: count() }).from(schema.threads).where(inArray(schema.threads.authorId, memberIds)).groupBy(schema.threads.authorId)
+      : Promise.resolve([]),
+    memberIds.length > 0
+      ? db.select({ authorId: schema.resources.authorId, total: count() }).from(schema.resources).where(and(inArray(schema.resources.authorId, memberIds), eq(schema.resources.isThreadStarter, false))).groupBy(schema.resources.authorId)
+      : Promise.resolve([]),
+    getThreads('latest'),
+    getThreads('hot'),
+  ]);
+
+  const threadCountByUser = new Map(threadCounts.map((row) => [row.authorId, Number(row.total)]));
+  const replyCountByUser = new Map(replyCounts.map((row) => [row.authorId, Number(row.total)]));
+
+  return {
+    metrics: {
+      totalMembers: Number(totalMembers?.value || 0),
+      totalThreads: Number(totalThreads?.value || 0),
+      totalReplies: Number(totalReplies?.value || 0),
+      totalVotes: Number(totalVotes?.value || 0),
+      newMembers24h: Number(newMembers24h?.value || 0),
+      newThreads24h: Number(newThreads24h?.value || 0),
+      newReplies24h: Number(newReplies24h?.value || 0),
+      votes24h: Number(votes24h?.value || 0),
+      pendingReports: Number(pendingReports?.value || 0),
+      resolvedReports7d: Number(resolvedReports7d?.value || 0),
+    },
+    subjectActivity: subjectActivity.map((row) => ({ subject: row.subject, threads: Number(row.threads) })),
+    recentThreads: recentThreads.slice(0, 6),
+    topDiscussions: topDiscussions.slice(0, 6),
+    members: members.map((member) => ({
+      id: member.id,
+      name: member.name,
+      username: member.username,
+      email: member.email,
+      role: member.role === 'admin' || member.role === 'moderator' ? member.role : 'student',
+      reputationScore: member.reputationScore || 0,
+      createdAt: member.createdAt || null,
+      threadCount: threadCountByUser.get(member.id) || 0,
+      replyCount: replyCountByUser.get(member.id) || 0,
+    })),
+  };
+};
+
+export const setThreadSticky = async (data: { threadId: string; isSticky: boolean }) => {
+  const [thread] = await db
+    .update(schema.threads)
+    .set({ isSticky: data.isSticky, updatedAt: new Date() })
+    .where(eq(schema.threads.id, data.threadId))
+    .returning();
+  return thread;
+};
+
+export const setUserRole = async (data: { userId: string; role: AdminRole }) => {
+  const [user] = await db
+    .update(schema.users)
+    .set({ role: data.role, updatedAt: new Date() })
+    .where(eq(schema.users.id, data.userId))
+    .returning();
+  return user;
+};
+
+export const createModerationLog = async (data: { moderatorId: string; targetType: 'thread' | 'user' | 'report'; targetId: string; action: string; reason?: string }) => {
+  const [log] = await db.insert(schema.moderationLogs).values(data).returning();
+  return log;
 };
 
 // --- Mutation Functions ---
