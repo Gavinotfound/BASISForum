@@ -6,7 +6,8 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import GavelIcon from '@mui/icons-material/Gavel';
 import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { getAdminDashboard, getForumCampaignSettings, getReports } from '@basis-forum/database';
+import ArticleIcon from '@mui/icons-material/Article';
+import { getAdminDashboard, getCreatorVerificationQueue, getEditorialReviewQueue, getForumCampaignSettings, getKnowledgeCardReviewQueue, getMentorVerificationQueue, getReports, getStudyHubReviewQueue } from '@basis-forum/database';
 import { isModerationRole } from '@basis-forum/core';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
@@ -15,6 +16,8 @@ import ReportQueue from './components/ReportQueue';
 import ThreadOperations from './components/ThreadOperations';
 import MemberDirectory from './components/MemberDirectory';
 import CampaignManager from './components/CampaignManager';
+import EditorialDesk from './components/EditorialDesk';
+import AcademicReviewDesk from './components/AcademicReviewDesk';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +33,7 @@ export default async function AdminDashboard() {
   const t = (key: string, vars?: Record<string, string | number>) => translate(locale, key, vars);
   if (!user?.id || !isModerationRole(user.role)) redirect('http://49.233.13.58:3000/login');
 
-  const [dashboard, reports, campaign] = await Promise.all([getAdminDashboard(), getReports(), getForumCampaignSettings()]);
+  const [dashboard, reports, campaign, editorialPosts, creatorRequests, knowledgeCards, studyHubs, mentorRequests] = await Promise.all([getAdminDashboard(), getReports(), getForumCampaignSettings(), getEditorialReviewQueue(), getCreatorVerificationQueue(), getKnowledgeCardReviewQueue(), getStudyHubReviewQueue(), getMentorVerificationQueue()]);
   const rows = reports.map((report) => ({ id: report.id, targetType: report.targetType, reason: report.reason, details: report.details, status: report.status, createdAt: report.createdAt, reporterId: report.reporterId, reporterName: report.reporter?.name || report.reporter?.username || 'Student', threadId: report.threadId || '', threadTitle: report.thread?.title || 'Removed discussion' }));
   const pendingCount = dashboard.metrics.pendingReports;
   const resolvedCount = dashboard.metrics.resolvedReports7d;
@@ -39,6 +42,8 @@ export default async function AdminDashboard() {
     { text: t('admin.overview'), icon: <DashboardIcon />, href: '#overview' },
     { text: t('admin.reports'), icon: <GavelIcon />, href: '#reports', badge: pendingCount },
     { text: t('admin.students'), icon: <PeopleIcon />, href: '#members' },
+    { text: 'Editorial', icon: <ArticleIcon />, href: '#editorial', badge: editorialPosts.length + creatorRequests.length },
+    { text: 'Academic', icon: <ArticleIcon />, href: '#academic-review', badge: knowledgeCards.length + studyHubs.length + mentorRequests.length },
     { text: 'Campaign', icon: <SettingsIcon />, href: '#campaign' },
     { text: t('admin.settings'), icon: <SettingsIcon />, href: '#operations' },
   ];
@@ -79,6 +84,10 @@ export default async function AdminDashboard() {
         </Box>
 
         <Box id="reports" sx={{ scrollMarginTop: 24, mb: { xs: 5, md: 7 } }}><Typography variant="overline" sx={{ color: 'var(--bf-muted)' }}>REPORT QUEUE / ACTIVE SAFETY WORK</Typography><Typography variant="h5" sx={{ mt: .5, mb: 1.5, fontWeight: 900 }}>Community reports</Typography><ReportQueue reports={rows} labels={{ queueClear: t('admin.queueClear'), noReports: t('admin.noReports'), target: t('admin.target'), reporter: t('admin.reporter'), reason: t('admin.reason'), status: t('admin.status'), action: t('admin.action'), dismiss: t('admin.dismiss'), takeAction: t('admin.takeAction'), resolved: t('admin.resolvedLabel') }} /></Box>
+
+        <EditorialDesk posts={editorialPosts.map((post) => ({ id: post.id, headline: post.headline, dek: post.dek, kind: post.kind, author: { name: post.authorName, username: post.authorUsername }, createdAt: post.createdAt }))} creatorRequests={creatorRequests.map((profile) => ({ id: profile.id, displayName: profile.displayName, type: profile.type, statement: profile.statement, user: { name: profile.userName, username: profile.userUsername }, createdAt: profile.createdAt }))} canPublish={canManageRoles} />
+
+        <AcademicReviewDesk cards={knowledgeCards} hubs={studyHubs} mentors={mentorRequests} canManage={canManageRoles} />
 
         <Box id="campaign" sx={{ scrollMarginTop: 24, mb: { xs: 5, md: 7 } }}><Typography variant="overline" sx={{ color: 'var(--bf-muted)' }}>CAMPAIGN CONTROL / HOMEPAGE PLACEMENT</Typography><Typography variant="h5" sx={{ mt: .5, mb: 1.5, fontWeight: 900 }}>Forum campaign editor</Typography><CampaignManager campaign={campaign} canManage={canManageRoles} /></Box>
 

@@ -76,7 +76,10 @@ export const threads = pgTable('threads', {
   slug: text('slug').unique().notNull(),
   authorId: uuid('author_id').references(() => users.id, { onDelete: 'set null' }),
   subject: text('subject').notNull(), // Math, Science, etc.
+  kind: text('kind').notNull().default('discussion'), // discussion, help_request, review_request
+  helpContext: jsonb('help_context'),
   isSticky: boolean('is_sticky').default(false),
+  isCommentsClosed: boolean('is_comments_closed').notNull().default(false),
   viewCount: integer('view_count').default(0),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
@@ -196,6 +199,260 @@ export const campaignSettings = pgTable('campaign_settings', {
   accent: text('accent'),
   imageSrc: text('image_src'),
   updatedBy: uuid('updated_by').references(() => users.id, { onDelete: 'set null' }),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// --- Structured community safety and academic tables ---
+
+export const userBlocks = pgTable('user_blocks', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  blockerId: uuid('blocker_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  blockedId: uuid('blocked_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (block) => ({
+  uniquePair: uniqueIndex('user_blocks_unique_pair').on(block.blockerId, block.blockedId),
+  blockerCreatedIdx: index('user_blocks_blocker_created_idx').on(block.blockerId, block.createdAt),
+}));
+
+export const reportAppeals = pgTable('report_appeals', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  reportId: uuid('report_id').notNull().references(() => reports.id, { onDelete: 'cascade' }),
+  appellantId: uuid('appellant_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  statement: text('statement').notNull(),
+  status: text('status').notNull().default('pending'),
+  reviewedBy: uuid('reviewed_by').references(() => users.id, { onDelete: 'set null' }),
+  reviewNote: text('review_note'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  reviewedAt: timestamp('reviewed_at'),
+}, (appeal) => ({
+  reportCreatedIdx: index('report_appeals_report_created_idx').on(appeal.reportId, appeal.createdAt),
+  uniqueOpenAppeal: uniqueIndex('report_appeals_open_unique').on(appeal.reportId, appeal.appellantId).where(sql`${appeal.status} = 'pending'`),
+}));
+
+export const threadResolutions = pgTable('thread_resolutions', {
+  threadId: uuid('thread_id').primaryKey().references(() => threads.id, { onDelete: 'cascade' }),
+  replyId: uuid('reply_id').notNull().references(() => resources.id, { onDelete: 'cascade' }),
+  resolvedBy: uuid('resolved_by').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export const knowledgeCards = pgTable('knowledge_cards', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: text('slug').notNull().unique(),
+  subject: text('subject').notNull(),
+  title: text('title').notNull(),
+  summary: text('summary').notNull(),
+  content: text('content').notNull(),
+  sourceThreadId: uuid('source_thread_id').references(() => threads.id, { onDelete: 'set null' }),
+  sourceReplyId: uuid('source_reply_id').references(() => resources.id, { onDelete: 'set null' }),
+  status: text('status').notNull().default('draft'),
+  createdBy: uuid('created_by').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  reviewedBy: uuid('reviewed_by').references(() => users.id, { onDelete: 'set null' }),
+  publishedAt: timestamp('published_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+}, (card) => ({
+  subjectStatusPublishedIdx: index('knowledge_cards_subject_status_published_idx').on(card.subject, card.status, card.publishedAt),
+  sourceThreadIdx: index('knowledge_cards_source_thread_idx').on(card.sourceThreadId),
+}));
+
+export const studyHubs = pgTable('study_hubs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: text('slug').notNull().unique(),
+  title: text('title').notNull(),
+  subject: text('subject').notNull(),
+  description: text('description').notNull(),
+  startsAt: timestamp('starts_at').notNull(),
+  endsAt: timestamp('ends_at').notNull(),
+  status: text('status').notNull().default('draft'),
+  createdBy: uuid('created_by').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  publishedAt: timestamp('published_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+}, (hub) => ({
+  subjectStatusEndsIdx: index('study_hubs_subject_status_ends_idx').on(hub.subject, hub.status, hub.endsAt),
+}));
+
+export const studyHubThreads = pgTable('study_hub_threads', {
+  hubId: uuid('hub_id').notNull().references(() => studyHubs.id, { onDelete: 'cascade' }),
+  threadId: uuid('thread_id').notNull().references(() => threads.id, { onDelete: 'cascade' }),
+  addedBy: uuid('added_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (membership) => ({
+  compositeKey: primaryKey({ columns: [membership.hubId, membership.threadId] }),
+}));
+
+export const studyCircles = pgTable('study_circles', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: text('slug').notNull().unique(),
+  hostId: uuid('host_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  subject: text('subject').notNull(),
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  startsAt: timestamp('starts_at').notNull(),
+  endsAt: timestamp('ends_at').notNull(),
+  capacity: integer('capacity').notNull().default(4),
+  locationLabel: text('location_label'),
+  status: text('status').notNull().default('open'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+}, (circle) => ({
+  statusStartsIdx: index('study_circles_status_starts_idx').on(circle.status, circle.startsAt),
+  hostCreatedIdx: index('study_circles_host_created_idx').on(circle.hostId, circle.createdAt),
+}));
+
+export const studyCircleRequests = pgTable('study_circle_requests', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  circleId: uuid('circle_id').notNull().references(() => studyCircles.id, { onDelete: 'cascade' }),
+  requesterId: uuid('requester_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  note: text('note'),
+  status: text('status').notNull().default('pending'),
+  decidedBy: uuid('decided_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  decidedAt: timestamp('decided_at'),
+}, (request) => ({
+  uniqueRequesterCircle: uniqueIndex('study_circle_requests_unique_pair').on(request.circleId, request.requesterId),
+  circleStatusIdx: index('study_circle_requests_circle_status_idx').on(request.circleId, request.status),
+}));
+
+// --- Peer review, mentorship, and verified creator publishing ---
+
+export const peerReviews = pgTable('peer_reviews', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  threadId: uuid('thread_id').notNull().unique().references(() => threads.id, { onDelete: 'cascade' }),
+  requesterId: uuid('requester_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  rubric: jsonb('rubric').notNull(),
+  externalUrl: text('external_url'),
+  status: text('status').notNull().default('open'),
+  closesAt: timestamp('closes_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const peerReviewFeedback = pgTable('peer_review_feedback', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  reviewId: uuid('review_id').notNull().references(() => peerReviews.id, { onDelete: 'cascade' }),
+  reviewerId: uuid('reviewer_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  criterion: text('criterion').notNull(),
+  feedback: text('feedback').notNull(),
+  isHelpful: boolean('is_helpful'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (feedback) => ({
+  reviewCreatedIdx: index('peer_review_feedback_review_created_idx').on(feedback.reviewId, feedback.createdAt),
+  uniqueReviewerCriterion: uniqueIndex('peer_review_feedback_unique_criterion').on(feedback.reviewId, feedback.reviewerId, feedback.criterion),
+}));
+
+export const mentorProfiles = pgTable('mentor_profiles', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
+  subjects: jsonb('subjects').notNull(),
+  statement: text('statement').notNull(),
+  status: text('status').notNull().default('requested'),
+  verifiedBy: uuid('verified_by').references(() => users.id, { onDelete: 'set null' }),
+  verifiedAt: timestamp('verified_at'),
+  expiresAt: timestamp('expires_at'),
+  reviewNote: text('review_note'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+}, (mentor) => ({
+  statusIdx: index('mentor_profiles_status_idx').on(mentor.status),
+}));
+
+export const mentorRequests = pgTable('mentor_requests', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  mentorProfileId: uuid('mentor_profile_id').notNull().references(() => mentorProfiles.id, { onDelete: 'cascade' }),
+  requesterId: uuid('requester_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  subject: text('subject').notNull(),
+  question: text('question').notNull(),
+  status: text('status').notNull().default('pending'),
+  responseNote: text('response_note'),
+  decidedAt: timestamp('decided_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (request) => ({
+  mentorStatusCreatedIdx: index('mentor_requests_mentor_status_created_idx').on(request.mentorProfileId, request.status, request.createdAt),
+}));
+
+export const creatorProfiles = pgTable('creator_profiles', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(),
+  status: text('status').notNull().default('requested'),
+  displayName: text('display_name').notNull(),
+  statement: text('statement').notNull(),
+  verifiedBy: uuid('verified_by').references(() => users.id, { onDelete: 'set null' }),
+  verifiedAt: timestamp('verified_at'),
+  expiresAt: timestamp('expires_at'),
+  suspensionNote: text('suspension_note'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+}, (creator) => ({
+  statusIdx: index('creator_profiles_status_idx').on(creator.status),
+}));
+
+export const editorialPosts = pgTable('editorial_posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: text('slug').notNull().unique(),
+  headline: text('headline').notNull(),
+  dek: text('dek').notNull(),
+  body: text('body').notNull(),
+  kind: text('kind').notNull(),
+  status: text('status').notNull().default('draft'),
+  authorId: uuid('author_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  creatorProfileId: uuid('creator_profile_id').references(() => creatorProfiles.id, { onDelete: 'set null' }),
+  tags: jsonb('tags').notNull().default(sql`'[]'::jsonb`),
+  sourceLinks: jsonb('source_links').notNull().default(sql`'[]'::jsonb`),
+  imageSrc: text('image_src'),
+  discussionThreadId: uuid('discussion_thread_id').references(() => threads.id, { onDelete: 'set null' }),
+  reviewNote: text('review_note'),
+  reviewedBy: uuid('reviewed_by').references(() => users.id, { onDelete: 'set null' }),
+  publisherId: uuid('publisher_id').references(() => users.id, { onDelete: 'set null' }),
+  publishedAt: timestamp('published_at'),
+  scheduledAt: timestamp('scheduled_at'),
+  archivedAt: timestamp('archived_at'),
+  correctionNote: text('correction_note'),
+  isSponsored: boolean('is_sponsored').notNull().default(false),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+}, (post) => ({
+  statusPublishedIdx: index('editorial_posts_status_published_idx').on(post.status, post.publishedAt),
+  kindStatusPublishedIdx: index('editorial_posts_kind_status_published_idx').on(post.kind, post.status, post.publishedAt),
+  authorCreatedIdx: index('editorial_posts_author_created_idx').on(post.authorId, post.createdAt),
+}));
+
+export const editorialPostRevisions = pgTable('editorial_post_revisions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  postId: uuid('post_id').notNull().references(() => editorialPosts.id, { onDelete: 'cascade' }),
+  revisionNumber: integer('revision_number').notNull(),
+  snapshot: jsonb('snapshot').notNull(),
+  state: text('state').notNull(),
+  reviewNote: text('review_note'),
+  createdBy: uuid('created_by').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (revision) => ({
+  uniqueRevision: uniqueIndex('editorial_post_revisions_unique_number').on(revision.postId, revision.revisionNumber),
+  postCreatedIdx: index('editorial_post_revisions_post_created_idx').on(revision.postId, revision.createdAt),
+}));
+
+export const editorialEvents = pgTable('editorial_events', {
+  postId: uuid('post_id').primaryKey().references(() => editorialPosts.id, { onDelete: 'cascade' }),
+  startsAt: timestamp('starts_at').notNull(),
+  endsAt: timestamp('ends_at').notNull(),
+  timezone: text('timezone').notNull().default('Asia/Shanghai'),
+  locationLabel: text('location_label'),
+  registrationUrl: text('registration_url'),
+  capacityNote: text('capacity_note'),
+  organizerLabel: text('organizer_label'),
+  status: text('status').notNull().default('scheduled'),
+});
+
+export const editorialHomepageFeatures = pgTable('editorial_homepage_features', {
+  slot: text('slot').primaryKey(),
+  postId: uuid('post_id').notNull().references(() => editorialPosts.id, { onDelete: 'cascade' }),
+  startsAt: timestamp('starts_at'),
+  endsAt: timestamp('ends_at'),
+  featuredBy: uuid('featured_by').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  selectionNote: text('selection_note'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 

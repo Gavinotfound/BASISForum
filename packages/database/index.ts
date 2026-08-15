@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema';
 import { Thread, User, Resource } from './types';
-import { and, asc, count, desc, eq, gte, ilike, inArray, isNull, or, type SQL } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gt, gte, ilike, inArray, isNull, lte, or, type SQL } from 'drizzle-orm';
 
 const pool = new Pool({
   connectionString:
@@ -125,7 +125,7 @@ export const getThreadById = async (threadId: string) => {
   }
 };
 
-export const getCommentsByThreadId = async (threadId: string): Promise<ForumComment[]> => {
+export const getCommentsByThreadId = async (threadId: string, viewerId?: string): Promise<ForumComment[]> => {
   try {
     const comments = await db.query.resources.findMany({
       where: eq(schema.resources.threadId, threadId),
@@ -133,7 +133,8 @@ export const getCommentsByThreadId = async (threadId: string): Promise<ForumComm
       with: { author: true },
     });
 
-    return comments.map((comment) => ({
+    const blockedUserIds = viewerId ? await getBlockedUserIds(viewerId) : new Set<string>();
+    return comments.filter((comment) => !blockedUserIds.has(comment.authorId || '')).map((comment) => ({
       id: comment.id,
       thread_id: comment.threadId || '',
       parent_id: comment.parentId || undefined,
@@ -560,7 +561,7 @@ export const setUserRole = async (data: { userId: string; role: AdminRole }) => 
   return user;
 };
 
-export const createModerationLog = async (data: { moderatorId: string; targetType: 'thread' | 'user' | 'report' | 'campaign'; targetId: string; action: string; reason?: string }) => {
+export const createModerationLog = async (data: { moderatorId: string; targetType: 'thread' | 'user' | 'report' | 'campaign' | 'editorial' | 'creator' | 'knowledge' | 'hub' | 'circle' | 'mentor' | 'peer_review'; targetId: string; action: string; reason?: string }) => {
   const [log] = await db.insert(schema.moderationLogs).values(data).returning();
   return log;
 };
@@ -573,6 +574,8 @@ export const createThread = async (data: {
   authorId: string;
   subject: string;
   content: string;
+  kind?: string;
+  helpContext?: Record<string, unknown>;
 }) => {
   return db.transaction(async (tx) => {
     const [thread] = await tx
@@ -582,6 +585,8 @@ export const createThread = async (data: {
         slug: data.slug,
         authorId: data.authorId,
         subject: data.subject,
+        kind: data.kind || 'discussion',
+        helpContext: data.helpContext || null,
       })
       .returning();
 
@@ -719,4 +724,532 @@ export const upsertForumCampaignSettings = async (
 
   if (!row) throw new Error('Campaign settings could not be saved');
   return { id: row.id, ...mapForumCampaign(row) };
+};
+
+
+// --- Structured community and BASIS Bulletin ---
+
+export type PublicEditorialPost = {
+  id: string;
+  slug: string;
+  headline: string;
+  dek: string;
+  body: string;
+  kind: string;
+  tags: string[];
+  imageSrc?: string;
+  publishedAt?: Date | null;
+  scheduledAt?: Date | null;
+  correctionNote?: string;
+  isSponsored: boolean;
+  authorId: string;
+  authorName: string;
+  creatorName?: string;
+  creatorType?: string;
+  discussionThreadId?: string;
+};
+
+const mapPublicEditorialPost = (row: {
+  post: typeof schema.editorialPosts.$inferSelect;
+  authorName: string | null;
+  authorUsername: string | null;
+  creatorName: string | null;
+  creatorType: string | null;
+}): PublicEditorialPost => ({
+  id: row.post.id,
+  slug: row.post.slug,
+  headline: row.post.headline,
+  dek: row.post.dek,
+  body: row.post.body,
+  kind: row.post.kind,
+  tags: Array.isArray(row.post.tags) ? row.post.tags.filter((tag): tag is string => typeof tag === 'string') : [],
+  imageSrc: row.post.imageSrc || undefined,
+  publishedAt: row.post.publishedAt,
+  scheduledAt: row.post.scheduledAt,
+  correctionNote: row.post.correctionNote || undefined,
+  isSponsored: row.post.isSponsored,
+  authorId: row.post.authorId,
+  authorName: row.creatorName || row.authorName || row.authorUsername || 'Verified creator',
+  creatorName: row.creatorName || undefined,
+  creatorType: row.creatorType || undefined,
+  discussionThreadId: row.post.discussionThreadId || undefined,
+});
+
+const publicEditorialConditions = (now = new Date()) =>
+  and(
+    eq(schema.editorialPosts.status, 'published'),
+    or(isNull(schema.editorialPosts.scheduledAt), lte(schema.editorialPosts.scheduledAt, now)),
+    or(isNull(schema.editorialPosts.publishedAt), lte(schema.editorialPosts.publishedAt, now)),
+  );
+
+export const getPublicEditorialPosts = async (kind?: string): Promise<PublicEditorialPost[]> => {
+  try {
+    const filters = kind ? and(publicEditorialConditions(), eq(schema.editorialPosts.kind, kind)) : publicEditorialConditions();
+    const rows = await db
+      .select({
+        post: schema.editorialPosts,
+        authorName: schema.users.name,
+        authorUsername: schema.users.username,
+        creatorName: schema.creatorProfiles.displayName,
+        creatorType: schema.creatorProfiles.type,
+      })
+      .from(schema.editorialPosts)
+      .leftJoin(schema.users, eq(schema.editorialPosts.authorId, schema.users.id))
+      .leftJoin(schema.creatorProfiles, eq(schema.editorialPosts.creatorProfileId, schema.creatorProfiles.id))
+      .where(filters)
+      .orderBy(desc(schema.editorialPosts.publishedAt), desc(schema.editorialPosts.createdAt));
+    return rows.map(mapPublicEditorialPost);
+  } catch (error) {
+    console.error('Bulletin lookup failed:', error);
+    return [];
+  }
+};
+
+export const getPublicEditorialPostBySlug = async (slug: string): Promise<PublicEditorialPost | null> => {
+  try {
+    const [row] = await db
+      .select({
+        post: schema.editorialPosts,
+        authorName: schema.users.name,
+        authorUsername: schema.users.username,
+        creatorName: schema.creatorProfiles.displayName,
+        creatorType: schema.creatorProfiles.type,
+      })
+      .from(schema.editorialPosts)
+      .leftJoin(schema.users, eq(schema.editorialPosts.authorId, schema.users.id))
+      .leftJoin(schema.creatorProfiles, eq(schema.editorialPosts.creatorProfileId, schema.creatorProfiles.id))
+      .where(and(eq(schema.editorialPosts.slug, slug), publicEditorialConditions()))
+      .limit(1);
+    return row ? mapPublicEditorialPost(row) : null;
+  } catch (error) {
+    console.error('Bulletin post lookup failed:', error);
+    return null;
+  }
+};
+
+export const getHomepageFeaturedEditorialPost = async (): Promise<PublicEditorialPost | null> => {
+  const now = new Date();
+  try {
+    const [row] = await db
+      .select({
+        post: schema.editorialPosts,
+        authorName: schema.users.name,
+        authorUsername: schema.users.username,
+        creatorName: schema.creatorProfiles.displayName,
+        creatorType: schema.creatorProfiles.type,
+      })
+      .from(schema.editorialHomepageFeatures)
+      .innerJoin(schema.editorialPosts, eq(schema.editorialHomepageFeatures.postId, schema.editorialPosts.id))
+      .leftJoin(schema.users, eq(schema.editorialPosts.authorId, schema.users.id))
+      .leftJoin(schema.creatorProfiles, eq(schema.editorialPosts.creatorProfileId, schema.creatorProfiles.id))
+      .where(and(
+        eq(schema.editorialHomepageFeatures.slot, 'forum_home_primary'),
+        publicEditorialConditions(now),
+        or(isNull(schema.editorialHomepageFeatures.startsAt), lte(schema.editorialHomepageFeatures.startsAt, now)),
+        or(isNull(schema.editorialHomepageFeatures.endsAt), gt(schema.editorialHomepageFeatures.endsAt, now)),
+      ))
+      .limit(1);
+    return row ? mapPublicEditorialPost(row) : null;
+  } catch (error) {
+    console.error('Homepage feature lookup failed:', error);
+    return null;
+  }
+};
+
+export const getCreatorProfileByUserId = async (userId: string) =>
+  db.query.creatorProfiles.findFirst({ where: eq(schema.creatorProfiles.userId, userId) });
+
+export const getVerifiedCreatorProfile = async (userId: string) =>
+  db.query.creatorProfiles.findFirst({ where: and(eq(schema.creatorProfiles.userId, userId), eq(schema.creatorProfiles.status, 'verified')) });
+
+export const getBlockedUserIds = async (userId: string) => {
+  const rows = await db.select({ blockedId: schema.userBlocks.blockedId }).from(schema.userBlocks).where(eq(schema.userBlocks.blockerId, userId));
+  return new Set(rows.map((row) => row.blockedId));
+};
+
+export const toggleUserBlock = async (blockerId: string, blockedId: string) => {
+  const [existing] = await db.select().from(schema.userBlocks).where(and(eq(schema.userBlocks.blockerId, blockerId), eq(schema.userBlocks.blockedId, blockedId)));
+  if (existing) {
+    await db.delete(schema.userBlocks).where(eq(schema.userBlocks.id, existing.id));
+    return { blocked: false };
+  }
+  await db.insert(schema.userBlocks).values({ blockerId, blockedId });
+  return { blocked: true };
+};
+
+export const resolveThreadWithReply = async (data: { threadId: string; replyId: string; resolvedBy: string }) => {
+  const [resolution] = await db
+    .insert(schema.threadResolutions)
+    .values(data)
+    .onConflictDoUpdate({
+      target: schema.threadResolutions.threadId,
+      set: { replyId: data.replyId, resolvedBy: data.resolvedBy, createdAt: new Date() },
+    })
+    .returning();
+  return resolution;
+};
+
+export const clearThreadResolution = async (threadId: string) => {
+  await db.delete(schema.threadResolutions).where(eq(schema.threadResolutions.threadId, threadId));
+};
+
+export const getThreadResolution = async (threadId: string) =>
+  db.query.threadResolutions.findFirst({ where: eq(schema.threadResolutions.threadId, threadId) });
+
+
+export type EditorialDraftInput = {
+  headline: string;
+  dek: string;
+  body: string;
+  kind: string;
+  tags?: string[];
+  sourceLinks?: string[];
+  imageSrc?: string;
+  scheduledAt?: Date;
+  isSponsored?: boolean;
+};
+
+export const getCreatorDeskPosts = async (authorId: string) =>
+  db.query.editorialPosts.findMany({
+    where: eq(schema.editorialPosts.authorId, authorId),
+    orderBy: [desc(schema.editorialPosts.updatedAt)],
+  });
+
+export const createCreatorProfileRequest = async (data: {
+  userId: string;
+  type: string;
+  displayName: string;
+  statement: string;
+}) => {
+  const [profile] = await db
+    .insert(schema.creatorProfiles)
+    .values({ ...data, status: 'requested', updatedAt: new Date() })
+    .onConflictDoUpdate({
+      target: schema.creatorProfiles.userId,
+      set: { type: data.type, displayName: data.displayName, statement: data.statement, status: 'requested', suspensionNote: null, updatedAt: new Date() },
+    })
+    .returning();
+  return profile;
+};
+
+export const createEditorialDraft = async (data: EditorialDraftInput & { authorId: string; creatorProfileId?: string }) => {
+  const slug = `${data.headline.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'bulletin'}-${crypto.randomUUID().slice(0, 8)}`;
+  const [post] = await db.insert(schema.editorialPosts).values({
+    slug,
+    headline: data.headline.trim(),
+    dek: data.dek.trim(),
+    body: data.body.trim(),
+    kind: data.kind,
+    status: 'draft',
+    authorId: data.authorId,
+    creatorProfileId: data.creatorProfileId || null,
+    tags: data.tags || [],
+    sourceLinks: data.sourceLinks || [],
+    imageSrc: data.imageSrc?.trim() || null,
+    scheduledAt: data.scheduledAt || null,
+    isSponsored: Boolean(data.isSponsored),
+    updatedAt: new Date(),
+  }).returning();
+  return post;
+};
+
+export const updateEditorialDraft = async (postId: string, authorId: string, data: EditorialDraftInput) => {
+  const [post] = await db
+    .update(schema.editorialPosts)
+    .set({
+      headline: data.headline.trim(), dek: data.dek.trim(), body: data.body.trim(), kind: data.kind,
+      tags: data.tags || [], sourceLinks: data.sourceLinks || [], imageSrc: data.imageSrc?.trim() || null,
+      scheduledAt: data.scheduledAt || null, isSponsored: Boolean(data.isSponsored), updatedAt: new Date(),
+    })
+    .where(and(eq(schema.editorialPosts.id, postId), eq(schema.editorialPosts.authorId, authorId), or(eq(schema.editorialPosts.status, 'draft'), eq(schema.editorialPosts.status, 'in_review'))))
+    .returning();
+  return post;
+};
+
+export const submitEditorialForReview = async (postId: string, authorId: string) => {
+  const [post] = await db
+    .update(schema.editorialPosts)
+    .set({ status: 'in_review', reviewNote: null, updatedAt: new Date() })
+    .where(and(eq(schema.editorialPosts.id, postId), eq(schema.editorialPosts.authorId, authorId), eq(schema.editorialPosts.status, 'draft')))
+    .returning();
+  return post;
+};
+
+export const getEditorialReviewQueue = async () =>
+  db
+    .select({
+      id: schema.editorialPosts.id,
+      headline: schema.editorialPosts.headline,
+      dek: schema.editorialPosts.dek,
+      kind: schema.editorialPosts.kind,
+      createdAt: schema.editorialPosts.createdAt,
+      authorName: schema.users.name,
+      authorUsername: schema.users.username,
+    })
+    .from(schema.editorialPosts)
+    .leftJoin(schema.users, eq(schema.editorialPosts.authorId, schema.users.id))
+    .where(eq(schema.editorialPosts.status, 'in_review'))
+    .orderBy(asc(schema.editorialPosts.createdAt));
+
+export const reviewEditorialPost = async (data: {
+  postId: string;
+  reviewerId: string;
+  decision: 'request_changes' | 'publish' | 'archive';
+  reviewNote?: string;
+  publishAt?: Date;
+}) => {
+  const nextStatus = data.decision === 'request_changes' ? 'draft' : data.decision === 'archive' ? 'archived' : 'published';
+  const now = new Date();
+  const [post] = await db
+    .update(schema.editorialPosts)
+    .set({
+      status: nextStatus,
+      reviewNote: data.reviewNote?.trim() || null,
+      reviewedBy: data.reviewerId,
+      publisherId: data.decision === 'publish' ? data.reviewerId : null,
+      publishedAt: data.decision === 'publish' ? data.publishAt || now : null,
+      archivedAt: data.decision === 'archive' ? now : null,
+      updatedAt: now,
+    })
+    .where(eq(schema.editorialPosts.id, data.postId))
+    .returning();
+  return post;
+};
+
+export const createEditorialRevision = async (data: {
+  postId: string;
+  createdBy: string;
+  snapshot: Record<string, unknown>;
+  state: string;
+  reviewNote?: string;
+}) => {
+  const [latest] = await db
+    .select({ revisionNumber: schema.editorialPostRevisions.revisionNumber })
+    .from(schema.editorialPostRevisions)
+    .where(eq(schema.editorialPostRevisions.postId, data.postId))
+    .orderBy(desc(schema.editorialPostRevisions.revisionNumber))
+    .limit(1);
+  const [revision] = await db.insert(schema.editorialPostRevisions).values({
+    postId: data.postId,
+    revisionNumber: (latest?.revisionNumber || 0) + 1,
+    snapshot: data.snapshot,
+    state: data.state,
+    reviewNote: data.reviewNote?.trim() || null,
+    createdBy: data.createdBy,
+  }).returning();
+  return revision;
+};
+
+export const upsertEditorialEvent = async (data: {
+  postId: string; startsAt: Date; endsAt: Date; timezone?: string; locationLabel?: string;
+  registrationUrl?: string; capacityNote?: string; organizerLabel?: string; status?: string;
+}) => {
+  const [event] = await db.insert(schema.editorialEvents).values({
+    ...data,
+    timezone: data.timezone || 'Asia/Shanghai',
+    locationLabel: data.locationLabel || null,
+    registrationUrl: data.registrationUrl || null,
+    capacityNote: data.capacityNote || null,
+    organizerLabel: data.organizerLabel || null,
+    status: data.status || 'scheduled',
+  }).onConflictDoUpdate({
+    target: schema.editorialEvents.postId,
+    set: { startsAt: data.startsAt, endsAt: data.endsAt, timezone: data.timezone || 'Asia/Shanghai', locationLabel: data.locationLabel || null, registrationUrl: data.registrationUrl || null, capacityNote: data.capacityNote || null, organizerLabel: data.organizerLabel || null, status: data.status || 'scheduled' },
+  }).returning();
+  return event;
+};
+
+export const setEditorialHomepageFeature = async (data: {
+  postId: string; featuredBy: string; startsAt?: Date; endsAt?: Date; selectionNote?: string;
+}) => {
+  const [feature] = await db.insert(schema.editorialHomepageFeatures).values({
+    slot: 'forum_home_primary', postId: data.postId, featuredBy: data.featuredBy,
+    startsAt: data.startsAt || null, endsAt: data.endsAt || null, selectionNote: data.selectionNote?.trim() || null, updatedAt: new Date(),
+  }).onConflictDoUpdate({
+    target: schema.editorialHomepageFeatures.slot,
+    set: { postId: data.postId, featuredBy: data.featuredBy, startsAt: data.startsAt || null, endsAt: data.endsAt || null, selectionNote: data.selectionNote?.trim() || null, updatedAt: new Date() },
+  }).returning();
+  return feature;
+};
+
+export const clearEditorialHomepageFeature = async () =>
+  db.delete(schema.editorialHomepageFeatures).where(eq(schema.editorialHomepageFeatures.slot, 'forum_home_primary'));
+
+export const setCreatorProfileStatus = async (data: { profileId: string; status: string; verifiedBy: string; note?: string; expiresAt?: Date }) => {
+  const now = new Date();
+  const [profile] = await db.update(schema.creatorProfiles).set({
+    status: data.status,
+    verifiedBy: data.verifiedBy,
+    verifiedAt: data.status === 'verified' ? now : null,
+    expiresAt: data.expiresAt || null,
+    suspensionNote: data.note?.trim() || null,
+    updatedAt: now,
+  }).where(eq(schema.creatorProfiles.id, data.profileId)).returning();
+  return profile;
+};
+
+export const getCreatorVerificationQueue = async () =>
+  db
+    .select({
+      id: schema.creatorProfiles.id,
+      displayName: schema.creatorProfiles.displayName,
+      type: schema.creatorProfiles.type,
+      statement: schema.creatorProfiles.statement,
+      createdAt: schema.creatorProfiles.createdAt,
+      userName: schema.users.name,
+      userUsername: schema.users.username,
+    })
+    .from(schema.creatorProfiles)
+    .leftJoin(schema.users, eq(schema.creatorProfiles.userId, schema.users.id))
+    .where(eq(schema.creatorProfiles.status, 'requested'))
+    .orderBy(asc(schema.creatorProfiles.createdAt));
+
+
+// --- Academic collaboration, knowledge, and mentorship ---
+
+export const getPublishedKnowledgeCards = async (subject?: string) => {
+  const conditions = subject ? and(eq(schema.knowledgeCards.status, 'published'), eq(schema.knowledgeCards.subject, subject)) : eq(schema.knowledgeCards.status, 'published');
+  return db.query.knowledgeCards.findMany({ where: conditions, orderBy: [desc(schema.knowledgeCards.publishedAt)] });
+};
+
+export const createKnowledgeCardDraft = async (data: {
+  slug: string; subject: string; title: string; summary: string; content: string; createdBy: string; sourceThreadId?: string; sourceReplyId?: string;
+}) => {
+  const [card] = await db.insert(schema.knowledgeCards).values({ ...data, status: 'draft', sourceThreadId: data.sourceThreadId || null, sourceReplyId: data.sourceReplyId || null, updatedAt: new Date() }).returning();
+  return card;
+};
+
+export const reviewKnowledgeCard = async (data: { cardId: string; status: 'published' | 'draft' | 'archived'; reviewedBy: string }) => {
+  const now = new Date();
+  const [card] = await db.update(schema.knowledgeCards).set({ status: data.status, reviewedBy: data.reviewedBy, publishedAt: data.status === 'published' ? now : null, updatedAt: now }).where(eq(schema.knowledgeCards.id, data.cardId)).returning();
+  return card;
+};
+
+export const getActiveStudyHubs = async () => {
+  const now = new Date();
+  return db.query.studyHubs.findMany({
+    where: and(eq(schema.studyHubs.status, 'published'), gt(schema.studyHubs.endsAt, now)),
+    orderBy: [asc(schema.studyHubs.startsAt)],
+  });
+};
+
+export const createStudyHub = async (data: { slug: string; title: string; subject: string; description: string; startsAt: Date; endsAt: Date; createdBy: string }) => {
+  const [hub] = await db.insert(schema.studyHubs).values({ ...data, status: 'draft', updatedAt: new Date() }).returning();
+  return hub;
+};
+
+export const publishStudyHub = async (hubId: string, actorId: string, status: 'published' | 'archived') => {
+  const now = new Date();
+  const [hub] = await db.update(schema.studyHubs).set({ status, publishedAt: status === 'published' ? now : null, updatedAt: now }).where(eq(schema.studyHubs.id, hubId)).returning();
+  if (hub) await createModerationLog({ moderatorId: actorId, targetType: 'hub', targetId: hub.id, action: `hub_${status}` });
+  return hub;
+};
+
+export const getOpenStudyCircles = async () => {
+  const rows = await db
+    .select({ circle: schema.studyCircles, hostName: schema.users.name, hostUsername: schema.users.username, acceptedCount: count(schema.studyCircleRequests.id) })
+    .from(schema.studyCircles)
+    .leftJoin(schema.users, eq(schema.studyCircles.hostId, schema.users.id))
+    .leftJoin(schema.studyCircleRequests, and(eq(schema.studyCircles.id, schema.studyCircleRequests.circleId), eq(schema.studyCircleRequests.status, 'accepted')))
+    .where(and(eq(schema.studyCircles.status, 'open'), gt(schema.studyCircles.endsAt, new Date())))
+    .groupBy(schema.studyCircles.id, schema.users.name, schema.users.username)
+    .orderBy(asc(schema.studyCircles.startsAt));
+  return rows.map((row) => ({ ...row.circle, hostName: row.hostName || row.hostUsername || 'Student', acceptedCount: Number(row.acceptedCount) }));
+};
+
+export const createStudyCircle = async (data: { slug: string; hostId: string; subject: string; title: string; description: string; startsAt: Date; endsAt: Date; capacity: number; locationLabel?: string }) => {
+  const [circle] = await db.insert(schema.studyCircles).values({ ...data, locationLabel: data.locationLabel || null, status: 'open', updatedAt: new Date() }).returning();
+  return circle;
+};
+
+export const requestStudyCircle = async (circleId: string, requesterId: string, note?: string) => {
+  const [circle] = await db.select().from(schema.studyCircles).where(eq(schema.studyCircles.id, circleId));
+  if (!circle || circle.status !== 'open') throw new Error('This study circle is no longer open.');
+  if (circle.hostId === requesterId) throw new Error('Hosts already belong to their own study circle.');
+  const [{ acceptedCount }] = await db.select({ acceptedCount: count(schema.studyCircleRequests.id) }).from(schema.studyCircleRequests).where(and(eq(schema.studyCircleRequests.circleId, circleId), eq(schema.studyCircleRequests.status, 'accepted')));
+  if (Number(acceptedCount) >= circle.capacity - 1) throw new Error('This study circle is already full.');
+  const [request] = await db.insert(schema.studyCircleRequests).values({ circleId, requesterId, note: note?.trim() || null, status: 'pending' }).onConflictDoUpdate({ target: [schema.studyCircleRequests.circleId, schema.studyCircleRequests.requesterId], set: { note: note?.trim() || null, status: 'pending', decidedBy: null, decidedAt: null } }).returning();
+  return request;
+};
+
+export const decideStudyCircleRequest = async (data: { requestId: string; hostId: string; status: 'accepted' | 'declined' }) => {
+  const [request] = await db
+    .select({ request: schema.studyCircleRequests, circle: schema.studyCircles })
+    .from(schema.studyCircleRequests)
+    .innerJoin(schema.studyCircles, eq(schema.studyCircleRequests.circleId, schema.studyCircles.id))
+    .where(eq(schema.studyCircleRequests.id, data.requestId));
+  if (!request || request.circle.hostId !== data.hostId) throw new Error('Only the circle host can decide requests.');
+  const [updated] = await db.update(schema.studyCircleRequests).set({ status: data.status, decidedBy: data.hostId, decidedAt: new Date() }).where(eq(schema.studyCircleRequests.id, request.request.id)).returning();
+  return updated;
+};
+
+export const getOpenPeerReviews = async () => {
+  const rows = await db
+    .select({ review: schema.peerReviews, thread: schema.threads, requesterName: schema.users.name, requesterUsername: schema.users.username })
+    .from(schema.peerReviews)
+    .innerJoin(schema.threads, eq(schema.peerReviews.threadId, schema.threads.id))
+    .leftJoin(schema.users, eq(schema.peerReviews.requesterId, schema.users.id))
+    .where(eq(schema.peerReviews.status, 'open'))
+    .orderBy(desc(schema.peerReviews.createdAt));
+  return rows.map((row) => ({ ...row.review, threadTitle: row.thread.title, threadSlug: row.thread.slug, requesterName: row.requesterName || row.requesterUsername || 'Student' }));
+};
+
+export const createPeerReview = async (data: { threadId: string; requesterId: string; rubric: string[]; externalUrl?: string; closesAt?: Date }) => {
+  const [review] = await db.insert(schema.peerReviews).values({ threadId: data.threadId, requesterId: data.requesterId, rubric: data.rubric, externalUrl: data.externalUrl || null, closesAt: data.closesAt || null, status: 'open', updatedAt: new Date() }).returning();
+  return review;
+};
+
+export const leavePeerReviewFeedback = async (data: { reviewId: string; reviewerId: string; criterion: string; feedback: string }) => {
+  const [feedback] = await db.insert(schema.peerReviewFeedback).values(data).onConflictDoUpdate({ target: [schema.peerReviewFeedback.reviewId, schema.peerReviewFeedback.reviewerId, schema.peerReviewFeedback.criterion], set: { feedback: data.feedback } }).returning();
+  return feedback;
+};
+
+export const getVerifiedMentors = async () => {
+  const rows = await db
+    .select({ profile: schema.mentorProfiles, userName: schema.users.name, userUsername: schema.users.username })
+    .from(schema.mentorProfiles)
+    .leftJoin(schema.users, eq(schema.mentorProfiles.userId, schema.users.id))
+    .where(and(eq(schema.mentorProfiles.status, 'verified'), or(isNull(schema.mentorProfiles.expiresAt), gt(schema.mentorProfiles.expiresAt, new Date()))));
+  return rows.map((row) => ({ ...row.profile, displayName: row.userName || row.userUsername || 'Verified mentor' }));
+};
+
+export const requestMentorProfile = async (data: { userId: string; subjects: string[]; statement: string }) => {
+  const [profile] = await db.insert(schema.mentorProfiles).values({ ...data, status: 'requested', updatedAt: new Date() }).onConflictDoUpdate({ target: schema.mentorProfiles.userId, set: { subjects: data.subjects, statement: data.statement, status: 'requested', reviewNote: null, updatedAt: new Date() } }).returning();
+  return profile;
+};
+
+export const requestMentorSupport = async (data: { mentorProfileId: string; requesterId: string; subject: string; question: string }) => {
+  const [request] = await db.insert(schema.mentorRequests).values({ ...data, status: 'pending' }).returning();
+  return request;
+};
+
+
+export const getKnowledgeCardReviewQueue = async () =>
+  db
+    .select({ id: schema.knowledgeCards.id, subject: schema.knowledgeCards.subject, title: schema.knowledgeCards.title, summary: schema.knowledgeCards.summary, createdAt: schema.knowledgeCards.createdAt, creatorName: schema.users.name, creatorUsername: schema.users.username })
+    .from(schema.knowledgeCards)
+    .leftJoin(schema.users, eq(schema.knowledgeCards.createdBy, schema.users.id))
+    .where(eq(schema.knowledgeCards.status, 'draft'))
+    .orderBy(asc(schema.knowledgeCards.createdAt));
+
+export const getStudyHubReviewQueue = async () =>
+  db
+    .select({ id: schema.studyHubs.id, subject: schema.studyHubs.subject, title: schema.studyHubs.title, description: schema.studyHubs.description, startsAt: schema.studyHubs.startsAt, endsAt: schema.studyHubs.endsAt, createdAt: schema.studyHubs.createdAt, creatorName: schema.users.name, creatorUsername: schema.users.username })
+    .from(schema.studyHubs)
+    .leftJoin(schema.users, eq(schema.studyHubs.createdBy, schema.users.id))
+    .where(eq(schema.studyHubs.status, 'draft'))
+    .orderBy(asc(schema.studyHubs.startsAt));
+
+export const getMentorVerificationQueue = async () =>
+  db
+    .select({ id: schema.mentorProfiles.id, subjects: schema.mentorProfiles.subjects, statement: schema.mentorProfiles.statement, createdAt: schema.mentorProfiles.createdAt, userName: schema.users.name, userUsername: schema.users.username })
+    .from(schema.mentorProfiles)
+    .leftJoin(schema.users, eq(schema.mentorProfiles.userId, schema.users.id))
+    .where(eq(schema.mentorProfiles.status, 'requested'))
+    .orderBy(asc(schema.mentorProfiles.createdAt));
+
+export const setMentorProfileStatus = async (data: { profileId: string; status: 'verified' | 'declined' | 'suspended'; reviewedBy: string; reviewNote?: string; expiresAt?: Date }) => {
+  const now = new Date();
+  const [profile] = await db.update(schema.mentorProfiles).set({ status: data.status, verifiedBy: data.reviewedBy, verifiedAt: data.status === 'verified' ? now : null, expiresAt: data.expiresAt || null, reviewNote: data.reviewNote?.trim() || null, updatedAt: now }).where(eq(schema.mentorProfiles.id, data.profileId)).returning();
+  return profile;
 };

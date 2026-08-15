@@ -19,6 +19,7 @@ type ReplyContext = {
 type FloorComment = {
   id: string;
   parent_id?: string;
+  author_id: string;
   author_name: string;
   author_username?: string;
   content: string;
@@ -53,10 +54,20 @@ type FloorDiscussionProps = {
   voteAction: (targetType: VoteTargetType, targetId: string, value: 1 | -1) => Promise<{ likes: number; dislikes: number; score: number; currentUserVote: 1 | -1 | 0; error?: string }>;
   canVote: boolean;
   reportAction: (targetType: 'thread' | 'comment', targetId: string, state: ReplyState, formData: FormData) => Promise<ReplyState>;
+  acceptedReplyId?: string;
+  canResolve: boolean;
+  acceptAction: (replyId: string) => Promise<unknown>;
+  canBlock: boolean;
+  currentUserId?: string;
+  blockAction: (targetUserId: string) => Promise<{ blocked: boolean }>;
+  blockedUserIds: string[];
 };
 
-export default function FloorDiscussion({ starterId, starterAuthor, comments, canReply, action, voteAction, canVote, reportAction }: FloorDiscussionProps) {
+export default function FloorDiscussion({ starterId, starterAuthor, comments, canReply, action, voteAction, canVote, reportAction, acceptedReplyId, canResolve, acceptAction, canBlock, currentUserId, blockAction, blockedUserIds }: FloorDiscussionProps) {
   const [state, formAction, isPending] = React.useActionState(action, {});
+  const [moderationPending, startModerationTransition] = React.useTransition();
+  const [moderationMessage, setModerationMessage] = useState<string>();
+  const [blockedIds, setBlockedIds] = useState(() => new Set(blockedUserIds));
   const [replyTarget, setReplyTarget] = useState<ReplyTarget>(null);
   const { t } = useLanguage();
 
@@ -132,9 +143,12 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
         <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.78, mb: 2, color: 'var(--bf-text) !important', opacity: '1 !important' }}>
           {comment.content}
         </Typography>
+        {acceptedReplyId === comment.id ? <Typography variant="overline" sx={{ display: 'block', mb: .75, color: 'var(--bf-interactive)' }}>ACCEPTED ANSWER / RESOLVED</Typography> : null}
         <Box sx={{ display: 'flex', gap: 0.75, alignItems: 'center', flexWrap: 'wrap' }}>
           <VoteControls targetType="comment" targetId={comment.id} initialVote={comment.vote} action={voteAction} canVote={canVote} compact />
           <ReportButton canReport={canVote} action={reportAction.bind(null, 'comment', comment.id)} compact />
+          {canResolve ? <Button size="small" variant={acceptedReplyId === comment.id ? 'contained' : 'outlined'} disabled={moderationPending} onClick={() => startModerationTransition(async () => { try { await acceptAction(comment.id); setModerationMessage('Accepted answer recorded.'); window.location.reload(); } catch (error) { setModerationMessage(error instanceof Error ? error.message : 'The answer could not be accepted.'); } })}>{acceptedReplyId === comment.id ? 'ACCEPTED' : 'MARK ANSWER'}</Button> : null}
+          {canBlock && comment.author_id && comment.author_id !== currentUserId ? <Button size="small" variant="text" disabled={moderationPending} onClick={() => startModerationTransition(async () => { try { const result = await blockAction(comment.author_id); setBlockedIds((current) => { const next = new Set(current); if (result.blocked) next.add(comment.author_id); else next.delete(comment.author_id); return next; }); setModerationMessage(result.blocked ? 'Member blocked. Their replies will be hidden after refresh.' : 'Member unblocked.'); } catch (error) { setModerationMessage(error instanceof Error ? error.message : 'The member could not be blocked.'); } })}>{blockedIds.has(comment.author_id) ? 'UNBLOCK' : 'BLOCK'}</Button> : null}
         </Box>
       </Box>
       {children.map((child) => renderComment(child, floor, 1))}
@@ -160,6 +174,7 @@ export default function FloorDiscussion({ starterId, starterAuthor, comments, ca
       </Paper> : <Paper variant="outlined" sx={{ py: 3, textAlign: 'center', bgcolor: 'transparent', borderTop: '1px solid var(--bf-divider)', borderBottom: '1px solid var(--bf-divider)' }}><Typography variant="body2">{t('discussion.signIn')}</Typography></Paper>}
     </Box>
 
+    {moderationMessage ? <Typography role="status" variant="body2" sx={{ mb: 2, color: 'var(--bf-interactive)' }}>{moderationMessage}</Typography> : null}
     <Typography variant="h5" sx={{ mb: 2.25, fontWeight: 900, display: 'flex', alignItems: 'center', gap: 1.1 }}>{t('discussion.floors')} <Box component="span" sx={{ color: 'var(--bf-muted)', fontSize: 14 }}>{String(topLevelComments.length).padStart(2, '0')}</Box></Typography>
     {topLevelComments.length === 0 ? <Typography variant="body1" color="text.secondary">{t('discussion.none')}</Typography> : <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>{topLevelComments.map((comment, index) => renderComment(comment, index + 1, 0))}</Box>}
   </Box>;

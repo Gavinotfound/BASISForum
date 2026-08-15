@@ -30,11 +30,15 @@ type LayoutProps = {
   onBookmarks?: () => void;
   onNotifications?: () => void;
   onHome?: () => void;
+  onBulletin?: () => void;
+  onCreatorDesk?: () => void;
+  onStudy?: () => void;
+  onKnowledge?: () => void;
 };
 
-export const Layout = ({ children, user, onSignIn, onSignOut, onSearch, onProfile, onBookmarks, onNotifications, onHome }: LayoutProps) => (
+export const Layout = ({ children, user, onSignIn, onSignOut, onSearch, onProfile, onBookmarks, onNotifications, onHome, onBulletin, onCreatorDesk, onStudy, onKnowledge }: LayoutProps) => (
   <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-    <Navbar user={user} onSignIn={onSignIn} onSignOut={onSignOut} onSearch={onSearch} onProfile={onProfile} onBookmarks={onBookmarks} onNotifications={onNotifications} onHome={onHome} />
+    <Navbar user={user} onSignIn={onSignIn} onSignOut={onSignOut} onSearch={onSearch} onProfile={onProfile} onBookmarks={onBookmarks} onNotifications={onNotifications} onHome={onHome} onBulletin={onBulletin} onCreatorDesk={onCreatorDesk} onStudy={onStudy} onKnowledge={onKnowledge} />
     <Container maxWidth={false} sx={{ maxWidth: { lg: 1440, xl: 1680 }, px: { xs: 2, sm: 3, md: 4, lg: 5 }, py: { xs: 1.75, sm: 2.25, lg: 3 } }}>
       {children}
     </Container>

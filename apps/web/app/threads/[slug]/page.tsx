@@ -3,11 +3,12 @@ import { BasisProvider, CategoryBadge } from '@basis-forum/ui';
 import { isDisplayMode } from '@basis-forum/ui/src/theme-config';
 import { cookies } from 'next/headers';
 import { Typography, Box } from '@mui/material';
-import { getBookmarkStatus, getCommentsByThreadId, getThreadBySlug, getVoteSummaries } from '@basis-forum/database';
+import { getBlockedUserIds, getBookmarkStatus, getCommentsByThreadId, getThreadBySlug, getThreadResolution, getVoteSummaries } from '@basis-forum/database';
 import { auth } from '@/auth';
 import { postComment } from '../../actions/forum';
 import { castVote } from '../../actions/votes';
 import { submitReport } from '../../actions/community';
+import { acceptHelpfulReply, toggleMemberBlock } from '../../actions/academic';
 import ClientLayout from '../../components/ClientLayout';
 import FloorDiscussion from '../../components/FloorDiscussion';
 import VoteControls from '../../components/VoteControls';
@@ -38,10 +39,13 @@ export default async function ThreadDetailPage({
     );
   }
 
-  const currentUserId = (session?.user as { id?: string } | undefined)?.id;
-  const [comments, bookmarked] = await Promise.all([
-    getCommentsByThreadId(thread.id),
+  const currentUser = session?.user as { id?: string; role?: string } | undefined;
+  const currentUserId = currentUser?.id;
+  const [comments, bookmarked, resolution, blockedUserIds] = await Promise.all([
+    getCommentsByThreadId(thread.id, currentUserId),
     getBookmarkStatus(currentUserId, thread.id),
+    getThreadResolution(thread.id),
+    currentUserId ? getBlockedUserIds(currentUserId) : Promise.resolve(new Set<string>()),
   ]);
   const voteTargets = [
     { targetType: 'thread' as const, targetId: thread.id },
@@ -61,6 +65,8 @@ export default async function ThreadDetailPage({
   const submitThreadReport = submitReport.bind(null, thread.id, 'thread', thread.id);
   const authorName = thread.author?.name || thread.author?.username || 'Student';
   const canInteract = Boolean(session?.user);
+  const canResolve = thread.kind === 'academic_help' && Boolean(currentUserId && (thread.authorId === currentUserId || currentUser?.role === 'admin' || currentUser?.role === 'moderator'));
+  const acceptReply = (replyId: string) => acceptHelpfulReply({ threadId: thread.id, threadSlug: slug, replyId });
 
   return (
     <BasisProvider mode={mode}>
@@ -88,6 +94,13 @@ export default async function ThreadDetailPage({
           voteAction={submitVote}
           canVote={canInteract}
           reportAction={submitReport.bind(null, thread.id)}
+          acceptedReplyId={resolution?.replyId}
+          canResolve={canResolve}
+          acceptAction={acceptReply}
+          canBlock={canInteract}
+          currentUserId={currentUserId}
+          blockAction={toggleMemberBlock}
+          blockedUserIds={[...blockedUserIds]}
         />
       </ClientLayout>
     </BasisProvider>

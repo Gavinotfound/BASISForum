@@ -424,3 +424,39 @@ Final production visual verification confirmed the nested reply no longer render
 This loop captured desktop and mobile dark, Archive, and Sakura baselines; corrected campaign accent foregrounds for Admin-configurable light accents; reinforced Swiss-grid campaign text contrast; made mobile category and reply metadata semantic and scanable; and made selected sort state explicit. The full test, lint, and strict sequential build gate passed. An independent stop-gate reviewer found no further objectively compelled UI changes under readability, responsive layout, accessibility, or Swiss-system consistency criteria; speculative styling changes are intentionally stopped.
 
 Production smoke confirmation: the deployed Archive mobile homepage now renders a visible `PROGRAM / 01` accent module, high-contrast campaign title, explicit selected sort state, and scanable category/reply metadata with no horizontal overflow.
+
+
+## Iteration 19 — 2026-08-15T08:40:29Z
+
+### Complete forum expansion
+
+- Added the idempotent `07_complete_forum_expansion.sql` migration and Drizzle contracts for verified creator publishing, editorial revisions and events, homepage Bulletin features, report appeals, user blocks, accepted-answer resolutions, curated knowledge cards, finite Study Hubs and Study Circles, peer-review exchanges, and mentor verification.
+- Built **BASIS Bulletin** as a verified-creator workflow: creators request access, create drafts, submit them for review, and publish only after administrator approval. Public Bulletin index and story routes include bylines, revision-aware editorial content, safe event metadata, and a controlled homepage feature placement.
+- Added structured academic help threads with an explicit post type, assignment context, and “what have you tried?” prompt. Question authors and moderators can mark a reply as the accepted answer; the resolution is persisted and visibly labelled in the discussion floor.
+- Completed user safety controls with per-user blocking. Blocked authors’ replies are excluded from the blocker’s thread retrieval, while the floor interface presents an unambiguous block/unblock control. The existing reporting and report-appeal data model remains available for moderation workflows.
+- Built the public **Study Center** around deliberate, finite interactions: time-bounded 2–12 member Study Circles, actionable peer-review exchanges created from review-request threads, administrator-curated Study Hubs, and opt-in verified mentorship without direct messages, following lists, attendee lists, or feed mechanics.
+- Added a public **Knowledge Base** route for reviewed cards and a signed-in proposal workflow. Cards remain drafts until approved through the administrator queue.
+- Expanded the Admin portal with a unified academic operations desk for knowledge-card curation, Study Hub drafting and publication, and mentor-verification decisions, in addition to the Editorial Desk’s creator-verification and Bulletin-review queues.
+- Extended the shared navigation and responsive layout contracts for Bulletin, Study Center, Creator Desk, and Knowledge Base routes. All new screens retain the rule-based Swiss visual system, semantic theme tokens, mobile overflow containment, and 44px navigation targets.
+- Added automatic peer-review record creation for structured review-request threads, including rubric validation and an optional safe HTTPS work link.
+- Refactored the academic review queue shell outside render to comply with React static-component rules, and removed all resulting lint warnings.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| `pnpm test` | Passed: **53 tests** |
+| Core V8 coverage | **100%** statements, branches, functions, and lines |
+| `pnpm lint` | Passed with **zero warnings** |
+| Strict Web TypeScript check | Passed |
+| Strict Admin TypeScript check | Passed |
+| `pnpm turbo run build --filter=web --filter=admin --concurrency=1` | Passed sequentially for Web and Admin |
+| New production routes included in build | `/bulletin`, `/bulletin/[slug]`, `/creator`, `/knowledge`, `/study`, `/threads/[slug]` |
+
+### Deployment status
+
+The complete expansion has passed all local quality gates and is ready for the idempotent production database migration, rsync deployment, sequential production build, PM2 restart, and live smoke verification. No production schema or application changes have been applied in this iteration yet.
+
+### Follow-up audit note
+
+The feature surface is now complete for the requested bounded community model. The remaining work is operational rather than architectural: deploy the verified source, apply the migration exactly once using its idempotent contract, and smoke-test public empty states and the administrator queues against the live service.

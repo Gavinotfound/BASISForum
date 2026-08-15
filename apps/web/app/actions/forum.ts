@@ -1,7 +1,8 @@
 'use server';
 
 import { randomUUID } from 'crypto';
-import { createNotification, createThread as dbCreateThread, createComment as dbCreateComment, getCommentById, getThreadBySlug } from '@basis-forum/database';
+import { createNotification, createPeerReview, createThread as dbCreateThread, createComment as dbCreateComment, getCommentById, getThreadBySlug } from '@basis-forum/database';
+import { isThreadKind, safeEditorialUrl, shortText } from '@basis-forum/core';
 import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -43,6 +44,12 @@ export async function postThread(_previousState: ThreadFormState, formData: Form
   const title = String(formData.get('title') || '').trim().replace(/\s+/g, ' ');
   const subject = String(formData.get('subject') || '').trim();
   const content = String(formData.get('content') || '').trim();
+  const kind = String(formData.get('kind') || 'discussion').trim();
+  const assignment = shortText(String(formData.get('assignment') || ''), 180);
+  const whatTried = shortText(String(formData.get('whatTried') || ''), 500);
+  const dueWindow = shortText(String(formData.get('dueWindow') || ''), 80);
+  const peerReviewRubric = [...new Set(String(formData.get('peerReviewRubric') || '').split(',').map((item) => shortText(item, 80)).filter(Boolean))].slice(0, 6);
+  const peerReviewUrl = safeEditorialUrl(String(formData.get('peerReviewUrl') || ''));
 
   if (title.length < 4 || title.length > 120) {
     return { error: '标题需为 4 至 120 个字符。' };
@@ -52,11 +59,23 @@ export async function postThread(_previousState: ThreadFormState, formData: Form
     return { error: '请选择有效的学科分类。' };
   }
 
+  if (!isThreadKind(kind)) {
+    return { error: '请选择有效的讨论类型。' };
+  }
+
+  if (kind === 'help_request' && whatTried.length < 8) {
+    return { error: '求助帖请简要说明你已经尝试过什么。' };
+  }
+
+  if (kind === 'review_request' && peerReviewRubric.length === 0) {
+    return { error: '互评请求请提供至少一个评审维度。' };
+  }
+
   if (content.length < 12 || content.length > 8000) {
     return { error: '正文需为 12 至 8,000 个字符。' };
   }
 
-  let thread: { slug: string };
+  let thread: { id: string; slug: string };
   try {
     thread = await dbCreateThread({
       title,
@@ -64,13 +83,25 @@ export async function postThread(_previousState: ThreadFormState, formData: Form
       content,
       slug: createSlug(title),
       authorId,
+      kind,
+      helpContext: kind === 'help_request' ? { assignment: assignment || null, whatTried, dueWindow: dueWindow || null } : undefined,
     });
   } catch (error) {
     console.error('Thread publication failed:', error);
     return { error: '发布失败，请稍后重试。' };
   }
 
+  if (kind === 'review_request') {
+    try {
+      await createPeerReview({ threadId: thread.id, requesterId: authorId, rubric: peerReviewRubric, externalUrl: peerReviewUrl });
+    } catch (error) {
+      console.error('Peer-review exchange creation failed:', error);
+      return { error: '讨论已创建，但互评工作区未能初始化。请联系管理员。' };
+    }
+  }
+
   revalidatePath('/');
+  revalidatePath('/study');
   redirect(`/threads/${thread.slug}`);
 }
 

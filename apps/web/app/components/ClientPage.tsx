@@ -6,11 +6,14 @@ import { Typography, Box, Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import CampaignSlot from './CampaignSlot';
 import type { ForumCampaignSlot } from '../config/campaign-slot';
+import FeaturedBulletin from './FeaturedBulletin';
 
 type ThreadListItem = { id: string; title: string; slug: string; subject: string; vote_score: number; reply_count: number; author_name?: string | null; updated_at?: string; is_sticky?: boolean };
 type ForumUser = { id?: string; name?: string | null; email?: string | null; image?: string | null; role?: string };
 
-export default function ClientPage({ user, threads, sort, campaign }: { user?: ForumUser; threads: ThreadListItem[]; sort: 'latest' | 'hot'; campaign: ForumCampaignSlot }) {
+type FeaturedBulletinPost = { slug: string; headline: string; dek: string; kind: string; authorName: string; creatorType?: string; publishedAt?: string; correctionNote?: string; isSponsored: boolean };
+
+export default function ClientPage({ user, threads, sort, campaign, featuredBulletin }: { user?: ForumUser; threads: ThreadListItem[]; sort: 'latest' | 'hot'; campaign: ForumCampaignSlot; featuredBulletin?: FeaturedBulletinPost | null }) {
   const router = useRouter();
   const { t } = useLanguage();
   const [query, setQuery] = useState('');
@@ -21,6 +24,7 @@ export default function ClientPage({ user, threads, sort, campaign }: { user?: F
 
   return <Box sx={{ maxWidth: { lg: 1440, xl: 1680 }, mx: 'auto' }}>
     <CampaignSlot campaign={campaign} />
+    <FeaturedBulletin post={featuredBulletin} />
     <Box component="header" sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '128px minmax(0,1fr) auto', md: '150px minmax(300px,1fr) auto' }, gap: { xs: 1.25, sm: 1.5, md: 2 }, alignItems: 'center', pt: { xs: 1.75, md: 2.5 }, pb: { xs: 1.25, md: 1.5 }, borderBottom: '2px solid var(--bf-text)' }}>
       <Box><Typography component="h1" sx={{ fontSize: { xs: '1rem', sm: '1.1rem' }, fontWeight: 800, letterSpacing: '-.055em' }}>BASISFORUM</Typography><Typography variant="overline" sx={{ color: 'var(--bf-muted)' }}>INDEX / 01</Typography></Box>
       <Box component="form" onSubmit={submitSearch} sx={{ minWidth: 0, borderBottom: '1px solid var(--bf-text)', display: 'flex', alignItems: 'center', gap: 1 }}>

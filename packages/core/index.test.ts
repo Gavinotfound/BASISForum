@@ -3,6 +3,18 @@ import { describe, expect, it } from 'vitest';
 import {
   REPORT_REASONS,
   SCHOOL_SUBJECTS,
+  buildEditorialSlug,
+  isCreatorStatus,
+  isCreatorType,
+  isEditorialKind,
+  isEditorialState,
+  isMentorStatus,
+  isRequestStatus,
+  isStudyCircleStatus,
+  isThreadKind,
+  safeCampusLocation,
+  safeEditorialUrl,
+  shortText,
   buildReplyNotification,
   clampProfileSubjects,
   isModerationRole,
@@ -103,6 +115,69 @@ describe('validateRegistration', () => {
       ok: false,
       error: 'Use a password with at least 8 characters.',
     });
+  });
+});
+
+describe('expansion domain validators', () => {
+  it.each(['discussion', 'help_request', 'review_request'])('recognizes %s as a thread kind', (kind) => {
+    expect(isThreadKind(kind)).toBe(true);
+  });
+
+  it.each(['question', 'announcement ', '', 'REVIEW_REQUEST'])('rejects %s as an invalid thread kind', (kind) => {
+    expect(isThreadKind(kind)).toBe(false);
+  });
+
+  it.each(['news', 'announcement', 'event', 'editorial_update'])('recognizes %s as an editorial kind', (kind) => {
+    expect(isEditorialKind(kind)).toBe(true);
+  });
+
+  it.each(['article', 'NEWS', ''])('rejects %s as an invalid editorial kind', (kind) => {
+    expect(isEditorialKind(kind)).toBe(false);
+  });
+
+  it.each(['student_publication', 'club', 'faculty_staff', 'school_office'])('recognizes %s as a creator type', (kind) => {
+    expect(isCreatorType(kind)).toBe(true);
+  });
+
+  it.each(['student', 'Club', ''])('rejects %s as an invalid creator type', (kind) => {
+    expect(isCreatorType(kind)).toBe(false);
+  });
+
+  it.each([
+    [isEditorialState, 'published', 'unlisted'],
+    [isCreatorStatus, 'verified', 'approved'],
+    [isStudyCircleStatus, 'open', 'active'],
+    [isRequestStatus, 'accepted', 'waiting'],
+    [isMentorStatus, 'suspended', 'approved'],
+  ])('validates expansion status guard values', (guard, valid, invalid) => {
+    expect(guard(valid)).toBe(true);
+    expect(guard(invalid)).toBe(false);
+  });
+
+  it('allows safe internal and HTTPS editorial links but rejects other schemes', () => {
+    expect(safeEditorialUrl()).toBeUndefined();
+    expect(safeEditorialUrl('/bulletin/fall-festival')).toBe('/bulletin/fall-festival');
+    expect(safeEditorialUrl(' https://basis.example/story ')).toBe('https://basis.example/story');
+    expect(safeEditorialUrl('http://basis.example/story')).toBeUndefined();
+    expect(safeEditorialUrl('javascript:alert(1)')).toBeUndefined();
+    expect(safeEditorialUrl('not a valid URL')).toBeUndefined();
+  });
+
+  it('normalizes and bounds short user-authored labels', () => {
+    expect(shortText('  A   concise\n  label  ', 20)).toBe('A concise label');
+    expect(shortText('0123456789', 6)).toBe('012345');
+  });
+
+  it('keeps campus-safe labels but rejects street-address patterns', () => {
+    expect(safeCampusLocation('Library collaboration room')).toBe('Library collaboration room');
+    expect(safeCampusLocation('  Science   Lab 2  ')).toBe('Science Lab 2');
+    expect(safeCampusLocation('120 Main Street')).toBeUndefined();
+    expect(safeCampusLocation('   ')).toBeUndefined();
+  });
+
+  it('builds stable, URL-safe editorial slugs from a headline and opaque suffix', () => {
+    expect(buildEditorialSlug('  Fall Festival: What to Know! ', 'abc12345-longer')).toBe('fall-festival-what-to-know-abc12345');
+    expect(buildEditorialSlug('***', 'xyz98765')).toBe('bulletin-xyz98765');
   });
 });
 
