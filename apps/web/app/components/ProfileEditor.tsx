@@ -3,6 +3,9 @@
 import React from 'react';
 import { useActionState } from 'react';
 import { Alert, Box, Button, Checkbox, FormControlLabel, FormGroup, TextField, Typography } from '@mui/material';
+import { LanguageSelector, DisplayModeSelector } from '@basis-forum/ui';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const subjects = ['Math', 'Science', 'History', 'English', 'Art', 'Computer Science', 'General'];
 
@@ -29,6 +32,7 @@ export default function ProfileEditor({
   action: (state: State, formData: FormData) => Promise<State>;
 }) {
   const [state, formAction, isPending] = useActionState(action, {});
+  const router = useRouter();
   const selected = Array.isArray(profile.favoriteSubjects) ? profile.favoriteSubjects.map(String) : [];
 
   return (
@@ -63,7 +67,16 @@ export default function ProfileEditor({
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5 }}>reputation points</Typography>
         <Typography variant="body2" sx={{ mb: 1.25 }}><strong>{profile.threadCount}</strong> discussions started</Typography>
         <Typography variant="body2" sx={{ mb: 1.25 }}><strong>{profile.bookmarkCount}</strong> saved discussions</Typography>
-        <Typography variant="body2"><strong>{profile.unreadNotifications}</strong> unread notifications</Typography>
+        <Typography variant="body2"><strong>{profile.unreadNotifications}</strong> unread discussion updates</Typography>
+        <Box component="section" aria-labelledby="account-settings-title" sx={{ mt: 3, pt: 2, borderTop: '1px solid var(--bf-divider)' }}>
+          <Typography id="account-settings-title" variant="overline" sx={{ display: 'block', color: 'var(--bf-muted)', mb: 1 }}>ACCOUNT & DISPLAY</Typography>
+          <Box sx={{ display: 'grid', gap: .5, mb: 1.5 }}><LanguageSelector /><DisplayModeSelector /></Box>
+          <Box sx={{ display: 'grid', gap: .75 }}>
+            <Button size="small" variant="outlined" onClick={() => router.push('/creator')} sx={{ justifyContent: 'flex-start' }}>CREATOR DESK & VERIFICATION</Button>
+            <Button size="small" variant="outlined" onClick={() => router.push('/bookmarks')} sx={{ justifyContent: 'flex-start' }}>SAVED DISCUSSIONS</Button>
+            <Button size="small" variant="text" onClick={() => signOut({ callbackUrl: '/' })} sx={{ justifyContent: 'flex-start', color: 'var(--bf-muted)' }}>SIGN OUT</Button>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

@@ -21,15 +21,10 @@ export default function ClientLayout({ children, user }: { children: React.React
       user={user} 
       onSignIn={() => router.push('/login')} 
       onSignOut={() => signOut()}
-      onSearch={() => router.push('/search')}
       onProfile={() => router.push('/profile')}
-      onBookmarks={() => router.push('/bookmarks')}
-      onNotifications={() => router.push('/notifications')}
       onHome={() => router.push('/')}
       onBulletin={() => router.push('/bulletin')}
-      onCreatorDesk={() => router.push('/creator')}
-      onStudy={() => router.push('/study')}
-      onKnowledge={() => router.push('/knowledge')}
+      onStudy={() => router.push('/study#updates')}
     >
       {children}
     </Layout>
