@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { Box, Button, Collapse, TextField, Typography } from '@mui/material';
 import { useLanguage } from '@basis-forum/ui';
-import { createCircle, joinStudyCircle, requestMentorHelp, requestMentorVerification, submitPeerFeedback } from '../actions/academic';
+import { createCircle, joinStudyCircle, submitPeerFeedback } from '../actions/academic';
 import { markNotificationsReadAction } from '../actions/community';
 
 type Circle = {
@@ -45,12 +46,11 @@ export default function StudyCenter({
   signedIn: boolean;
 }) {
   const { locale, t } = useLanguage();
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string>();
   const [openCircleForm, setOpenCircleForm] = useState(false);
   const [openReviewId, setOpenReviewId] = useState<string>();
-  const [openMentorId, setOpenMentorId] = useState<string>();
-  const [openMentorVerification, setOpenMentorVerification] = useState(false);
   const unreadCount = updates.filter((update) => !update.readAt).length;
   const formatDate = (date: Date) => new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(date));
 
@@ -171,27 +171,12 @@ export default function StudyCenter({
                   <Typography variant="body1" sx={{ fontWeight: 900, overflowWrap: 'anywhere' }}>{mentor.displayName}</Typography>
                   <Typography variant="caption" sx={{ color: 'var(--bf-muted)' }}>SUBJECTS / {Array.isArray(mentor.subjects) ? mentor.subjects.join(' · ') : 'Academic support'}</Typography>
                   <Typography variant="body2" sx={{ mt: .75, color: 'var(--bf-muted)', lineHeight: 1.6 }}>{mentor.statement}</Typography>
-                  <Button size="small" variant="outlined" aria-expanded={openMentorId === mentor.id} sx={{ mt: 1.25 }} onClick={() => setOpenMentorId((open) => open === mentor.id ? undefined : mentor.id)}>{openMentorId === mentor.id ? t('study.closeRequest') : t('study.askQuestion')}</Button>
-                  <Collapse in={openMentorId === mentor.id}>
-                    <Box component="form" onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); actionGuard(() => requestMentorHelp({ mentorProfileId: mentor.id, subject: String(form.get('subject')), question: String(form.get('question')) }), 'Mentor request submitted.'); }} sx={{ display: 'grid', gap: 1, mt: 1.25 }}>
-                      <TextField name="subject" label={t('form.subject')} required sx={inputSx} />
-                      <TextField name="question" label={t('study.question')} multiline minRows={3} required sx={inputSx} />
-                      <Button type="submit" variant="outlined" disabled={pending} sx={{ justifySelf: 'start' }}>{t('study.requestHelp')}</Button>
-                    </Box>
-                  </Collapse>
+                  <Button size="small" variant="outlined" sx={{ mt: 1.25 }} onClick={() => router.push(`/study/mentor/${mentor.id}`)}>{t('study.askQuestion')}</Button>
                 </Box>
               ))}
               {mentors.length === 0 ? <Typography variant="body2" sx={{ py: 2, color: 'var(--bf-muted)' }}>{t('study.noMentors')}</Typography> : null}
             </Box>
-            <Button size="small" variant="outlined" aria-expanded={openMentorVerification} sx={{ mt: 2 }} onClick={() => setOpenMentorVerification((open) => !open)}>{openMentorVerification ? t('study.closeVerification') : t('study.becomeMentor')}</Button>
-            <Collapse in={openMentorVerification}>
-              <Box component="form" onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); actionGuard(() => requestMentorVerification({ subjects: String(form.get('subjects')).split(',').map((subject) => subject.trim()).filter(Boolean), statement: String(form.get('statement')) }), 'Mentor verification request submitted for administrator review.'); }} sx={{ mt: 2, display: 'grid', gap: 1.25 }}>
-                <Typography variant="overline" sx={{ color: 'var(--bf-muted)' }}>{t('study.requestVerification')}</Typography>
-                <TextField name="subjects" label={t('study.subjects')} required sx={inputSx} />
-                <TextField name="statement" label={t('study.experience')} required multiline minRows={4} sx={inputSx} />
-                <Button type="submit" variant="contained" disabled={pending} sx={{ justifySelf: 'start' }}>{t('study.requestVerificationButton')}</Button>
-              </Box>
-            </Collapse>
+            <Button size="small" variant="outlined" sx={{ mt: 2 }} onClick={() => router.push('/study/mentor/verify')}>{t('study.becomeMentor')}</Button>
           </Box>
         </Box>
       </Box>
