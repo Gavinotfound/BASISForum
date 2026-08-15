@@ -37,8 +37,8 @@ export const Navbar = ({ user, onSignIn, onProfile, onHome, onBulletin, onStudy 
             <Typography variant="h6" component="span" sx={{ color: 'text.primary', fontWeight: 800, letterSpacing: '-.05em', fontSize: { xs: '1rem', sm: '1.1rem' } }}>BASISForum</Typography>
           </ButtonBase>
           <Box aria-label="Forum navigation" sx={{ minWidth: 0, width: { xs: '100%', sm: 'auto' }, display: 'flex', justifyContent: { xs: 'flex-start', sm: 'flex-end' }, gap: { xs: 0.35, sm: 0.75 }, alignItems: 'center', overflowX: 'auto', overscrollBehaviorX: 'contain', pb: { xs: 0.25, sm: 0 }, '&::-webkit-scrollbar': { display: 'none' } }}>
-            <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0, minHeight: 44 }} onClick={onBulletin}>BULLETIN</Button>
-            <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0, minHeight: 44 }} onClick={onStudy}>STUDY + UPDATES</Button>
+            <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0, minHeight: 44, whiteSpace: 'nowrap', fontSize: { xs: '.64rem', sm: '.72rem' } }} onClick={onBulletin}>{t('nav.bulletin')}</Button>
+            <Button sx={{ color: 'text.primary', flex: '0 0 auto', px: { xs: 0.8, md: 1 }, minWidth: 0, minHeight: 44, whiteSpace: 'nowrap', fontSize: { xs: '.64rem', sm: '.72rem' } }} onClick={onStudy}>{t('nav.studyUpdates')}</Button>
             {user ? <ButtonBase aria-label={t('nav.profile')} onClick={onProfile} sx={{ width: 44, height: 44, flex: '0 0 auto', display: 'grid', placeItems: 'center', '&:hover .MuiAvatar-root': { opacity: .72 } }}><Avatar sx={{ width: 31, height: 31, bgcolor: 'text.primary', color: 'background.default', fontSize: 13, fontWeight: 900 }}>{(user.name || 'S').slice(0, 1).toUpperCase()}</Avatar></ButtonBase> : <Button variant="contained" color="secondary" sx={{ flex: '0 0 auto', minHeight: 44 }} onClick={onSignIn}>{t('nav.signIn')}</Button>}
           </Box>
         </Toolbar>
