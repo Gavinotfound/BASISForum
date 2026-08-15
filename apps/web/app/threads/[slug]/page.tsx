@@ -66,7 +66,7 @@ export default async function ThreadDetailPage({
   const authorName = thread.author?.name || thread.author?.username || 'Student';
   const canInteract = Boolean(session?.user);
   const canResolve = thread.kind === 'academic_help' && Boolean(currentUserId && (thread.authorId === currentUserId || currentUser?.role === 'admin' || currentUser?.role === 'moderator'));
-  const acceptReply = (replyId: string) => acceptHelpfulReply({ threadId: thread.id, threadSlug: slug, replyId });
+  const acceptReply = acceptHelpfulReply.bind(null, thread.id, slug);
 
   return (
     <BasisProvider mode={mode}>

@@ -32,13 +32,13 @@ export async function toggleMemberBlock(targetUserId: string) {
   return result;
 }
 
-export async function acceptHelpfulReply(input: { threadId: string; threadSlug: string; replyId: string }) {
+export async function acceptHelpfulReply(threadId: string, threadSlug: string, replyId: string) {
   const actor = await requireActor();
-  const thread = await getThreadBySlug(input.threadSlug);
-  if (!thread || thread.id !== input.threadId) throw new Error('Discussion not found.');
+  const thread = await getThreadBySlug(threadSlug);
+  if (!thread || thread.id !== threadId) throw new Error('Discussion not found.');
   if (thread.authorId !== actor.id && actor.role !== 'admin' && actor.role !== 'moderator') throw new Error('Only the question author or a moderator can mark an answer as resolved.');
-  const resolution = await resolveThreadWithReply({ threadId: input.threadId, replyId: input.replyId, resolvedBy: actor.id });
-  revalidatePath(`/threads/${input.threadSlug}`);
+  const resolution = await resolveThreadWithReply({ threadId, replyId, resolvedBy: actor.id });
+  revalidatePath(`/threads/${threadSlug}`);
   revalidatePath('/');
   return resolution;
 }
