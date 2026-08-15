@@ -22,16 +22,25 @@ const CampaignMeta = ({ campaign, dark = false }: { campaign: ForumCampaignSlot;
   {campaign.kind === 'sponsor' ? 'SPONSORED SPACE' : campaign.eyebrow}
 </Typography>;
 
+const getAccentForeground = (accent: string) => {
+  const match = /^#([0-9a-f]{6})$/i.exec(accent);
+  if (!match) return '#FFFFFF';
+  const value = match[1];
+  const luminance = (0.2126 * Number.parseInt(value.slice(0, 2), 16) + 0.7152 * Number.parseInt(value.slice(2, 4), 16) + 0.0722 * Number.parseInt(value.slice(4, 6), 16)) / 255;
+  return luminance > 0.62 ? '#000000' : '#FFFFFF';
+};
+
 export default function CampaignSlot({ campaign }: { campaign: ForumCampaignSlot }) {
   if (!campaign.enabled) return null;
 
   const accent = campaign.accent || 'var(--bf-interactive)';
+  const accentForeground = campaign.accent ? getAccentForeground(campaign.accent) : '#FFFFFF';
   const photographicBackground: CSSProperties = campaign.imageSrc ? { backgroundImage: `url(${campaign.imageSrc})` } : {};
 
   if (campaign.template === 'swiss-grid') {
     return <Box component="aside" aria-label={campaign.kind === 'sponsor' ? 'Sponsored message' : 'Community announcement'} sx={{ mb: { xs: 2, md: 3 }, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'minmax(120px,.55fr) minmax(0,1.65fr) minmax(150px,.7fr)' }, borderTop: '2px solid var(--bf-text)', borderBottom: '1px solid var(--bf-text)', bgcolor: 'var(--bf-surface)' }}>
-      <Box sx={{ p: { xs: 1.5, md: 2 }, borderBottom: { xs: '1px solid var(--bf-divider)', sm: 'none' }, borderRight: { sm: '1px solid var(--bf-divider)' }, bgcolor: accent, color: '#FFFFFF' }}><Typography variant="overline">{campaign.kind === 'sponsor' ? 'PARTNER / 01' : 'PROGRAM / 01'}</Typography></Box>
-      <Box sx={{ p: { xs: 2, md: 2.5 }, borderBottom: { xs: '1px solid var(--bf-divider)', sm: 'none' }, borderRight: { sm: '1px solid var(--bf-divider)' } }}><CampaignMeta campaign={campaign} /><Typography component="h2" sx={{ mt: .75, fontSize: { xs: '1.22rem', md: '1.52rem' }, fontWeight: 900, letterSpacing: '-.045em', lineHeight: 1.05, textTransform: 'uppercase' }}>{campaign.title}</Typography><Typography variant="body2" sx={{ mt: 1.2, maxWidth: '58ch', color: 'var(--bf-muted)' }}>{campaign.body}</Typography></Box>
+      <Box sx={{ p: { xs: 1.5, md: 2 }, borderBottom: { xs: '1px solid var(--bf-divider)', sm: 'none' }, borderRight: { sm: '1px solid var(--bf-divider)' }, bgcolor: accent, color: accentForeground }}><Typography variant="overline" sx={{ color: 'inherit' }}>{campaign.kind === 'sponsor' ? 'PARTNER / 01' : 'PROGRAM / 01'}</Typography></Box>
+      <Box sx={{ p: { xs: 2, md: 2.5 }, borderBottom: { xs: '1px solid var(--bf-divider)', sm: 'none' }, borderRight: { sm: '1px solid var(--bf-divider)' }, bgcolor: 'var(--bf-surface)', color: 'var(--bf-text)' }}><CampaignMeta campaign={campaign} /><Typography component="h2" sx={{ mt: .75, fontSize: { xs: '1.22rem', md: '1.52rem' }, fontWeight: 900, letterSpacing: '-.045em', lineHeight: 1.05, textTransform: 'uppercase', color: 'var(--bf-text)' }}>{campaign.title}</Typography><Typography variant="body2" sx={{ mt: 1.2, maxWidth: '58ch', color: 'var(--bf-muted)' }}>{campaign.body}</Typography></Box>
       <Box sx={{ p: { xs: 1.5, md: 2 }, display: 'flex', alignItems: { xs: 'flex-start', sm: 'flex-end' }, justifyContent: 'flex-start' }}><CampaignAction campaign={campaign} /></Box>
     </Box>;
   }

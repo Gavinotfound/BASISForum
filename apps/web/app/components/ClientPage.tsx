@@ -17,7 +17,7 @@ export default function ClientPage({ user, threads, sort, campaign }: { user?: F
   const isHot = sort === 'hot';
   const submitSearch = (event: React.FormEvent) => { event.preventDefault(); if (query.trim()) router.push(`/search?q=${encodeURIComponent(query.trim())}`); };
 
-  const sortControls = <Box aria-label="Thread sorting" sx={{ display: 'flex', gap: 0.5, flex: '0 0 auto' }}><Button size="small" variant={!isHot ? 'text' : 'outlined'} onClick={() => router.push('/?sort=latest')}>{t('feed.latest')}</Button><Button size="small" variant={isHot ? 'text' : 'outlined'} onClick={() => router.push('/?sort=hot')}>{t('feed.hot')}</Button></Box>;
+  const sortControls = <Box aria-label="Thread sorting" sx={{ display: 'flex', gap: 0.5, flex: '0 0 auto' }}><Button size="small" variant="outlined" aria-pressed={!isHot} sx={!isHot ? { bgcolor: 'var(--bf-text)', color: 'var(--bf-selection-fg)', borderColor: 'var(--bf-text)', '&:hover': { bgcolor: 'var(--bf-text)', color: 'var(--bf-selection-fg)' } } : { color: 'var(--bf-muted)', borderColor: 'var(--bf-divider)' }} onClick={() => router.push('/?sort=latest')}>{t('feed.latest')}</Button><Button size="small" variant="outlined" aria-pressed={isHot} sx={isHot ? { bgcolor: 'var(--bf-text)', color: 'var(--bf-selection-fg)', borderColor: 'var(--bf-text)', '&:hover': { bgcolor: 'var(--bf-text)', color: 'var(--bf-selection-fg)' } } : { color: 'var(--bf-muted)', borderColor: 'var(--bf-divider)' }} onClick={() => router.push('/?sort=hot')}>{t('feed.hot')}</Button></Box>;
 
   return <Box sx={{ maxWidth: { lg: 1440, xl: 1680 }, mx: 'auto' }}>
     <CampaignSlot campaign={campaign} />

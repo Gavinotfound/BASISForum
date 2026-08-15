@@ -83,7 +83,7 @@ export const HeroBanner = ({ name, onNewThread }: { name: string; onNewThread?: 
   </Box>;
 };
 
-export const CategoryBadge = ({ label }: { label: string }) => <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: .75, minWidth: 0 }}><Box aria-hidden sx={{ width: 7, height: 7, flex: '0 0 auto', bgcolor: 'var(--bf-text)' }} /><Typography variant="overline" sx={{ color: 'var(--bf-text)', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</Typography></Box>;
+export const CategoryBadge = ({ label }: { label: string }) => <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: .75, minWidth: 0 }}><Box aria-hidden sx={{ width: 7, height: 7, flex: '0 0 auto', bgcolor: 'var(--bf-interactive)' }} /><Typography variant="overline" sx={{ color: 'var(--bf-muted)', fontWeight: 800, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</Typography></Box>;
 
 export const ThreadCard = ({ title, author, category, replies, score = 0, updatedAt, isSticky = false, onClick }: { title: string; author: string; category: string; replies: number; score?: number; updatedAt?: string; isSticky?: boolean; onClick?: () => void }) => {
   const emphasized = isSticky || score >= 5;
@@ -92,7 +92,7 @@ export const ThreadCard = ({ title, author, category, replies, score = 0, update
     <Box sx={{ display: 'flex', alignItems: 'center' }}><CategoryBadge label={category} /></Box>
     <Box sx={{ display: 'flex', alignItems: 'center', gap: .75, overflow: 'hidden' }}><Typography component="h2" sx={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: emphasized ? { xs: '.88rem', sm: '.92rem', md: '1.02rem' } : { xs: '.78rem', sm: '.84rem', md: '.9rem' }, fontWeight: emphasized ? 800 : 600, letterSpacing: '-.015em' }}>{title}</Typography>{emphasized ? <Typography variant="overline" sx={{ color: 'inherit', flex: '0 0 auto' }}>HOT</Typography> : null}</Box>
     <Typography variant="overline" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', color: 'var(--bf-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{author.toUpperCase()}</Typography>
-    <Typography variant="overline" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontVariantNumeric: 'tabular-nums', color: score < 0 ? 'var(--bf-burgundy)' : 'var(--bf-text)' }}>{replies}</Typography>
+    <Typography variant="overline" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontVariantNumeric: 'tabular-nums', fontWeight: 800, color: score < 0 ? 'var(--bf-burgundy)' : 'var(--bf-muted)' }}>{replies}</Typography>
     <Typography variant="overline" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'flex-end', fontVariantNumeric: 'tabular-nums', color: 'var(--bf-muted)' }}>{activity}</Typography>
   </Box>;
 };

@@ -418,3 +418,7 @@ A follow-up compositor audit added explicit stacking isolation to nested replies
 The final visual diagnostic proved that an elevated foreground renders correctly above the affected nested-card mask. The permanent component contract now applies that elevated paint order to nested reply boxes, typography, and controls, preserving the regular semantic colors while preventing blank child surfaces. The complete test, lint, and strict-build gate passes.
 
 Final production visual verification confirmed the nested reply no longer renders as a blank grey field: the black semantic surface visibly displays the `REPLY TO FLOOR #1` strip, author, timestamp, body text, vote controls, and report action.
+
+### Bounded UI-aesthetics loop
+
+This loop captured desktop and mobile dark, Archive, and Sakura baselines; corrected campaign accent foregrounds for Admin-configurable light accents; reinforced Swiss-grid campaign text contrast; made mobile category and reply metadata semantic and scanable; and made selected sort state explicit. The full test, lint, and strict sequential build gate passed. An independent stop-gate reviewer found no further objectively compelled UI changes under readability, responsive layout, accessibility, or Swiss-system consistency criteria; speculative styling changes are intentionally stopped.
