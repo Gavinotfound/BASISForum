@@ -554,3 +554,24 @@ The shared language catalog now covers the new primary navigation, forum-section
 A persistent browser session interrupted during a live Chinese screenshot after the standard locale cookie/localStorage contract was updated. The source-level locale mappings, type checks, and all English mobile render checks completed successfully; the locale switch uses the same established provider behavior already used elsewhere in the application.
 
 The release was committed as `790da2b` (`fix(web): improve study readability and localization`), pushed to GitHub `main`, and deployed to production.
+
+
+## Iteration 23 — 2026-08-15T10:17:00Z
+
+### Dedicated mentor workflows
+
+Following the clarified workflow request, only mentor verification and mentor help requests were moved out of Study Center. Study-circle creation and peer-review feedback remain in their existing Study Center workflows. The mentor overview now acts as a concise directory: **Ask a Question** opens `/study/mentor/[id]` for the selected verified mentor, while **Become a Verified Mentor** opens `/study/mentor/verify`.
+
+Both new routes require authentication, preserve the member’s selected display mode and shared layout, keep the Swiss editorial form treatment, and return members to Study Center after a successful server action. Their new page controls and verification guidance were added to the EN, ZH-CN, FR, and IS language catalog.
+
+| Check | Result |
+|---|---|
+| Strict Web TypeScript | Passed |
+| `pnpm lint` | Passed with zero warnings |
+| `pnpm test` | Passed: 53 tests and 100% core coverage |
+| Sequential Web/Admin build | Passed; both dedicated routes listed in build output |
+| Production Web build and PM2 restart | Passed; Web and Admin online |
+| Protected-route smoke | Unauthenticated mentor verification response encodes the expected Next.js redirect to `/login` |
+| 390px mobile Study Center smoke | Overview is compact; mentor verification is a single route-navigation action with no inline mentor form |
+
+The first deployment transfer briefly encountered an SSH connection closure while the host remained reachable. A bounded reconnection, clean resynchronization, and rebuild completed successfully. The feature release is committed as `5876d08` and localization polish as `a36dc4d`, both pushed to GitHub `main` and deployed.
