@@ -422,3 +422,5 @@ Final production visual verification confirmed the nested reply no longer render
 ### Bounded UI-aesthetics loop
 
 This loop captured desktop and mobile dark, Archive, and Sakura baselines; corrected campaign accent foregrounds for Admin-configurable light accents; reinforced Swiss-grid campaign text contrast; made mobile category and reply metadata semantic and scanable; and made selected sort state explicit. The full test, lint, and strict sequential build gate passed. An independent stop-gate reviewer found no further objectively compelled UI changes under readability, responsive layout, accessibility, or Swiss-system consistency criteria; speculative styling changes are intentionally stopped.
+
+Production smoke confirmation: the deployed Archive mobile homepage now renders a visible `PROGRAM / 01` accent module, high-contrast campaign title, explicit selected sort state, and scanable category/reply metadata with no horizontal overflow.
