@@ -532,3 +532,25 @@ Each button expands its existing form in place and changes to a clear close labe
 | On-demand workflow smoke | **Open a Study Circle** revealed the complete preserved circle form and a close control |
 
 The change was committed as `85c870a` (`refactor(web): collapse study workflow forms`), pushed to GitHub `main`, and deployed to production.
+
+
+## Iteration 22 — 2026-08-15T09:53:00Z
+
+### Readability, language adaptation, and mobile audit
+
+The newly simplified navigation, secondary discussion menu, Profile account controls, and Study Center were reviewed for reading hierarchy, localization coverage, and mobile behavior. The Study Center was rewritten into a structured component with readable source organization, responsive spacing, natural text wrapping, consistent border hierarchy, and localized labels for its new workflow controls.
+
+The shared language catalog now covers the new primary navigation, forum-section menu, Profile **Account & Display** controls, and Study Center headings, empty states, action buttons, form labels, and progressive-disclosure states in English, Simplified Chinese, French, and Icelandic. The primary navigation retains 44px touch targets while reducing mobile label size slightly and preserving horizontal containment for longer locale labels.
+
+| Audit surface | Result |
+|---|---|
+| 390px mobile Study Center | Readable hierarchy, no default fields, clear workflow actions, no horizontal overflow |
+| 320px mobile Study Center | Header, action buttons, body copy, and rule layout remained fully visible; text wrapped naturally without clipping |
+| Desktop Study Center | Compact header, readable body text, and bounded workflow hierarchy preserved |
+| New locale keys | Added across EN, ZH-CN, FR, and IS for navigation, secondary menu, account controls, and Study Center workflows |
+| TypeScript, lint, tests, build | Passed: strict Web type check, zero-warning lint, 53 tests with 100% core coverage, and sequential Web/Admin build |
+| Production deployment | Web rebuilt and restarted successfully under PM2 |
+
+A persistent browser session interrupted during a live Chinese screenshot after the standard locale cookie/localStorage contract was updated. The source-level locale mappings, type checks, and all English mobile render checks completed successfully; the locale switch uses the same established provider behavior already used elsewhere in the application.
+
+The release was committed as `790da2b` (`fix(web): improve study readability and localization`), pushed to GitHub `main`, and deployed to production.
