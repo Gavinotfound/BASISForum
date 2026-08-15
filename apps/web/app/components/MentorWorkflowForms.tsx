@@ -35,7 +35,7 @@ export function MentorHelpForm({ mentor }: { mentor: Mentor }) {
     <Box component="form" onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); startTransition(async () => { try { await requestMentorHelp({ mentorProfileId: mentor.id, subject: String(form.get('subject')), question: String(form.get('question')) }); router.push('/study'); router.refresh(); } catch (error) { setMessage(error instanceof Error ? error.message : 'The request could not be submitted.'); } }); }} sx={{ mt: 3, display: 'grid', gap: 1.25 }}>
       <TextField name="subject" label={t('form.subject')} required sx={inputSx} />
       <TextField name="question" label={t('study.question')} multiline minRows={5} required sx={inputSx} />
-      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}><Button type="submit" variant="contained" disabled={pending}>{pending ? 'SENDING…' : t('study.requestHelp')}</Button><Button type="button" variant="outlined" onClick={() => router.push('/study')}>BACK TO STUDY CENTER</Button></Box>
+      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}><Button type="submit" variant="contained" disabled={pending}>{pending ? t('study.sending') : t('study.requestHelp')}</Button><Button type="button" variant="outlined" onClick={() => router.push('/study')}>{t('study.backToCenter')}</Button></Box>
       {message ? <Typography role="status" variant="body2" sx={{ color: 'var(--bf-interactive)' }}>{message}</Typography> : null}
     </Box>
   </WorkflowFrame>;
@@ -47,11 +47,11 @@ export function MentorVerificationForm() {
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string>();
 
-  return <WorkflowFrame eyebrow={t('study.mentors')} title={t('study.becomeMentor')} description={t('study.noMentors')}>
+  return <WorkflowFrame eyebrow={t('study.mentors')} title={t('study.becomeMentor')} description={t('study.verifyDescription')}>
     <Box component="form" onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); startTransition(async () => { try { await requestMentorVerification({ subjects: String(form.get('subjects')).split(',').map((subject) => subject.trim()).filter(Boolean), statement: String(form.get('statement')) }); router.push('/study'); router.refresh(); } catch (error) { setMessage(error instanceof Error ? error.message : 'The verification request could not be submitted.'); } }); }} sx={{ mt: 3, display: 'grid', gap: 1.25 }}>
       <TextField name="subjects" label={t('study.subjects')} required sx={inputSx} />
       <TextField name="statement" label={t('study.experience')} required multiline minRows={6} sx={inputSx} />
-      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}><Button type="submit" variant="contained" disabled={pending}>{pending ? 'SENDING…' : t('study.requestVerificationButton')}</Button><Button type="button" variant="outlined" onClick={() => router.push('/study')}>BACK TO STUDY CENTER</Button></Box>
+      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}><Button type="submit" variant="contained" disabled={pending}>{pending ? t('study.sending') : t('study.requestVerificationButton')}</Button><Button type="button" variant="outlined" onClick={() => router.push('/study')}>{t('study.backToCenter')}</Button></Box>
       {message ? <Typography role="status" variant="body2" sx={{ color: 'var(--bf-interactive)' }}>{message}</Typography> : null}
     </Box>
   </WorkflowFrame>;
