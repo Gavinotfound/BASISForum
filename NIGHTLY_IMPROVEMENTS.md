@@ -511,3 +511,24 @@ During production log review, a previously hidden runtime serialization issue wa
 ### Source control
 
 The navigation release was committed as `ad9668b` (`refactor(web): simplify navigation and unify study updates`) and the accepted-answer action repair as `b3324a0` (`fix(web): bind accepted-answer server action`). Both commits were pushed to GitHub `main` and deployed to production.
+
+
+## Iteration 21 — 2026-08-15T09:44:00Z
+
+### Study Center progressive disclosure
+
+The unified Study + Updates workspace was refined after visual review showed that immediate rendering of every creation, feedback, mentor-help, and verification field overwhelmed the study index. All input-heavy workflows now use progressive disclosure. The default view preserves only clear action buttons—**Open a Study Circle**, **Write Feedback**, **Ask a Question**, and **Become a Verified Mentor**—so the page remains an editorial overview rather than a long form stack.
+
+Each button expands its existing form in place and changes to a clear close label. No validation, server action, capacity bound, campus-safe location check, peer-feedback requirement, or mentorship-verification workflow was removed. This preserves the bounded-collaboration model while reducing visual and scrolling load.
+
+| Check | Result |
+|---|---|
+| Strict Web TypeScript | Passed |
+| `pnpm test` | Passed: 53 tests; 100% core coverage retained |
+| `pnpm lint` | Passed with zero warnings |
+| Sequential Web/Admin build | Passed |
+| Production Web build and PM2 restart | Passed; Web and Admin online |
+| Production visual smoke | Default Study Center rendered without input fields; both workflow buttons visible |
+| On-demand workflow smoke | **Open a Study Circle** revealed the complete preserved circle form and a close control |
+
+The change was committed as `85c870a` (`refactor(web): collapse study workflow forms`), pushed to GitHub `main`, and deployed to production.
