@@ -460,3 +460,23 @@ The complete expansion has passed all local quality gates and is ready for the i
 ### Follow-up audit note
 
 The feature surface is now complete for the requested bounded community model. The remaining work is operational rather than architectural: deploy the verified source, apply the migration exactly once using its idempotent contract, and smoke-test public empty states and the administrator queues against the live service.
+
+
+### Iteration 19 production deployment verification
+
+The idempotent expansion migration was applied successfully inside the live PostgreSQL 15 container after detecting that the host does not expose a standalone `psql` client. The live database now confirms `editorial_posts`, `knowledge_cards`, `study_hubs`, and `mentor_profiles` exist.
+
+The committed source was synchronized with generated files and secrets excluded. Production dependencies were already lockfile-consistent; the Web build completed first, followed by the Admin build, after which both PM2 services were restarted and saved. `basis-forum-web` and `basis-forum-admin` are online.
+
+| Live check | Result |
+|---|---|
+| Homepage | HTTP 200; Bulletin, Study, and Knowledge navigation controls visible |
+| `/bulletin` | HTTP 200; reviewed empty state rendered correctly |
+| `/study` | HTTP 200 in 5.70s; Study Center, empty Study Circle, and verified mentor states present |
+| `/creator` | Verified creator-access request form rendered for the signed-in member |
+| `/knowledge` | HTTP 200 in 5.58s; Knowledge Base shelf and proposal form present |
+| Admin portal | Editorial Desk and Academic Operations queues rendered with Study Hub creation form |
+| `/new-thread` | Structured post type, academic-help context, peer-review criteria, and safe work-link inputs visible |
+| PM2 | Web and Admin both online after restart |
+
+Two browser navigations to the heavier Study and Knowledge routes exceeded the browser automation timeout, but direct server responses were healthy and contained their expected rendered states. No application error page or server failure was observed in the completed production checks.
