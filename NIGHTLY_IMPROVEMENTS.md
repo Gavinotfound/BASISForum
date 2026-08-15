@@ -480,3 +480,34 @@ The committed source was synchronized with generated files and secrets excluded.
 | PM2 | Web and Admin both online after restart |
 
 Two browser navigations to the heavier Study and Knowledge routes exceeded the browser automation timeout, but direct server responses were healthy and contained their expected rendered states. No application error page or server failure was observed in the completed production checks.
+
+
+## Iteration 20 — 2026-08-15T09:27:00Z
+
+### Navigation refinement and discussion reliability
+
+The primary header was reduced to its essential forum-wide destinations: **Bulletin**, **Study + Updates**, and the signed-in member’s avatar. The avatar is now the dedicated entry point to Profile, removing global links for search, Knowledge Base, saved discussions, updates, creator access, sign-out, language, and display mode. This substantially reduces visual density while retaining a 44px account target across breakpoints.
+
+Knowledge Base now lives in a deliberate secondary menu paired with the discussion index. Both the homepage and Knowledge Base route present the same two-part **Discussions / Knowledge Base** navigation, with a visible active state. Creator Desk and verification, saved discussions, sign-out, language selection, and display-mode selection now live together in the Profile-side **Account & Display** settings panel.
+
+Study Center now incorporates personal discussion notifications under a **Study + Updates** section. Existing `/notifications` links redirect to `/study#updates`, preserving legacy links while removing the separate top-level destination. Signed-in members can review linked discussion activity and mark all updates read without leaving the bounded Study Center workspace.
+
+During production log review, a previously hidden runtime serialization issue was identified in the accepted-answer control. The server page had wrapped the accepted-answer action in a local function before sending it to a Client Component. The action is now directly bound with its stable thread context, preserving a serializable server action and restoring accepted-answer interactions on academic-help threads.
+
+### Verification and release
+
+| Check | Result |
+|---|---|
+| Strict Web and Admin TypeScript | Passed |
+| `pnpm test` | Passed: 53 tests; core coverage remains 100% |
+| `pnpm lint` | Passed with zero warnings |
+| Sequential local Web/Admin build | Passed |
+| Production Web/Admin build and PM2 restart | Passed; both services online |
+| Homepage visual smoke test | Simplified header and secondary Discussions / Knowledge Base menu rendered correctly |
+| Study visual smoke test | Unified Study + Updates section rendered correctly with existing bounded workflows |
+| Profile route | Browser automation timed out twice, but the route returned normally to unauthenticated HTTP checks; the component passed strict type and production build checks |
+| Accepted-answer action | Rebound as a direct serializable server action and deployed |
+
+### Source control
+
+The navigation release was committed as `ad9668b` (`refactor(web): simplify navigation and unify study updates`) and the accepted-answer action repair as `b3324a0` (`fix(web): bind accepted-answer server action`). Both commits were pushed to GitHub `main` and deployed to production.
